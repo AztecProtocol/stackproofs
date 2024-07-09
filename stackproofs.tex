@@ -1,0 +1,796 @@
+% !tex encoding = utf-8 unicode
+
+% this is a simple template for a latex document using the "article" class.
+% see "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage{fullpage}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% packages
+\usepackage[
+    type={CC},
+    modifier={by-nc-sa},
+    version={3.0},
+]{doclicense}
+\usepackage{authblk}
+\usepackage[utf8]{inputenc} % set input encoding (not needed with xelatex)
+\usepackage[strict]{changepage}
+\usepackage{bold-extra}    
+    %%% examples of article customizations
+    % these packages are optional, depending whether you want the features they provide.
+    % see the latex companion or other references for full information.
+    
+    
+    %%% page dimensions
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (us) or a5paper or....
+%     \geometry{margin=2in} % for example, change the margins to 2 inches all round
+    % \geometry{landscape} % set up the page for landscape
+    %   read geometry.pdf for detailed page layout information
+ \usepackage{numdef}
+   
+\usepackage{graphicx} % support the \includegraphics command and options
+    % some of the article customisations are relevant for this class
+\usepackage{amsmath,amsthm,calligra}
+\usepackage{amsfonts} % math fonts such as \mathbb{}
+\usepackage{amssymb} % \therefore
+% \usepackage{bickham}
+\usepackage{hyperref}
+\usepackage{cryptocode}
+\usepackage{framed} 
+    % \usepackage[parfill]{parskip} % activate to begin paragraphs with an empty line rather than an indent
+    
+    %%% packages
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. Enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+    % % these packages are all incorporated in the memoir class to one degree or another...
+\usepackage{mathrsfs}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{adjustbox}
+
+\usepackage{pgfplots}
+
+\renewcommand\theadalign{bc}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\theadgape{\Gape[4pt]}
+  
+    %%% headers & footers
+\usepackage{fancyhdr} % this should be set after setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+    
+    
+    %%% section title appearance
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (see the fntguide.pdf for font help)
+    % (this matches context defaults)
+    
+    %%% toc (table of contents) appearance
+\usepackage[nottoc,notlof,notlot]{tocbibind} % put the bibliography in the toc
+\usepackage[titles,subfigure]{tocloft} % alter the style of the table of contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % no bold!
+
+ %%% end article customizations
+ 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ % macros
+ \newcommand{\code}[1]{\texttt{#1}}
+\newcommand\tstrut{\rule{0pt}{2.6ex}}         % = `top' strut
+\newcommand\bstrut{\rule[-0.9ex]{0pt}{0pt}}   % = `bottom' strut
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\bsigma}{\boldsymbol{\sigma}}
+\newcommand{\plonk}{\ensuremath{\mathcal{P} \mathfrak{lon}\mathcal{K}}\xspace}
+\newcommand{\cq}{\ensuremath{\mathpgoth{cq} }\xspace}
+\newcommand{\cqlin}{\ensuremath{\mathpgoth{cq}\mathscr{\text{\calligra{lin}}} }\xspace}
+\newcommand{\cqstar}{\ensuremath{\mathpgoth{cq^{\mathbf{*}} }}\xspace}
+\newcommand{\protogal}{{\scshape Proto\bfseries{galaxy}}\xspace}
+\newcommand{\stackproofs}{s{\ensuremath{\mathfrak{t} \mathpgoth {ack}}\bfseries{proofs}}\xspace}
+\newcommand{\protostar}{{\scshape Protostar}\xspace}
+\newcommand{\hypernova}{{HyperNova}\xspace}
+\newcommand{\flookup}{\ensuremath{\mathsf{\mathpgoth{Flookup}}}\xspace}
+\newcommand{\baloo}{\ensuremath{\mathrm{ba}\mathit{loo}}\xspace}
+\newcommand{\caulkp}{\ensuremath{\mathsf{\mathrel{Caulk}\mathrel{\scriptstyle{+}}}}\xspace}
+\newcommand{\caulk}{\ensuremath{\mathsf{Caulk}}\xspace}
+\newcommand{\plookup}{\ensuremath{\mathpgoth{plookup}}\xspace}
+\newcommand{\tablegroup}{\ensuremath{\mathbb{H}}\xspace}
+\newcommand{\V}{\ensuremath{\mathbf{V} }\xspace}
+\newcommand{\relbase}{\ensuremath{\rel_0}\xspace}
+
+\newcommand{\instbase}{\ensuremath{\inst_0}\xspace}
+\newcommand{\witbase}{\ensuremath{\wit_0}\xspace}
+
+
+\newcommand{\papertitle}{\stackproofs: Private proofs of stack and contract execution using \protogal}
+%\newcommand{\authorname}}
+\newcommand{\company}{}
+\title{ \papertitle \\[0.72cm]}
+\author{}
+% \author{ Liam Eagen \\ \tt{Blockstream Research}\\ \tt{Zeta Function Technologies}   \and Ariel Gabizon \\ \tt{Zeta Function Technologies} } 
+% \author[1]{Liam Eagen}
+% \author[1]{Ariel Gabizon}
+% \author{2}{Patrick Towa}
+% \author{2}{Zac Williamson}
+% \affil[1]{Zeta Function Technologies}
+% \affil[1]{Zeta Function Technologies}
+% \affil[2]{Aztec Labs}
+% 
+% 	\large{\authorname} \\[0.5cm] \large{\company}
+% 	\\ {DRAFT}
+%}
+%\date{} % activate to display a given date or no date (if empty),
+
+% otherwise the current date is printed 
+\DeclareMathAlphabet{\mathpgoth}{OT1}{pgoth}{m}{n}	
+\ProvidesPackage{numdef}
+
+
+
+%% Ariel Macros:
+% \num\newcommand{\G1}{\ensuremath{{\mathbb G}_1}\xspace}
+\newcommand{\Gi}{\ensuremath{{\mathbb G}_i}\xspace}
+\newcommand{\G}{\ensuremath{{\mathbb G}}\xspace}
+\newcommand{\Gstar}{\ensuremath{{\mathbb G}^*}\xspace}
+\newcommand{\x}{\ensuremath{\mathbf{x}}\xspace}
+\newcommand{\z}{\ensuremath{\mathbf{z}}\xspace}
+\newcommand{\X}{\ensuremath{\mathbf{X}}\xspace}
+
+% \num\newcommand{\G2}{\ensuremath{{\mathbb G}_2}\xspace}
+%\num\newcommand{\G11}{\ensuremath{\G1\setminus \set{0} }\xspace}
+%\num\newcommand{\G21}{\ensuremath{\G2\setminus \set{0} }\xspace}
+\newcommand{\grouppair}{\ensuremath{G^*}\xspace}
+\newcommand{\prvperm}{\ensuremath{\mathrm{P_{\mathsf{\sigma}}}}\xspace}
+\newcommand{\verperm}{\ensuremath{\mathrm{V_{\mathsf{\sigma}}}}\xspace}
+\newcommand{\alg}{\ensuremath{\mathscr{A}}\xspace}
+
+\newcommand{\Gt}{\ensuremath{{\mathbb G}_t}\xspace}
+\newcommand{\F}{\ensuremath{\mathbb F}\xspace}
+\newcommand{\Fstar}{\ensuremath{\mathbb F^*}\xspace}
+
+\newcommand{\help}[1]{$#1$-helper\xspace}
+\newcommand{\randompair}[1]{\ensuremath{\mathsf{randomPair}(#1)}\xspace}
+\newcommand{\pair}[1]{$#1$-pair\xspace}
+\newcommand{\pairs}[1]{$#1$-pairs\xspace}
+\newcommand{\chalpoint}{\ensuremath{\mathfrak{z}}\xspace}
+
+\newcommand{\pairone}[1]{\G1-$#1$-pair\xspace}
+\newcommand{\pairtwo}[1]{\G2-$#1$-pair\xspace}
+\newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
+\newcommand{\vecc}[2]{\ensuremath{\left(#1\right)_{#2}}\xspace}
+\newcommand{\players}{\ensuremath{[n]}\xspace}
+\newcommand{\adv}{\ensuremath{\mathcal A}\xspace}
+\newcommand{\advprime}{\ensuremath{{\mathcal A}'}\xspace}
+\newcommand{\extprime}{\ensuremath{E'}\xspace}
+\newcommand{\advrand}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+% \num\newcommand{\srs1}{\ensuremath{\mathsf{srs_1}}\xspace}
+% \num\newcommand{\srs2}{\ensuremath{\mathsf{srs_2}}\xspace}
+\newcommand{\srs}{\ensuremath{\mathsf{srs}}\xspace}
+\newcommand{\regsrs}[1]{\ensuremath{\sett{\enc1{x^i}}{i\in \set{0,\ldots,#1-1}}}\xspace}
+\newcommand{\srsm}{\ensuremath{\mathsf{srs}_M}\xspace}
+\newcommand{\srsext}{\ensuremath{\mathsf{srs^*}}\xspace}
+\newcommand{\srsbase}{\ensuremath{\mathsf{srs_0}}\xspace}
+\newcommand{\srsi}{\ensuremath{\mathsf{srs_i}}\xspace}
+\newcommand{\com}{\ensuremath{\mathsf{com}}\xspace}
+\newcommand{\comperm}{\ensuremath{\mathsf{com_{\sigma}}}\xspace}
+\newcommand{\cm}{\ensuremath{\mathsf{cm}}\xspace}
+\newcommand{\cmsig}{\ensuremath{\mathsf{cm_\sigma}}\xspace}
+\newcommand{\open}{\ensuremath{\mathsf{open}}\xspace}
+\newcommand{\openperm}{\ensuremath{\mathsf{open_{\sigma}}}\xspace}
+\newcommand{\sigof}[1]{\ensuremath{\sigma(#1)}\xspace}
+\newcommand{\proverexp}{\ensuremath{\mathsf{e}}\xspace}
+\newcommand{\reducedelems}{\ensuremath{\mathsf{r}}\xspace}
+
+\newcommand{\ci}{\ensuremath{\mathrm{CI}}\xspace}
+\renewcommand{\deg}{\ensuremath{\mathrm{deg}}\xspace}
+\newcommand{\pairvec}[1]{$#1$-vector\xspace}
+\newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
+\newcommand{\randpair}[1]{\ensuremath{\mathsf{rp}_{#1}}\xspace}
+\newcommand{\randpairone}[1]{\ensuremath{\mathsf{rp}_{#1}^{1}}\xspace}
+\newcommand{\abase}{\ensuremath{A_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\bbase}{\ensuremath{B_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\cbase}{\ensuremath{C_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\bliop}[1]{\ensuremath{\mathsf{#1{\text{-}}{BLIOP}}}\xspace}
+\newcommand{\blop}{\ensuremath{\mathsf{\mathscr{BL} {\text{-}}IOP}}\xspace}
+\newcommand{\openprotinput}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\bmid}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\cmid}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+
+\newcommand{\negl}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
+\newcommand{\nilp}{\ensuremath{\mathscr N}\xspace}
+\newcommand{\groupgen}{\ensuremath{\mathscr G}\xspace}
+\newcommand{\qap}{\ensuremath{\mathscr Q}\xspace}
+\newcommand{\polprot}[4]{$(#1,#2,#3,#4)$-polynomial protocol}
+\newcommand{\rangedprot}[5]{$#5$-ranged $(#1,#2,#3,#4)$-polynomial protocol}
+
+\newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+\newcommand{\res}{\ensuremath{\mathsf{res}}\xspace}
+\newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
+ \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
+ \newcommand{\comm}[1]{\ensuremath{\enc1{#1(x)}}\xspace}
+ \newcommand{\defeq}{:=}
+
+\newcommand{\B}{\ensuremath{\set{0,1}}\xspace}
+\newcommand{\dom}{\ensuremath{H}\xspace}
+\newcommand{\C}{\ensuremath{\vec{C}}\xspace}
+\newcommand{\Btwo}{\ensuremath{\vec{B_2}}\xspace}
+\newcommand{\treevecsimp}{\ensuremath{(\tau,\rho_A,\rho_A \rho_B,\rho_A\alpha_A,\rho_A\rho_B\alpha_B, \rho_A\rho_B\alpha_C,\beta,\beta\gamma)}\xspace}% The sets of elements used in simplifed relation tree in main text body
+\newcommand{\rcptc}{random-coefficient subprotocol\xspace}
+\newcommand{\rcptcparams}[2]{\ensuremath{\mathrm{RCPC}(#1,#2)}\xspace}
+\newcommand{\verifyrcptcparams}[2]{\ensuremath{\mathrm{\mathsf{verify}RCPC}(#1,#2)}\xspace}
+\newcommand{\randadv}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+ \num\newcommand{\ex1}[1]{\ensuremath{ #1\cdot g_1}\xspace}
+ \num\newcommand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
+ \newcommand{\pr}{\mathrm{Pr}}
+ \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
+ \newcommand{\partition}{\ensuremath{{\mathcal T}}\xspace}
+ \newcommand{\partof}[1]{\ensuremath{{\partition_{#1}}}\xspace}
+\num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
+\num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
+ \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
+ \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
+\newcommand{\protver}{protocol verifier\xspace} 
+\newcommand{\hash}{\ensuremath{\mathcal{H}}\xspace} 
+\newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
+\newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace} 
+\newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
+\newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
+\newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
+\newcommand{\trapdoor}{\ensuremath{r}}
+\newcommand{\trapdoorext}{\ensuremath{r_{\mathrm{ext}}}\xspace}
+% \newcommand{\trapdoorsim}{\ensuremath{r_{\mathrm{sim}}}\xspace}
+\renewcommand{\mod}{\ensuremath{\;\mathrm{mod}\;}}
+\newcommand{\hsub}{\ensuremath{H^*}\xspace}
+\num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
+\newcommand{\enci}[1]{\ensuremath{\left[#1\right]_i}\xspace}
+\num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
+\newcommand{\gen}{\ensuremath{\mathsf{gen}}\xspace}
+\newcommand{\hgen}{\ensuremath{\omega}\xspace}
+\newcommand{\gops}{\G1-operations\xspace}
+\newcommand{\nlogngops}{$O(n\log n)$ \G1-operations\xspace}
+\newcommand{\nlognfops}{$O(n\log n)$ \F-operations\xspace}
+\newcommand{\fops}{\F-operations\xspace}
+\newcommand{\prv}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
+\newcommand{\prvpoly}{\ensuremath{\mathrm{P_{\mathsf{poly}}}}\xspace}
+\newcommand{\prvpc}{\ensuremath{\mathrm{P_{\mathsf{PC}}}}\xspace}
+\newcommand{\verpoly}{\ensuremath{\mathrm{V_{\mathsf{poly}}}}\xspace}
+\newcommand{\verpc}{\ensuremath{\mathrm{V_{\mathsf{PC}}}}\xspace}
+\newcommand{\ideal}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\prf}{\ensuremath{\mathsf{\pi}}\xspace}
+\newcommand{\prfone}{\ensuremath{\mathsf{\pi_1}}\xspace}
+% \newcommand{\simprv}{\ensuremath{\mathrm{P^{sim}}}\xspace}
+
+%\newcommand{\enc}[1]{\ensuremath{\left[#1\right]}\xspace}
+%\num\newcommand{\G0}{\ensuremath{\mathbf{G}}\xspace}
+\newcommand{\GG}{\ensuremath{\mathbf{G^*}}\xspace}  % would have liked to call this G01 but problem with name
+\num\newcommand{\g0}{\ensuremath{\mathbf{g}}\xspace}
+\newcommand{\inst}{\ensuremath{\phi}\xspace}
+\newcommand{\newinst}{\ensuremath{\phi^*}\xspace}
+\newcommand{\row}{\ensuremath{\mathsf{R}}\xspace}
+\newcommand{\col}{\ensuremath{\mathsf{C}}\xspace}
+\newcommand{\inp}{\ensuremath{\mathsf{x}}\xspace}
+\newcommand{\wit}{\ensuremath{\omega}\xspace}
+\newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
+\newcommand{\per}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
+\newcommand{\sonic}{\ensuremath{\mathsf{Sonic}}\xspace}
+\newcommand{\aurora}{\ensuremath{\mathsf{Aurora}}\xspace}
+\newcommand{\auroralight}{\ensuremath{\mathsf{Auroralight}}\xspace}
+\newcommand{\groth}{\ensuremath{\mathsf{Groth'16}}\xspace}
+\newcommand{\kate}{\ensuremath{\mathsf{KZG}}\xspace}
+\newcommand{\rel}{\ensuremath{\mathcal{R}}\xspace}
+\newcommand{\relrand}{\ensuremath{\mathcal{R^{\mathsf{rand}}}}\xspace}
+\newcommand{\lang}{\ensuremath{\mathcal{L}}\xspace}
+\newcommand{\ext}{\ensuremath{E}\xspace}
+\newcommand{\params}{\ensuremath{\mathsf{params}_{\inst}}\xspace}
+\newcommand{\protparams}{\ensuremath{\mathsf{params}_{\inst}^\advv}\xspace}
+\num\newcommand{\p1}{\ensuremath{P_1}\xspace}
+\newcommand{\advv}{\ensuremath{ {\mathcal A}^{\mathbf{*}}}\xspace} % the adversary that uses protocol adversary as black box
+\newcommand{\crs}{\ensuremath{\sigma}\xspace}
+%\num\newcommand{\crs1}{\ensuremath{\mathrm{\sigma}_1}\xspace}
+%\num\newcommand{\crs2}{\ensuremath{\mathrm{\sigma}_2}\xspace}
+\newcommand{\set}[1]{\ensuremath{\left\{#1\right\}}\xspace}
+% \newcommand{\hgen}{\ensuremath{\mathbf{\omega}}\xspace}
+\newcommand{\vgen}{\ensuremath{\mathbf{g}}\xspace}
+% \renewcommand{\sim}{\ensuremath{\mathsf{sim}}\xspace}%the distribution of messages when \advv simulates message of \p1
+\newcommand{\real}{\ensuremath{\mathsf{real}}\xspace}%the distribution of messages when \p1 is honest and \adv controls rest of players
+ \newcommand{\koevec}[2]{\ensuremath{(1,#1,\ldots,#1^{#2},\alpha,\alpha #1,\ldots,\alpha #1^{#2})}\xspace}
+\newcommand{\mida}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\midb}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\midc}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+\newcommand{\chal}{\ensuremath{\mathsf{challenge}}\xspace}
+\newcommand{\attackparams}{\ensuremath{\mathsf{params^{pin}}}\xspace}
+\newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
+\newcommand{\attackdist}[2]{\ensuremath{AD_{#1}}\xspace}
+\renewcommand{\neg}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\ro}{\ensuremath{{\mathscr R}}\xspace}
+\newcommand{\elements}[1]{\ensuremath{\mathsf{elements}_{#1}}\xspace}
+ \num\newcommand{\elmpowers1}[1]{\ensuremath{\mathrm{\mathsf{e}}^1_{#1}}\xspace}
+ \num\newcommand{\elmpowers2}[1]{\ensuremath{\mathrm{\mathsf{e}}^2_{#1}}\xspace}
+\newcommand{\elempowrs}[1]{\ensuremath{\mathsf{e}_{#1}}\xspace}
+ \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
+ \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
+ \newcommand{\pols}{\ensuremath{\F[X]}\xspace}
+ \newcommand{\bivar}[1]{\ensuremath{\F_{< #1}[X,Y]}\xspace}
+ \newcommand{\sig}{\ensuremath{\mathscr{S}}\xspace}
+ \newcommand{\prot}{\ensuremath{\mathscr{P}}\xspace}
+ \newcommand{\protstar}{\ensuremath{\mathscr{P}^*}\xspace}
+ \newcommand{\PCscheme}{\ensuremath{\mathscr{S}}\xspace}
+ \newcommand{\protprime}{\ensuremath{\mathscr{P^*}}\xspace}
+ \newcommand{\sigprv}{\ensuremath{\mathsf{P_{sc}}}\xspace}
+ \newcommand{\sigver}{\ensuremath{\mathsf{V_{sc}}}\xspace}
+ \newcommand{\sigpoly}{\ensuremath{\mathsf{S_{\sigma}}}\xspace}
+ \newcommand{\idpoly}{\ensuremath{\mathsf{S_{ID}}}\xspace}
+\newcommand{\idpolyevala}{\ensuremath{\mathsf{\bar{s}_{ID1}}}\xspace}
+\newcommand{\sigpolyevala}{\ensuremath{\mathsf{\bar{s}_{\sigma1}}}\xspace}
+\newcommand{\sigpolyevalb}{\ensuremath{\mathsf{\bar{s}_{\sigma2}}}\xspace}
+\newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
+\newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
+\newcommand{\PIb}{\ensuremath{\mathsf{PI_B}}\xspace}
+\newcommand{\PIc}{\ensuremath{\mathsf{PI_C}}\xspace}
+\newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
+\newcommand{\obgen}{\ensuremath{\mathcal O}\xspace}
+\newcommand{\PC}{\ensuremath{\mathscr{P}}\xspace}
+\newcommand{\permscheme}{\ensuremath{\sigma_\mathscr{P}}\xspace}
+
+	
+\newcommand{\selleft}{\ensuremath{\mathbf{q_L}}\xspace}
+\newcommand{\selright}{\ensuremath{\mathbf{q_R}}\xspace}
+\newcommand{\selout}{\ensuremath{\mathbf{q_O}}\xspace}
+\newcommand{\selmult}{\ensuremath{\mathbf{q_M}}\xspace}
+\newcommand{\selconst}{\ensuremath{\mathbf{q_C}}\xspace}
+\newcommand{\selectors}{\ensuremath{\mathcal{Q}}\xspace}
+\newcommand{\lvar}{\ensuremath{\mathbf{a}}\xspace}
+\newcommand{\vars}{\ensuremath{\mathcal{V}}\xspace}
+\newcommand{\rvar}{\ensuremath{\mathbf{b}}\xspace}
+\newcommand{\ovar}{\ensuremath{\mathbf{c}}\xspace}
+\newcommand{\pubvars}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\assignment}{\ensuremath{\mathbf{x}}\xspace}
+\newcommand{\constsystem}{\ensuremath{\mathscr{C}}\xspace}
+\newcommand{\relof}[1]{\ensuremath{\rel_{#1}}\xspace}
+\newcommand{\pubinppoly}{\ensuremath{\mathsf{PI}}\xspace}
+\newcommand{\sumi}[1]{\sum_{i\in[#1]}}
+\newcommand{\sumzertok}[1]{\sum_{#1=0}^{k}}
+\newcommand{\sumpoly}[1]{\sum_{i=0}^{#1-1}}
+\newcommand{\summ}[1]{\sum_{i\in[#1]}}
+\newcommand{\sumj}[1]{\sum_{j\in[#1]}}
+\newcommand{\ZeroH}{\ensuremath{Z_{H}} \xspace}
+\newcommand{\lpoly}{\ensuremath{\mathsf{a}}\xspace}
+\newcommand{\rpoly}{\ensuremath{\mathsf{b}}\xspace}
+\newcommand{\opoly}{\ensuremath{\mathsf{c}}\xspace}
+\newcommand{\idpermpoly}{\ensuremath{\mathsf{z}}\xspace}
+\newcommand{\lagrangepoly}{\ensuremath{\mathsf{L}}\xspace}
+\newcommand{\zeropoly}{\ensuremath{\mathsf{\ZeroH}}\xspace}
+\newcommand{\selmultpoly}{\ensuremath{\mathsf{q_M}}\xspace}
+\newcommand{\selleftpoly}{\ensuremath{\mathsf{q_L}}\xspace}
+\newcommand{\selrightpoly}{\ensuremath{\mathsf{q_R}}\xspace}
+\newcommand{\seloutpoly}{\ensuremath{\mathsf{q_O}}\xspace}
+\newcommand{\selconstpoly}{\ensuremath{\mathsf{q_C}}\xspace}
+\newcommand{\idcomm}{\ensuremath{[s_{\mathsf{ID1}}]_1}\xspace}
+\newcommand{\sigcomma}{\ensuremath{[s_{\mathsf{\sigma1}}]_1}\xspace}
+\newcommand{\sigcommb}{\ensuremath{[s_{\mathsf{\sigma2}}]_1}\xspace}
+\newcommand{\sigcommc}{\ensuremath{[s_{\mathsf{\sigma3}}]_1}\xspace}
+\newcommand{\selleftcomm}{\ensuremath{[q_\mathsf{L}]_1}\xspace}
+\newcommand{\selrightcomm}{\ensuremath{[q_\mathsf{R}]_1}\xspace}
+\newcommand{\seloutcomm}{\ensuremath{[q_\mathsf{O}]_1}\xspace}
+\newcommand{\selconstcomm}{\ensuremath{[q_\mathsf{C}]_1}\xspace}
+\newcommand{\selmultcomm}{\ensuremath{[q_\mathsf{M}]_1}\xspace}
+
+\newcommand{\multlinecomment}[1]{\directlua{-- #1}}
+    
+
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{thm}[lemma]{Theorem}
+\newtheorem{dfn}[lemma]{Definition}
+\newtheorem{remark}[lemma]{Remark}
+
+\newtheorem{claim}[lemma]{Claim}
+\newtheorem{corollary}[lemma]{Corollary}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\crct}{\ensuremath{\mathsf{C}}\xspace}
+\newcommand{\A}{\ensuremath{\mathcal{A}}\xspace}
+%\newcommand{\G}{\mathcal{G}}
+\newcommand{\Gr}{\mathbb{G}}
+%\newcommand{\com}{\textsf{com}}  Ariel defined equivalent that also works in math mode
+\newcommand{\cgen}{\text{cgen}}
+\newcommand{\poly}{\ensuremath{\mathsf{poly(\lambda)}}\xspace}
+\newcommand{\snark}{\ensuremath{\mathsf{snark}}\xspace}
+\newcommand{\grandprod}{\mathsf{prod}}
+\newcommand{\perm}{\mathsf{perm}}
+%\newcommand{\open}{\mathsf{open}}
+\newcommand{\update}{\mathsf{update}}
+\newcommand{\Prove}{\mathcal{P}}
+\newcommand{\Verify}{\mathcal{V}}
+\newcommand{\Extract}{\mathcal{E}}
+\newcommand{\Simulate}{\mathcal{S}}
+\newcommand{\Unique}{\mathcal{U}}
+\newcommand{\Rpoly}{\R{\poly}}
+\newcommand{\Ppoly}{\Prove{\poly}}
+\newcommand{\Vpoly}{\Verify{\poly}}
+\newcommand{\Psnark}{\prv}%{\Prove{\snark}}
+\newcommand{\Vsnark}{\ver}%{\Verify{\snark}}
+\newcommand{\Rprod}{\R{\grandprod}}
+\newcommand{\Pprod}{\Prove{\grandprod}}
+\newcommand{\Vprod}{\Verify{\grandprod}}
+\newcommand{\Rperm}{\R{\perm}}
+\newcommand{\Pperm}{\Prove{\perm}}
+\newcommand{\Vperm}{\Verify{\perm}}
+% \newcommand{\zw}[1]{{\textcolor{magenta}{Zac:#1}}}
+\newcommand{\ag}[1]{{\textcolor{blue}{\emph{Ariel:#1}}}}
+\newcommand{\prob}{\ensuremath{\mathrm{Pr}}\xspace}
+\newcommand{\extprot}{\ensuremath{E_{\prot}}\xspace}
+\newcommand{\transcript}{\ensuremath{\mathsf{transcript}}\xspace}
+\newcommand{\extpc}{\ensuremath{E_{\PCscheme}}\xspace}
+\newcommand{\advpc}{\ensuremath{\mathcal A_{\PCscheme}}\xspace}
+\newcommand{\advprot}{\ensuremath{\mathcal A_{\prot}}\xspace}
+\newcommand{\protmany}{\ensuremath{ {\prot}_k}\xspace}
+
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\marlin}{\ensuremath{\mathsf{Marlin}}\xspace}
+\newcommand{\fractal}{\ensuremath{\mathsf{Fractal}}\xspace}
+% \newcommand{\Rsnark}{\R{\snark}}
+\newcommand{\Rsnark}{\R}
+\newcommand{\subvec}[1]{\ensuremath{#1|_{\subspace}}\xspace}
+\newcommand{\restricttovec}[1]{\ensuremath{#1|_{\subgroup}}\xspace}
+\newcommand{\isinvanishing}[1]{\ensuremath{\mathsf{IsInVanishing_{\subspace,#1}}}\xspace}
+\newcommand{\batchedisinvanishing}[1]{\ensuremath{\mathsf{BatchedIsInVanishing_{\subspace,#1}}}\xspace}
+\newcommand{\isconsistent}{\ensuremath{\mathsf{IsConsistent}}\xspace}
+\newcommand{\isintable}{\ensuremath{\mathsf{IsInTable}}\xspace}
+\newcommand{\lincheck}{\ensuremath{\mathsf {lincheck}}\xspace}
+\newcommand{\accprot}{\ensuremath{\mathsf {accProt}}\xspace}
+\newcommand{\isinvanishingtable}[1]{\ensuremath{\mathsf{IsInVanishingTable_{\subspace,#1}}}\xspace}
+\newcommand{\isvanishingsubtable}[1]{\ensuremath{\mathsf{IsVanishingSubtable_{#1}}}\xspace}
+\newcommand{\haslowerdegree}{\ensuremath{\mathsf{HasLowerDegree}}\xspace}
+\newcommand{\haslowdegree}[1]{\ensuremath{\mathsf{HasLowDegree_{#1}}}\xspace}
+\newcommand{\issubtable}[1]{\ensuremath{\mathsf{IsSubtable_{#1}}}\xspace}
+\newcommand{\isinsubtable}[2]{\ensuremath{\mathsf{IsInSubtable_{#1,#2}}}\xspace}
+\newcommand{\secbasezero}[1]{\ensuremath{\hat{\tau}_{#1}}\xspace}
+\newcommand{\secbase}[1]{\ensuremath{\hat{\tau}_{#1}}\xspace}
+\newcommand{\secbasereg}[1]{\ensuremath{\tau_{#1}}\xspace}
+\newcommand{\secset}{\ensuremath{I}\xspace}
+\newcommand{\pubbase}[1]{\ensuremath{\mu_{#1}}\xspace}
+\newcommand{\subspace}{\ensuremath{\mathbb{H}}\xspace}
+\newcommand{\subgroup}{\ensuremath{\mathbb{H}}\xspace}
+\newcommand{\biggroup}{\ensuremath{\mathbb{V}}\xspace}
+\newcommand{\subtable}{\ensuremath{T_0}\xspace}
+\newcommand{\tablelang}{\ensuremath{\lang_{T}}\xspace}
+\newcommand{\vanishingtablelang}{\ensuremath{\lang_{\subspace}}\xspace}
+\newcommand{\nonorm}[1]{\ensuremath{\Gamma^T_{#1}}\xspace}
+\newcommand{\unnorm}[2]{\ensuremath{\Gamma^{#1}_{#2}}\xspace}
+\newcommand{\bigspacebase}{\ensuremath{\lambda}\xspace}
+\newcommand{\bigspacegen}{\ensuremath{\mathsf{h}}\xspace}
+\newcommand{\modvan}[1]{\ensuremath{\mathrm{mod\;}Z_{#1}}\xspace}
+\newcommand{\extractevaltable}{\ensuremath{\mathsf{ExtractEvalTable}_{C,\tablegroup}}\xspace}
+\newcommand{\witsize}{\ensuremath{n}\xspace}
+\newcommand{\witruntime}{\ensuremath{\witsize\log\witsize}\xspace}
+\newcommand{\tabsize}{\ensuremath{N}\xspace}
+\newcommand{\tabruntime}{\ensuremath{\tabsize\log\tabsize}\xspace}
+\newcommand{\tab}{\ensuremath{\mathfrak{t}}\xspace}
+ \renewcommand{\a}{\ensuremath{\mathsf{a}}\xspace}
+\renewcommand{\b}{\ensuremath{\mathsf{b}_0}\xspace}
+\renewcommand{\c}{\ensuremath{\mathsf{c}}\xspace}
+\renewcommand{\r}{\ensuremath{\mathsf{r}}\xspace}
+\newcommand{\f}{\ensuremath{\mathsf{f}}\xspace}
+\renewcommand{\g}{\ensuremath{\mathsf{g}}\xspace}
+\newcommand{\matrices}{\ensuremath{\F^{n\times n}}\xspace}
+\newcommand{\ftwo}{\ensuremath{\mathsf{f}_2}\xspace}
+\renewcommand{\p}{\ensuremath{\mathsf{p}}\xspace}
+\newcommand{\q}{\ensuremath{\mathsf{q}}\xspace}
+\newcommand{\qone}{\ensuremath{\mathsf{q_1}}\xspace}
+\newcommand{\s}{\ensuremath{\mathsf{s}}\xspace}
+\newcommand{\qa}{\ensuremath{\mathsf{q_a}}\xspace}
+\newcommand{\qb}{\ensuremath{\mathsf{q_b}}\xspace}
+\newcommand{\m}{\ensuremath{\mathsf{m}}\xspace}
+\newcommand{\agam}{\ensuremath{a_\gamma}\xspace}
+\newcommand{\gamproof}{\ensuremath{\mathsf{\pi_\gamma}}\xspace}
+\newcommand{\zerproof}{\ensuremath{\mathsf{\a}_0}\xspace}
+\newcommand{\bgam}{\ensuremath{b_\gamma}\xspace}
+\newcommand{\bzergam}{\ensuremath{b_{0,\gamma}}\xspace}
+\newcommand{\qbgam}{\ensuremath{Q_{b,\gamma}}\xspace}
+\newcommand{\zgam}{\ensuremath{Z_{\bigspace,\gamma}}\xspace}
+\newcommand{\betaa}{\ensuremath{\mathbf{\boldsymbol{\beta}}}\xspace}
+\newcommand{\deltaa}{\ensuremath{\mathbf{\boldsymbol{\delta}}}\xspace}
+\newcommand{\gammaa}{\ensuremath{\mathbf{\boldsymbol{\gamma}}}\xspace}
+\newcommand{\witcom}{\ensuremath{\mathsf{W}}\xspace}
+\newcommand{\instt}{\ensuremath{\Phi^*}\xspace}
+\newcommand{\insttbase}{\ensuremath{\Phi}\xspace}
+\newcommand{\pow}{\ensuremath{\mathsf{pow}}\xspace}
+\newcommand{\eq}{\ensuremath{\mathsf{eq}}\xspace}
+\newcommand{\FFT}{\ensuremath{\mathsf{FFT}}\xspace}
+\newcommand{\fgam}{\ensuremath{f_{\gamma}}\xspace}
+\newcommand{\pgam}{\ensuremath{P_{\gamma}}\xspace}
+\newcommand{\supp}[1]{\ensuremath{\mathrm{supp}(#1)}\xspace}
+\newcommand{\degoffset}{\ensuremath{\tabsize-1-(\witsize-2)}\xspace}
+\newcommand{\modpoly}[1]{\ensuremath{\;\;\mod #1(X) }\xspace}
+\newcommand{\coeff}[2]{\ensuremath{(#1)_{[#2]} }\xspace}
+\newcommand{\kzg}[1]{\ensuremath{\mathsf{KZG}_{#1,\subgroup}}\xspace}
+\newcommand{\accscheme}[2]{$(#1\mapsto #2)$-accumulation/folding scheme\xspace}
+\newcommand{\accrel}{\ensuremath{\rel_{\mathrm{acc}}}\xspace}
+\newcommand{\relpair}{\ensuremath{\mathfrak{p}}\xspace}
+\newcommand{\inststar}{\ensuremath{\inst^*}\xspace}
+\newcommand{\witstar}{\ensuremath{\wit^*}\xspace}
+\newcommand{\relpairstar}{\ensuremath{\relpair^*}\xspace}
+\newcommand{\witt}{\ensuremath{\mathrm{w}}\xspace}
+\newcommand{\nodelabel}{\ensuremath{\mathfrak{n}}\xspace}
+\newcommand{\roundnum}{\ensuremath{\mathpgoth{k}}\xspace}
+\newcommand{\manyvar}{\ensuremath{\mathfrak{J}}\xspace}
+\newcommand{\nmin}{\ensuremath{[n]_0}\xspace}
+\newcommand{\zfin}{\ensuremath{z_{\mathrm{final}}}\xspace}
+\newcommand{\relplonk}{\ensuremath{\rel_{app}}\xspace}
+\newcommand{\init}{\ensuremath{\mathsf{init}}\xspace}
+\newcommand{\add}{\ensuremath{\mathsf{add}}\xspace}
+\newcommand{\del}{\ensuremath{\mathsf{del}}\xspace}
+\renewcommand{\read}{\ensuremath{\mathsf{read}}\xspace}
+\newcommand{\true}{\ensuremath{\mathsf{true}}\xspace}
+\newcommand{\finstate}{\ensuremath{V}\xspace}
+\newcommand{\zksnark}{zk-SNARK\;}
+\begin{document}
+    \maketitle
+\begin{abstract}
+The goal of this note is to describe and analyze a simplified variant of the zk-SNARK construction used in the Aztec protocol.
+Taking inspiration from the popular notion of Incrementally Verifiable Computation\cite{ivc} (IVC)
+we define a related notion of \emph{Repeated Computation with Global state} (RCG). As opposed to IVC, in RCG we assume the computation \emph{does} terminate before proving starts, and in addition to the local transitions some global consistency checks of the whole computation are needed. However, we require the memory efficiency of the prover to be close to that of an IVC prover not required to prove this global consistency.
+We show how RCG is useful for a private smart contract system like Aztec.
+\end{abstract}
+\section{Introduction}
+In IVC, PCD \cite{ivc,pcd} we have an acyclic computation.
+However code written in almost any programming language \emph{is} cyclic in the sense of often relying on internal calls - 
+we start from a function $A$, execute some commands, go into a function $B$, execute its commands, and go back to $A$.
+When making a SNARK proof of such an execution, we typically linearize or ``flatten'' the cycle stemming from  the internal call, in one of the following two ways
+\begin{enumerate}
+ \item The monolithic circuit approach - we ``inline'' all internal calls (as well as loops) into one long program without jumps.
+ \item The VM approach - assume the code of $A,B$ is written in some prespecified instruction set. The program is executed by initially writing the code of $A,B$ into memory, and loading from memory and executing at each step the appropriate instruction according to a program counter. (For example, the call to $B$ is made by changing the counter to the first instruction of $B$.) To prove correctness of the execution, all we need is a SNARK for proving correctness of a certain number of steps of a machine with this instruction set, and some initial memory state.
+\end{enumerate}
+
+The second approach is more generic, while the first offers more room for optimization, so we'd want to use it in resource-constrained settings, e.g. client-side proving.
+
+
+However, what if we're in a situation where $A$ and $B$ have already been ``SNARKified'' separately?
+Namely, there is a verification key attached to each one, and we are expected to use these keys specifically.
+This is what happens in the Aztec system:
+\paragraph{The Aztec private contract system:}
+ Similar to Ethereum - we have contracts; and the contracts have functions.
+A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions,
+we can't predict specifically what function will be internally called by a given contract function: For example, a ``send token'' function could have an internal call to an ``authorize'' function.
+But ``authorize'' is not tied to one specific verification key - as different token holders are allowed to set their own ``authorize'' function.
+
+
+The goal of the Aztec system is to enable constructing zero-knowledge proofs of such contract function executions.
+For this purpose, a contract is deployed by 
+\begin{enumerate}
+\item  Computing a verification key for each function of the contract.
+\item Adding a commitment to the verification keys of the contract in a global ``function tree'. More accurately, a leaf of this tree is a hash of the
+contract address with a merkle root of a tree whose leaves are the verification keys of the contract functions.
+
+\end{enumerate}
+
+While running, a contract can read, create or delete notes belonging to the contract.
+We can thus think of the notes as ``global variables'' shared between the different functions.
+
+
+
+
+Let us think of all functions in this system as having multiple arguments, and returning accept or reject. (We can always move the output into the arguments, if it's not of this form.)
+Here's a natural way to prove the mentioned execution: Put the arguments to $B$ in the public inputs of both the circuits of $A$ and $B$.
+Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
+
+However, this doesn't yet deal with the notes. During native execution, note operations happened at a certain order.
+We can think of these operations as having timestamps incremented by one with each operation.
+We need to check, for example, that if a note was read in a certain timestamp, it was indeed created
+in an earlier timestamp.
+We can have the note operations - \set{add, read, delete} - performed by a function be included in the public inputs of its circuit.
+The issue is, what if $A$ is reading a note that was created in the internal call to $B$?
+% Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
+
+This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
+
+\begin{itemize}
+ \item 
+In RCG we are not interested in ``incremental'' proofs of one step, only in proofs for a whole
+sequence of transitions ending in a desired final state.
+
+\item In RCG we allow a \emph{final predicate} checking a joint consistency condition between witnesses from all iterations.
+
+\end{itemize}
+ From what is written so far, one could ask why not \emph{only} have a final predicate that includes the transition checks. 
+The point is that in our usecase the final predicate is applied to small parts of each witness - namely the note opreations, and is relatively simple. Thus, this decomposition facilitates obtaining better prover efficiency, compared to what we'd get from a monolithic circuit for the whole computation.
+
+
+
+
+
+
+\section{Preliminaries}
+\subsection{Relations of the app functions}
+Define a relation including the selectors
+Fixed polynomial $f(x_1,\ldots,x_{S})$
+$S=n+d+\ell$
+Relation \relplonk of $\cm1,\ldots,\cm_S$
+
+
+
+\section{Repeated Computation with Global state}
+An RCG relation is defined by a pair of functions $(F,f)$.\\
+\noindent
+We call $F(Z,W,S,Z^*)\to \set{\acc,\rej}$ the \emph{transition predicate}.
+
+We informally think of 
+\begin{itemize}
+\item $Z^*$ as the output of $F$ (although the actual output is \set{\acc,\rej}.
+
+\item $Z$ as the public input and $W$ as the private input of $F$.
+\item $S$ as the part of the private input that will be used in the final predicate.
+% 
+% *When we refer to the output of $F$ in this doc we always mean $Z^*$, not the real output of $F$ which is accept/reject - hope that's not too confusing :)*
+\end{itemize}
+
+
+$f:D^*\times V \to \set{\acc,\rej}$ is the \emph{final predicate}.
+
+The relation $\rel=\rel_{F,f}$ consists of pairs $(\inp,\wit)$ such that
+$\inp=(\zfin,C,\finstate),\wit=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
+\begin{itemize}
+ \item $z_0.\init = \true$.
+ \item $z_n=\zfin$.
+ \item $n\leq C$.
+ \item For each $i\in [n]$, $F(z_{i-1},w_i,s_i,z_i)=\acc$.
+ \item $f(s_1,\ldots,s_n,\finstate)=\acc$.
+\end{itemize}
+
+
+we say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming access
+to $z$ and $w$ \prv requires space $O(|F|+|\finstate|)$.
+
+
+
+
+\section{Record operations}
+*Records* are pairs $(v,c)$ - $v$ is a value, $c$ is a counter.
+A record operation has one of the following forms
+$(\add,v,c)$,$(\del,v,vc,c)$,$(\read,v,vc,c)$.
+
+Where $v$ denotes a note value, $c$ denotes the counter of the operation.
+For $\read/\del$ - $vc$ denotes the counter where the value being read or deleted 
+
+
+
+We say a sequence $O$ of record ops of size $n$ is *consistent* if 
+- The $count$ fields in all ops are distinct, and as a set equal to $\{1,\ldots,n\}$.
+- The $valc$ fields in all $del$ ops are distinct.
+- If $(val,\read,valc,c)\in ops$, then $valc<c$ and $(val,\add,valc)\in ops$.
+- If $(val,\del,valc,c)\in ops$ then $valc<c$ and $(val,\add,valc)\in ops$.
+
+Let $V$ be set of records.
+We say $O$ is \emph{consistent with $V$} if:
+\begin{itemize}
+ \item $O$ is consistent.
+ \item $V=\set{(val,c) | (\add,val,c)\in O\;\&\; \forall c',(\del,val,c,c')\notin O }$. In words,
+ $V$ is the set of notes that were added but not deleted.
+\end{itemize}
+
+
+
+
+\subsection{Proving record ops via log-derivative}
+
+
+
+\section{The transition function $F$ describing the Aztec kernel}
+Here's a sketch of what the Aztec $F$ could look like:
+
+Global state:
+- $r_{func}$ - merkle tree of allowed functions
+
+Outputs:
+- $g$ - stack of functions - where each function consists of its selector commitments
+- $ns$ - new state to be added to Aztec - notes and nullifiers. To be of fixed size, $ns$ might be represented as a merkle root.
+
+Public inputs
+- $g_{prev}$ - previous stack of functions
+- $ns_{prev}$ - previous new state to be added to Aztec - notes and nullifiers
+
+
+
+Private inputs:
+- $pi_f$ - public inputs to some Aztec function $f$. These include
+    -  Descriptions of at most four functions $f_1,\ldots,f_4$ to add to the stack. Again, a description of a function is its selector commitments.
+%     - $ns_f$ - new notes and nullifiers added by execution of $f$. 
+- $w_f$ - the witness of the Aztec function $f$ to be executed.
+- $i$ - index of $f$ in the Aztec function tree.
+
+
+For boolean $init$, global state $r_{func}$, private input $\omega=(pi_f,w_f,i,aux)$, public input $z=(g_{prev},ns_{prev})$, and output $z^*=(g,ns)$, we have $F(init, g, z,w,z^*)=acc$ exactly when:
+
+- Let $f$ be the first function in $g_{prev}$. Then
+    -  $f$ is contained at leaf $i$ in the tree with root $r_{func}$
+    -  $w_f$ is a valid witness for $f$ with public inputs $pi_f$ (There are subtleties in how this is done, see below)
+    -  adding $ns_f$ to $ns_{prev}$ results in $ns$.
+- let $f_1\ldots,f_4$ be the functions in $pi_f$. Then popping $f$ from $g_{prev}$ and pushing $f_1,\ldots,f_4$ results in $g$.
+- If $init=true$ then $g_{prev}$ contains exactly one function, i.e. $f$; and $ns_{prev}$ is empty.
+- $aux$ contains all merkle paths necessary in the above.
+
+
+
+\textbf{ Our $z_{final}$:}
+
+$z_{final}$ must contain empty stack $g$, and $ns$ matching the notes and nullifiers we send to the rollup
+
+
+
+
+\section{On protogalaxy}
+\subsection{Introspective constraints}
+Constraints $f_i$ on \wit, simply low degree polynomials, but have the ability to refer to
+components of $\cm(m_j)$
+Function $F$ should have ``introspection'' ability to look at commitments.
+
+commitment function will output two representations of $\cm(w)$ - in \G and in \F and 
+
+or PI will include \F representation. which will then be part of $w$. \V will check representations match.
+\subsection{Proving \protogal under zero-testing assumption}
+\section{The Algebraic Group Model with recursive extraction}
+As in \cite{agm}, we assume when \adv outputs $a\in \G$ it outputs a vector $c\in \F^n$ 
+with $<c,\srs>=a$. We fix some mapping $G:\F^4\to \G\cup \set{*}$. $*$ means the input doesn't correspond to \G element. We assume that this is the representation \adv uses for elements of \G.
+
+For our security proof, we require a notion of ``recursive extraction'' used by \cite{novarecursive}:
+Specifically, we assume that if $c$ output by \A along with $a$, thought of as $c\in(\F^4)^{n/4}$, contains an element $c_i$ with $G(c_i)=a\in \G$, then \A outputs 
+$c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue outputting representations
+until reaching one where no element correponds to $a\in \G$.
+
+
+\section{Transforming $F$ into $F'$}
+\paragraph{Describing $F^*$}
+**public input:**
+$z$ - output for $F$
+$G$ - global state for $F$
+$count$ - counter of IVC step
+$h$ - supposed hash of accumulator
+**private input:**
+$acc$ - current accumulator instance
+$acc_{prev}$ - previous accumulator instance
+$inst$ - instance (of $F'$) to be accumulated.
+$w$ - private input for $F$
+$\pi$ - proof for protogalaxy verifier
+
+Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
+
+$F'(X,W)=\mathrm{accept}$ if and only if:
+\begin{enumerate}
+ \item  $hash(acc)=h$.
+\item $V_{PG}(acc_{prev}, inst, \pi, acc )= \mathrm{acc}$
+\item $inst.h=hash(acc_{prev})$.
+\item If $count>0$:
+\begin{enumerate}
+    \item $inst.G = G$.
+    \item $inst.count=count-1$.
+    \item $F(false,G, inst.z, w,z)=\mathrm{acc}$
+    \end{enumerate}
+    
+\item If $count=0$:
+\begin{enumerate}
+    \item $F(true,G, inst.z, w,z)=\mathrm{acc}$
+
+    \end{enumerate}
+\end{enumerate}
+
+
+
+
+\section*{Acknowledgements}
+\bibliographystyle{alpha}
+\bibliography{references}
+\end{document}
+
+
