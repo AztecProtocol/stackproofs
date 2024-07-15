@@ -406,7 +406,7 @@
 \newcommand{\poly}{\ensuremath{\mathsf{poly(\lambda)}}\xspace}
 \newcommand{\snark}{\ensuremath{\mathsf{snark}}\xspace}
 \newcommand{\grandprod}{\mathsf{prod}}
-\newcommand{\perm}{\mathsf{perm}}
+\newcommand{\perm}{\mathsf{S}}
 %\newcommand{\open}{\mathsf{open}}
 \newcommand{\update}{\mathsf{update}}
 \newcommand{\Prove}{\mathcal{P}}
@@ -528,13 +528,35 @@
 \newcommand{\manyvar}{\ensuremath{\mathfrak{J}}\xspace}
 \newcommand{\nmin}{\ensuremath{[n]_0}\xspace}
 \newcommand{\zfin}{\ensuremath{z_{\mathrm{final}}}\xspace}
-\newcommand{\relplonk}{\ensuremath{\rel_{app}}\xspace}
+\newcommand{\relapp}{\ensuremath{\rel_{app}}\xspace}
+\newcommand{\relF}{\ensuremath{\rel_{F}}\xspace}
 \newcommand{\init}{\ensuremath{\mathsf{init}}\xspace}
 \newcommand{\add}{\ensuremath{\mathsf{add}}\xspace}
 \newcommand{\del}{\ensuremath{\mathsf{del}}\xspace}
 \renewcommand{\read}{\ensuremath{\mathsf{read}}\xspace}
+\newcommand{\countrange}{\ensuremath{[n]}\xspace}
 \newcommand{\true}{\ensuremath{\mathsf{true}}\xspace}
+\newcommand{\false}{\ensuremath{\mathsf{false}}\xspace}
 \newcommand{\finstate}{\ensuremath{V}\xspace}
+\newcommand{\ops}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\instapp}{\ensuremath{\mathfrak{x}}\xspace}
+\newcommand{\witapp}{\ensuremath{\mathfrak{w}}\xspace}
+\newcommand{\instnoops}{\ensuremath{\mathbf{x}}\xspace}
+ \renewcommand{\path}{\ensuremath{\mathbf{p}}\xspace}
+\renewcommand{\root}{\ensuremath{\mathbf{r}}\xspace}
+\renewcommand{\empty}{\ensuremath{g_{\mathrm{empty}}}\xspace}
+\newcommand{\funcs}{\ensuremath{\mathrm{F}}\xspace}
+\newcommand{\instF}{\ensuremath{\mathrm{x}}\xspace}
+\newcommand{\witF}{\ensuremath{\mathrm{w}}\xspace}
+\newcommand{\witf}{\ensuremath{\mathsf{w_f}}\xspace}
+\newcommand{\sel}{\ensuremath{\mathsf{q}}\xspace}
+% \newcommand{\perm}{\ensuremath{\mathsf{s}}\xspace}
+\newcommand{\args}{\ensuremath{\mathsf{args}}\xspace}
+\newcommand{\callnum}{\ensuremath{\mathsf{c}}\xspace}
+\newcommand{\recset}{\ensuremath{\mathsf{V}}\xspace}
+\newcommand{\tree}{\ensuremath{\mathsf{T}}\xspace}
+\newcommand{\node}{\ensuremath{\mathsf{n}}\xspace}
+\newcommand{\finpred}{\ensuremath{\mathsf{f}}\xspace}
 \newcommand{\zksnark}{zk-SNARK\;}
 \begin{document}
     \maketitle
@@ -551,7 +573,7 @@ we start from a function $A$, execute some commands, go into a function $B$, exe
 When making a SNARK proof of such an execution, we typically linearize or ``flatten'' the cycle stemming from  the internal call, in one of the following two ways
 \begin{enumerate}
  \item The monolithic circuit approach - we ``inline'' all internal calls (as well as loops) into one long program without jumps.
- \item The VM approach - assume the code of $A,B$ is written in some prespecified instruction set. The program is executed by initially writing the code of $A,B$ into memory, and loading from memory and executing at each step the appropriate instruction according to a program counter. (For example, the call to $B$ is made by changing the counter to the first instruction of $B$.) To prove correctness of the execution, all we need is a SNARK for proving correctness of a certain number of steps of a machine with this instruction set, and some initial memory state.
+ \item The VM approach - assume the code of $A,B$ is written in some prespecified instruction set. The program is executed by initially writing the code of $A,B$ into memory, and loading from memory and executing at each step the appropriate instruction according to a program counter. For example, the call to $B$ is made by changing the counter to that of the  first instruction of $B$. To prove correctness of the execution, all we need is a SNARK for proving correctness of a certain number of steps of a machine with this instruction set, and some initial memory state.
 \end{enumerate}
 
 The second approach is more generic, while the first offers more room for optimization, so we'd want to use it in resource-constrained settings, e.g. client-side proving.
@@ -559,11 +581,11 @@ The second approach is more generic, while the first offers more room for optimi
 
 However, what if we're in a situation where $A$ and $B$ have already been ``SNARKified'' separately?
 Namely, there is a verification key attached to each one, and we are expected to use these keys specifically.
-This is what happens in the Aztec system:
+This is what happens in the Aztec system.
 \paragraph{The Aztec private contract system:}
  Similar to Ethereum - we have contracts; and the contracts have functions.
 A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions,
-we can't predict specifically what function will be internally called by a given contract function: For example, a ``send token'' function could have an internal call to an ``authorize'' function.
+we can't predict specifically what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
 But ``authorize'' is not tied to one specific verification key - as different token holders are allowed to set their own ``authorize'' function.
 
 
@@ -571,13 +593,13 @@ The goal of the Aztec system is to enable constructing zero-knowledge proofs of 
 For this purpose, a contract is deployed by 
 \begin{enumerate}
 \item  Computing a verification key for each function of the contract.
-\item Adding a commitment to the verification keys of the contract in a global ``function tree'. More accurately, a leaf of this tree is a hash of the
-contract address with a merkle root of a tree whose leaves are the verification keys of the contract functions.
+\item Adding a commitment to the verification keys of the contract in a global ``function tree''. More accurately, a leaf of this tree is a hash of the
+contract address with a merkle root of a tree whose leaves are the verification keys of that contract's functions.
 
 \end{enumerate}
 
 While running, a contract can read, create or delete notes belonging to the contract.
-We can thus think of the notes as ``global variables'' shared between the different functions.
+We can thus think of the notes as global variables shared between the different functions.
 
 
 
@@ -604,31 +626,119 @@ sequence of transitions ending in a desired final state.
 \item In RCG we allow a \emph{final predicate} checking a joint consistency condition between witnesses from all iterations.
 
 \end{itemize}
- From what is written so far, one could ask why not \emph{only} have a final predicate that includes the transition checks. 
-The point is that in our usecase the final predicate is applied to small parts of each witness - namely the note opreations, and is relatively simple. Thus, this decomposition facilitates obtaining better prover efficiency, compared to what we'd get from a monolithic circuit for the whole computation.
+ One could ask, why not \emph{only} have a final predicate that includes the transition checks? 
+The point is that in our usecase the final predicate is applied to small parts of each iteration's witness - namely the note operations. As a result, the decomposition into a transition and final predicate can facilitate obtaining better prover efficiency, especially in terms of prover space.
+Roughly, we'll require space sufficient for storing the inputs to the final predicate, in addition to the space required to prove a single transition.
 
-
-
+\subsection{Related work}
+mangrove, nexus, Jens's talk.
 
 
 
 \section{Preliminaries}
+
+Representing \G:
+Assume an injective function $R:\G \to \F^2$
+Whenever we discuss $a\in \G$ we assume it is represented as  $R(a)$.
+When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ with $R(a)=b$.
 \subsection{Relations of the app functions}
 Define a relation including the selectors
 Fixed polynomial $f(x_1,\ldots,x_{S})$
 $S=n+d+\ell$
-Relation \relplonk of $\cm1,\ldots,\cm_S$
+Relation \relapp of $\cm1,\ldots,\cm_S$
 
+\section{The execution model:}
+We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
+For this, we first introduce record operations which is our specific notion of operating on a global state. 
+\subsection{Record operations}
+\emph{Records} are pairs $(v,c)$ - where $v\in \F$ is the \emph{note}, and $c\in \countrange$ is the \emph{counter}.
+A \emph{record operation} has one of the following forms:
+\begin{itemize}
+ \item $(\add,v,c)$,
+\item $(\del,v,vc,c)$,
+\item $(\read,v,vc,c)$.
+
+\end{itemize}
+Here $v\in \F$ is a note value and $c,vc\in \countrange$ are counters.
+$c$ is interpreted as the counter of the current operation, and $vc$ is interpreted as the counter of the operation where
+the note was added in the case of a \read or \del operation.
+
+
+
+We say a sequence \ops of record operations of size $n$ is \emph{consistent} if 
+\begin{enumerate}
+\item The counter values $c$ are distinct in all elements of \ops, and as a set equal to $\{1,\ldots,n\}$.
+\item The $vc$ fields in all $\del$ operations $(\del,v,vc,c)\in \ops$ are distinct.
+\item If $(v,\read,vc,c)\in \ops$, then $vc<c$ and $(\add, v,vc)\in \ops$.
+\item If $(v,\del,vc,c)\in \ops$ then $vc<c$ and $(\add,v,vc)\in \ops$.
+\end{enumerate}
+
+Let \recset be set of records 
+We say $\ops$ is \emph{has output \recset} if:
+\begin{itemize}
+ \item $\ops$ is consistent.
+ \item $\recset=\set{(v,c) | (\add,v,c)\in \ops\;\&\; \forall c',(\del,v,c,c')\notin \ops }$. In words,
+ $V$ is the set of notes that were added and not deleted.
+\end{itemize}
+
+
+
+\subsection{The plonkish relation}
+Now we can introduce a relation describing exeuctions where functions can call each other and operate on global state.
+Some choices of constants - like the number of maxium inner calls being two, are abitrary.
+We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
+
+\relapp consists of all pairs $(\instapp, \witapp)$ such that
+\begin{enumerate}
+ \item 
+
+$\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$
+where $\f,\f_1,\f_2 \in \G,\args\in \F^4,\callnum\in \set{0,1,2}$; and
+$\witapp=(\witf,\wit)$
+
+where 
+\begin{itemize}
+ \item 
+
+
+$\witf=(\perm_1,\ldots,\perm_4,\sel_1,\ldots,\sel_4)$,where $\perm_j \in [|\instapp|+|\wit|]^n,\sel_j \in \F^n$ for each $j\in [4]$,
+\item and $\wit\in \F^N$.
+\end{itemize}
+                                                                                
+\item  Setting $x=(\instapp,\wit)$, for all $i\in [n]$,
+\[G_i(\sel_{1,i},\ldots,\sel_{4,i},x_{\perm_{1,i}},\ldots,x_{\perm_{4,i}})=0.\]
+\item $\cm(\witf)=\f$.
+\end{enumerate}
+
+\subsection{Valid execution trees}\label{sec:validexec}
+
+By an \emph{exeuction tree of length $n$} we mean a tree \tree with $n$ vertices of maximal degree two, whose nodes are
+labeled by pairs $(\instapp,\witapp)$.
+Let \funcs be a set of elements of \G.
+Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
+\begin{enumerate}
+ \item For each $\node\in\tree$ the label $(\instapp,\witapp)$ is in \relapp.
+    \item For each $\node\in \tree$, let $(\instapp,\witapp)$ be its label. Let 
+$\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$. Then
+    \begin{itemize}
+    \item $\f\in \funcs$.
+     \item The number of its children is \callnum.
+     \item For $i\in [\callnum]$, let $(\f^i,\args^i,\callnum^i, \f^{i}_{1},\args^i_{1}, \f^i_{2},\args^i_{2},\ops^i)$ denote the first component of $\node$'s $i$'th child's label. Then $\f_i=\f^i$ and  $\args_i=\args^i$.
+     \item Let \ops be the multi-set union of the \ops field in all nodes' labels. Then \ops has output \recset.
+     
+    \end{itemize}
+
+\end{enumerate}
 
 
 \section{Repeated Computation with Global state}
-An RCG relation is defined by a pair of functions $(F,f)$.\\
+An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
 \noindent
 We call $F(Z,W,S,Z^*)\to \set{\acc,\rej}$ the \emph{transition predicate}.
 
 We informally think of 
 \begin{itemize}
-\item $Z^*$ as the output of $F$ (although the actual output is \set{\acc,\rej}.
+\item $Z^*$ as the output of $F$ (although the actual output is \set{\acc,\rej}).
 
 \item $Z$ as the public input and $W$ as the private input of $F$.
 \item $S$ as the part of the private input that will be used in the final predicate.
@@ -636,50 +746,67 @@ We informally think of
 % *When we refer to the output of $F$ in this doc we always mean $Z^*$, not the real output of $F$ which is accept/reject - hope that's not too confusing :)*
 \end{itemize}
 
+Let $D_1,D_2$ be the domains of $S,\recset$ respectively. \finpred is a function
+$\finpred:D_1^*\times D_2 \to \set{\acc,\rej}$ called the \emph{final predicate}.
 
-$f:D^*\times V \to \set{\acc,\rej}$ is the \emph{final predicate}.
-
-The relation $\rel=\rel_{F,f}$ consists of pairs $(\inp,\wit)$ such that
+The relation $\rel=\rel_{F,\finpred}$ consists of pairs $(\inp,\wit)$ such that
 $\inp=(\zfin,C,\finstate),\wit=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
 \begin{itemize}
  \item $z_0.\init = \true$.
  \item $z_n=\zfin$.
  \item $n\leq C$.
  \item For each $i\in [n]$, $F(z_{i-1},w_i,s_i,z_i)=\acc$.
- \item $f(s_1,\ldots,s_n,\finstate)=\acc$.
+ \item $\finpred(s_1,\ldots,s_n,\finstate)=\acc$.
 \end{itemize}
 
 
 we say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming access
-to $z$ and $w$ \prv requires space $O(|F|+|\finstate|)$.
+to $z$ and $w$ \prv requires space $O(|F|+|s|+\log n)$.
 
 
+\subsection{Valid executions as RCG}
+We now reduce valid executions as defined in Section \ref{sec:validexec} to RCG's.
+
+Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
+\begin{itemize}
+ \item $Z=(g,\root,\init)$ where $g$ is a stack of elements $(\f,\args)$, \root is a root of a merkle tree, and \init a boolean.
+ \item $Z^*=(g^*,\root^*,\init^*)$ has the same form.
+ \item $W=(\path,\instnoops,\witapp)$
+ \item $S$ is a set of record operations.
+\end{itemize}
+
+Under this notation
+$F(Z,W,Z^*,S)=\acc$ if and only if
+\begin{enumerate}
+ \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
+ \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
+ \item \path is a merkle path from \f to \root.
+ \item  $\root=\root^*$.
+ \item $g^*$ is the result of popping $(\f,\args)$ from $g$ and then pushing the $\instapp.\callnum$ elements
+ $(\instapp.\f_i,\args_i)$ for $i\in [\instapp.\callnum]$.
+\end{enumerate}
+
+
+
+
+
+We define the function \finpred on input $(s_1,\ldots,s_n,\recset)$ to output \acc if and only if
+each $s_i$ is a well-formed set of record operations, and when defining \ops as the multi-set union of $s_1,\ldots,s_n$ it  has output \recset.
+
+The following is easily checkable
+\begin{lemma}\label{lem:execasRCG}(WIP)
+
+Let \funcs be a set of function commitments and \root a root of a Merkle tree with \funcs as the leaves.
+Define $\zfin=(\empty,\root,\false)$
+There is a map $\phi$ from the labels of an execution tree to \wit such 
+that $((\zfin,C,\recset),\wit)\in \rel_{F,\finpred}$ iff \tree is a valid execution 
+of length $n\leq C$ with function set \funcs and output \recset.
+
+ 
+\end{lemma}
 
 
 \section{Record operations}
-*Records* are pairs $(v,c)$ - $v$ is a value, $c$ is a counter.
-A record operation has one of the following forms
-$(\add,v,c)$,$(\del,v,vc,c)$,$(\read,v,vc,c)$.
-
-Where $v$ denotes a note value, $c$ denotes the counter of the operation.
-For $\read/\del$ - $vc$ denotes the counter where the value being read or deleted 
-
-
-
-We say a sequence $O$ of record ops of size $n$ is *consistent* if 
-- The $count$ fields in all ops are distinct, and as a set equal to $\{1,\ldots,n\}$.
-- The $valc$ fields in all $del$ ops are distinct.
-- If $(val,\read,valc,c)\in ops$, then $valc<c$ and $(val,\add,valc)\in ops$.
-- If $(val,\del,valc,c)\in ops$ then $valc<c$ and $(val,\add,valc)\in ops$.
-
-Let $V$ be set of records.
-We say $O$ is \emph{consistent with $V$} if:
-\begin{itemize}
- \item $O$ is consistent.
- \item $V=\set{(val,c) | (\add,val,c)\in O\;\&\; \forall c',(\del,val,c,c')\notin O }$. In words,
- $V$ is the set of notes that were added but not deleted.
-\end{itemize}
-
 
 
 
@@ -687,47 +814,47 @@ We say $O$ is \emph{consistent with $V$} if:
 
 
 
-\section{The transition function $F$ describing the Aztec kernel}
-Here's a sketch of what the Aztec $F$ could look like:
-
-Global state:
-- $r_{func}$ - merkle tree of allowed functions
-
-Outputs:
-- $g$ - stack of functions - where each function consists of its selector commitments
-- $ns$ - new state to be added to Aztec - notes and nullifiers. To be of fixed size, $ns$ might be represented as a merkle root.
-
-Public inputs
-- $g_{prev}$ - previous stack of functions
-- $ns_{prev}$ - previous new state to be added to Aztec - notes and nullifiers
-
-
-
-Private inputs:
-- $pi_f$ - public inputs to some Aztec function $f$. These include
-    -  Descriptions of at most four functions $f_1,\ldots,f_4$ to add to the stack. Again, a description of a function is its selector commitments.
+% \section{The transition function $F$ describing the Aztec kernel}
+% Here's a sketch of what the Aztec $F$ could look like:
+% 
+% Global state:
+% - $r_{func}$ - merkle tree of allowed functions
+% 
+% Outputs:
+% - $g$ - stack of functions - where each function consists of its selector commitments
+% - $ns$ - new state to be added to Aztec - notes and nullifiers. To be of fixed size, $ns$ might be represented as a merkle root.
+% 
+% Public inputs
+% - $g_{prev}$ - previous stack of functions
+% - $ns_{prev}$ - previous new state to be added to Aztec - notes and nullifiers
+% 
+% 
+% 
+% Private inputs:
+% - $pi_f$ - public inputs to some Aztec function $f$. These include
+%     -  Descriptions of at most four functions $f_1,\ldots,f_4$ to add to the stack. Again, a description of a function is its selector commitments.
 %     - $ns_f$ - new notes and nullifiers added by execution of $f$. 
-- $w_f$ - the witness of the Aztec function $f$ to be executed.
-- $i$ - index of $f$ in the Aztec function tree.
-
-
-For boolean $init$, global state $r_{func}$, private input $\omega=(pi_f,w_f,i,aux)$, public input $z=(g_{prev},ns_{prev})$, and output $z^*=(g,ns)$, we have $F(init, g, z,w,z^*)=acc$ exactly when:
-
-- Let $f$ be the first function in $g_{prev}$. Then
-    -  $f$ is contained at leaf $i$ in the tree with root $r_{func}$
-    -  $w_f$ is a valid witness for $f$ with public inputs $pi_f$ (There are subtleties in how this is done, see below)
-    -  adding $ns_f$ to $ns_{prev}$ results in $ns$.
-- let $f_1\ldots,f_4$ be the functions in $pi_f$. Then popping $f$ from $g_{prev}$ and pushing $f_1,\ldots,f_4$ results in $g$.
-- If $init=true$ then $g_{prev}$ contains exactly one function, i.e. $f$; and $ns_{prev}$ is empty.
-- $aux$ contains all merkle paths necessary in the above.
-
-
-
-\textbf{ Our $z_{final}$:}
-
-$z_{final}$ must contain empty stack $g$, and $ns$ matching the notes and nullifiers we send to the rollup
-
-
+% - $w_f$ - the witness of the Aztec function $f$ to be executed.
+% - $i$ - index of $f$ in the Aztec function tree.
+% 
+% 
+% For boolean $init$, global state $r_{func}$, private input $\omega=(pi_f,w_f,i,aux)$, public input $z=(g_{prev},ns_{prev})$, and output $z^*=(g,ns)$, we have $F(init, g, z,w,z^*)=acc$ exactly when:
+% 
+% - Let $f$ be the first function in $g_{prev}$. Then
+%     -  $f$ is contained at leaf $i$ in the tree with root $r_{func}$
+%     -  $w_f$ is a valid witness for $f$ with public inputs $pi_f$ (There are subtleties in how this is done, see below)
+%     -  adding $ns_f$ to $ns_{prev}$ results in $ns$.
+% - let $f_1\ldots,f_4$ be the functions in $pi_f$. Then popping $f$ from $g_{prev}$ and pushing $f_1,\ldots,f_4$ results in $g$.
+% - If $init=true$ then $g_{prev}$ contains exactly one function, i.e. $f$; and $ns_{prev}$ is empty.
+% - $aux$ contains all merkle paths necessary in the above.
+% 
+% 
+% 
+% \textbf{ Our $z_{final}$:}
+% 
+% $z_{final}$ must contain empty stack $g$, and $ns$ matching the notes and nullifiers we send to the rollup
+% 
+% 
 
 
 \section{On protogalaxy}
