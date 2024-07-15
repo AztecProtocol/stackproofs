@@ -688,6 +688,8 @@ Now we introduce a relation describing the individual function executions tailor
 Some choices of constants - like the maximal number inner calls being two, are abitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
+We fix a polynomial $G:\F^8\to \F$ that is an implicit parameter in the following definition of \relapp.
+
 \relapp consists of all pairs $(\instapp, \witapp)$ such that
 \begin{enumerate}
  \item 
@@ -706,7 +708,7 @@ $\witf=(\perm_1,\ldots,\perm_4,\sel_1,\ldots,\sel_4)$,where $\perm_j \in [|\inst
 \end{itemize}
                                                                                 
 \item  Setting $x=(\instapp,\wit)$, for all $i\in [n]$,
-\[G_i(\sel_{1,i},\ldots,\sel_{4,i},x_{\perm_{1,i}},\ldots,x_{\perm_{4,i}})=0.\]
+\[G(\sel_{1,i},\ldots,\sel_{4,i},x_{\perm_{1,i}},\ldots,x_{\perm_{4,i}})=0.\]
 \item $\cm(\witf)=\f$.
 \end{enumerate}
 
