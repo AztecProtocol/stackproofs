@@ -684,8 +684,8 @@ We say $\ops$ is \emph{has output \recset} if:
 
 
 \subsection{The plonkish relation}
-Now we can introduce a relation describing exeuctions where functions can call each other and operate on global state.
-Some choices of constants - like the number of maxium inner calls being two, are abitrary.
+Now we introduce a relation describing the individual function executions tailored to make it convenient in the next section to discuss an execution of a  sequence functions calling each other.
+Some choices of constants - like the maximal number inner calls being two, are abitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
 \relapp consists of all pairs $(\instapp, \witapp)$ such that
@@ -750,13 +750,13 @@ Let $D_1,D_2$ be the domains of $S,\recset$ respectively. \finpred is a function
 $\finpred:D_1^*\times D_2 \to \set{\acc,\rej}$ called the \emph{final predicate}.
 
 The relation $\rel=\rel_{F,\finpred}$ consists of pairs $(\inp,\wit)$ such that
-$\inp=(\zfin,C,\finstate),\wit=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
+$\inp=(\zfin,C,\recset),\wit=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
 \begin{itemize}
  \item $z_0.\init = \true$.
  \item $z_n=\zfin$.
  \item $n\leq C$.
  \item For each $i\in [n]$, $F(z_{i-1},w_i,s_i,z_i)=\acc$.
- \item $\finpred(s_1,\ldots,s_n,\finstate)=\acc$.
+ \item $\finpred(s_1,\ldots,s_n,\recset)=\acc$.
 \end{itemize}
 
 
