@@ -529,6 +529,7 @@
 \newcommand{\nmin}{\ensuremath{[n]_0}\xspace}
 \newcommand{\zfin}{\ensuremath{z_{\mathrm{final}}}\xspace}
 \newcommand{\relapp}{\ensuremath{\rel_{app}}\xspace}
+\newcommand{\relexec}{\ensuremath{\rel_{\mathrm{exec}}}\xspace}
 \newcommand{\relF}{\ensuremath{\rel_{F}}\xspace}
 \newcommand{\init}{\ensuremath{\mathsf{init}}\xspace}
 \newcommand{\add}{\ensuremath{\mathsf{add}}\xspace}
@@ -548,6 +549,8 @@
 \newcommand{\funcs}{\ensuremath{\mathrm{F}}\xspace}
 \newcommand{\instF}{\ensuremath{\mathrm{x}}\xspace}
 \newcommand{\witF}{\ensuremath{\mathrm{w}}\xspace}
+\newcommand{\instexec}{\ensuremath{\mathrm{x_{exec}}}\xspace}
+\newcommand{\witexec}{\ensuremath{\mathrm{w_{exec}}}\xspace}
 \newcommand{\witf}{\ensuremath{\mathsf{w_f}}\xspace}
 \newcommand{\sel}{\ensuremath{\mathsf{q}}\xspace}
 % \newcommand{\perm}{\ensuremath{\mathsf{s}}\xspace}
@@ -719,7 +722,7 @@ labeled by pairs $(\instapp,\witapp)$.
 Let \funcs be a set of elements of \G.
 Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
 \begin{enumerate}
- \item For each $\node\in\tree$ the label $(\instapp,\witapp)$ is in \relapp.
+ \item For each $\node\in\tree$, its label $(\instapp,\witapp)$ is in \relapp.
     \item For each $\node\in \tree$, let $(\instapp,\witapp)$ be its label. Let 
 $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$. Then
     \begin{itemize}
@@ -732,6 +735,14 @@ $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$. Then
 
 \end{enumerate}
 
+We define a relation capturing knowledge of an execution of a bounded length with a certain output set of records.
+the relation $\relexec$ of pairs $(\instexec,\witexec)$
+such that
+\begin{itemize}
+ \item $\instexec=(\funcs,C,\recset)$,
+ \item $\witexec=(n,\tree)$,
+\end{itemize}
+such that $n\leq C$, and  \tree is a valid execution tree of length $n$ with function set \funcs and output set \recset. 
 
 \section{Repeated Computation with Global state}
 An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
