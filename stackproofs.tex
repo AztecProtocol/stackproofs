@@ -734,15 +734,16 @@ $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$. Then
     \end{itemize}
 
 \end{enumerate}
+Given a set of group elements \funcs say it has \emph{Merkle root \root} if \root is the root of a Merkle tree with the elements of  \funcs at the leaves using some pre-determined encoding.
 
 We define a relation capturing knowledge of an execution of a bounded length with a certain output set of records.
-the relation $\relexec$ of pairs $(\instexec,\witexec)$
+The relation $\relexec$ of pairs $(\instexec,\witexec)$
 such that
 \begin{itemize}
- \item $\instexec=(\funcs,C,\recset)$,
+ \item $\instexec=(\root,C,\recset)$,
  \item $\witexec=(n,\tree)$,
 \end{itemize}
-such that $n\leq C$, and  \tree is a valid execution tree of length $n$ with function set \funcs and output set \recset. 
+such that $n\leq C$, and  \tree is a valid execution tree of length $n$ with function set \funcs having Merkle root \root, and output set \recset. 
 
 \section{Repeated Computation with Global state}
 An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
@@ -755,8 +756,6 @@ We informally think of
 
 \item $Z$ as the public input and $W$ as the private input of $F$.
 \item $S$ as the part of the private input that will be used in the final predicate.
-% 
-% *When we refer to the output of $F$ in this doc we always mean $Z^*$, not the real output of $F$ which is accept/reject - hope that's not too confusing :)*
 \end{itemize}
 
 Let $D_1,D_2$ be the domains of $S,\recset$ respectively. \finpred is a function
@@ -782,7 +781,7 @@ We now reduce valid executions as defined in Section \ref{sec:validexec} to RCG'
 
 Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
 \begin{itemize}
- \item $Z=(g,\root,\init)$ where $g$ is a stack of elements $(\f,\args)$, \root is a root of a merkle tree, and \init a boolean.
+ \item $Z=(g,\root,\init)$ where $g$ is a stack of elements of the form $(\f,\args)$, \root is a root of a merkle tree, and \init a boolean.
  \item $Z^*=(g^*,\root^*,\init^*)$ has the same form.
  \item $W=(\path,\instnoops,\witapp)$
  \item $S$ is a set of record operations.
@@ -791,6 +790,7 @@ Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
 Under this notation
 $F(Z,W,Z^*,S)=\acc$ if and only if
 \begin{enumerate}
+\item If $\init=\true$, $g$ contains exactly one element.
  \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
  \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
  \item \path is a merkle path from \f to \root.
@@ -806,17 +806,43 @@ $F(Z,W,Z^*,S)=\acc$ if and only if
 We define the function \finpred on input $(s_1,\ldots,s_n,\recset)$ to output \acc if and only if
 each $s_i$ is a well-formed set of record operations, and when defining \ops as the multi-set union of $s_1,\ldots,s_n$ it  has output \recset.
 
-The following is easily checkable
-\begin{lemma}\label{lem:execasRCG}(WIP)
 
-Let \funcs be a set of function commitments and \root a root of a Merkle tree with \funcs as the leaves.
-Define $\zfin=(\empty,\root,\false)$
-There is a map $\phi$ from the labels of an execution tree to \wit such 
-that $((\zfin,C,\recset),\wit)\in \rel_{F,\finpred}$ iff \tree is a valid execution 
-of length $n\leq C$ with function set \funcs and output \recset.
+In the lemma below, we denote by \empty the empty stack.
+
+
+\begin{lemma}\label{lem:execasRCG}
+There is an efficiently computable and efficiently invertible map $\phi$ such that the following holds.
+Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
+Define $\zfin=(\empty,\root,\false)$. Let \tree be an execution tree of length $n$.
+
+Then  $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset),\phi(\tree))\in \rel_{F,\finpred}$.
 
  
 \end{lemma}
+\begin{proof}
+We describe the operation of $\phi$.
+Given \tree of length $n$ let $(\instapp_1,\witapp_1),\ldots,(\instapp_{n},\witapp_{n})$ be the labels of its nodes according to 
+DFS order.
+Define a sequence of stacks $g_0,\ldots,g_n$ according to the sequence of labels.
+
+Namely, $g_0$ is the stack containing only $(\instapp_1.\f,\instapp_1.\args)$. And for each $i\in [n]$ $g_i$ is
+the stack obtained by popping $g[0]$ and adding $(\instapp_i.\f_j,\args_j)$ for $j\in [\instapp_i.\callnum]$.
+
+Now, define $z_0=(g_0,\root,\true)$ and for each $i\in [n]$, $z_i=(g_i,\root,\false)$.
+
+
+
+We now need to refer to the record operations in each instance separately.
+For this purpose,
+for each $i\in [n]$, denote $\instapp_i=(\instnoops_i,\ops_i)$.
+
+For each $i\in [n]$, let $\path_i$ be the path from $\instapp_i.\f$ to \root.
+
+Define for each $i\in [n]$, $w_{i}=(\path_i,\instnoops_i,\witapp_i)$, $s_i=\ops_i$.
+
+Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
+ and $\phi(\tree)=(n,z,w,s)$.
+\end{proof}
 
 
 \section{Record operations}
@@ -826,48 +852,6 @@ of length $n\leq C$ with function set \funcs and output \recset.
 \subsection{Proving record ops via log-derivative}
 
 
-
-% \section{The transition function $F$ describing the Aztec kernel}
-% Here's a sketch of what the Aztec $F$ could look like:
-% 
-% Global state:
-% - $r_{func}$ - merkle tree of allowed functions
-% 
-% Outputs:
-% - $g$ - stack of functions - where each function consists of its selector commitments
-% - $ns$ - new state to be added to Aztec - notes and nullifiers. To be of fixed size, $ns$ might be represented as a merkle root.
-% 
-% Public inputs
-% - $g_{prev}$ - previous stack of functions
-% - $ns_{prev}$ - previous new state to be added to Aztec - notes and nullifiers
-% 
-% 
-% 
-% Private inputs:
-% - $pi_f$ - public inputs to some Aztec function $f$. These include
-%     -  Descriptions of at most four functions $f_1,\ldots,f_4$ to add to the stack. Again, a description of a function is its selector commitments.
-%     - $ns_f$ - new notes and nullifiers added by execution of $f$. 
-% - $w_f$ - the witness of the Aztec function $f$ to be executed.
-% - $i$ - index of $f$ in the Aztec function tree.
-% 
-% 
-% For boolean $init$, global state $r_{func}$, private input $\omega=(pi_f,w_f,i,aux)$, public input $z=(g_{prev},ns_{prev})$, and output $z^*=(g,ns)$, we have $F(init, g, z,w,z^*)=acc$ exactly when:
-% 
-% - Let $f$ be the first function in $g_{prev}$. Then
-%     -  $f$ is contained at leaf $i$ in the tree with root $r_{func}$
-%     -  $w_f$ is a valid witness for $f$ with public inputs $pi_f$ (There are subtleties in how this is done, see below)
-%     -  adding $ns_f$ to $ns_{prev}$ results in $ns$.
-% - let $f_1\ldots,f_4$ be the functions in $pi_f$. Then popping $f$ from $g_{prev}$ and pushing $f_1,\ldots,f_4$ results in $g$.
-% - If $init=true$ then $g_{prev}$ contains exactly one function, i.e. $f$; and $ns_{prev}$ is empty.
-% - $aux$ contains all merkle paths necessary in the above.
-% 
-% 
-% 
-% \textbf{ Our $z_{final}$:}
-% 
-% $z_{final}$ must contain empty stack $g$, and $ns$ matching the notes and nullifiers we send to the rollup
-% 
-% 
 
 
 \section{On protogalaxy}
