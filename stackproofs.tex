@@ -194,26 +194,16 @@
 \newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
 \newcommand{\randpair}[1]{\ensuremath{\mathsf{rp}_{#1}}\xspace}
 \newcommand{\randpairone}[1]{\ensuremath{\mathsf{rp}_{#1}^{1}}\xspace}
-\newcommand{\abase}{\ensuremath{A_{\mathrm{\mathbf{0}}}}\xspace}
-\newcommand{\bbase}{\ensuremath{B_{\mathrm{\mathbf{0}}}}\xspace}
-\newcommand{\cbase}{\ensuremath{C_{\mathrm{\mathbf{0}}}}\xspace}
-\newcommand{\bliop}[1]{\ensuremath{\mathsf{#1{\text{-}}{BLIOP}}}\xspace}
-\newcommand{\blop}{\ensuremath{\mathsf{\mathscr{BL} {\text{-}}IOP}}\xspace}
-\newcommand{\openprotinput}{\ensuremath{\mathcal{O}}\xspace}
-\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
-\newcommand{\bmid}{\ensuremath{B_{\mathrm{mid}}}\xspace}
-\newcommand{\cmid}{\ensuremath{C_{\mathrm{mid}}}\xspace}
-
 \newcommand{\negl}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
 \newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
-\newcommand{\nilp}{\ensuremath{\mathscr N}\xspace}
-\newcommand{\groupgen}{\ensuremath{\mathscr G}\xspace}
-\newcommand{\qap}{\ensuremath{\mathscr Q}\xspace}
+% \newcommand{\nilp}{\ensuremath{\mathscr N}\xspace}
+% \newcommand{\groupgen}{\ensuremath{\mathscr G}\xspace}
+% \newcommand{\qap}{\ensuremath{\mathscr Q}\xspace}
 \newcommand{\polprot}[4]{$(#1,#2,#3,#4)$-polynomial protocol}
 \newcommand{\rangedprot}[5]{$#5$-ranged $(#1,#2,#3,#4)$-polynomial protocol}
 
-\newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
-\newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+\newcommand{\rej}{\ensuremath{\mathsf{reject}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathsf{accept}}\xspace}
 \newcommand{\res}{\ensuremath{\mathsf{res}}\xspace}
 \newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
  \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
@@ -545,6 +535,8 @@
 \newcommand{\instnoops}{\ensuremath{\mathbf{x}}\xspace}
  \renewcommand{\path}{\ensuremath{\mathbf{p}}\xspace}
 \renewcommand{\root}{\ensuremath{\mathbf{r}}\xspace}
+\newcommand{\cmtwo}{\ensuremath{\cm^{\oplus{2}}}\xspace}
+\newcommand{\predinst}{\ensuremath{\mathpgoth{f}}\xspace}
 \renewcommand{\empty}{\ensuremath{g_{\mathrm{empty}}}\xspace}
 \newcommand{\funcs}{\ensuremath{\mathrm{F}}\xspace}
 \newcommand{\instF}{\ensuremath{\mathrm{x}}\xspace}
@@ -566,11 +558,12 @@
 \begin{abstract}
 The goal of this note is to describe and analyze a simplified variant of the zk-SNARK construction used in the Aztec protocol.
 Taking inspiration from the popular notion of Incrementally Verifiable Computation\cite{ivc} (IVC)
-we define a related notion of \emph{Repeated Computation with Global state} (RCG). As opposed to IVC, in RCG we assume the computation \emph{does} terminate before proving starts, and in addition to the local transitions some global consistency checks of the whole computation are needed. However, we require the memory efficiency of the prover to be close to that of an IVC prover not required to prove this global consistency.
-We show how RCG is useful for a private smart contract system like Aztec.
+we define a related notion of \emph{Repeated Computation with Global state} (RCG). As opposed to IVC, in RCG we assume the computation terminates before proving starts, and in addition to the local transitions some global consistency checks of the whole computation are allowed. However, we require the space efficiency of the prover to be close to that of an IVC prover not required to prove this global consistency.
+We show how RCG is useful for desigining a proof system for a private smart contract system like Aztec.
 \end{abstract}
 \section{Introduction}
-In IVC, PCD \cite{ivc,pcd} we have an acyclic computation.
+Incrementally Verifiable Computation (IVC) \cite{ivc} and its generalization to Proof Carrying Data (PCD) \cite{pcd} are useful tools for constructing space-efficient SNARK provers.
+In IVC and PCD we always have an acyclic computation.
 However code written in almost any programming language \emph{is} cyclic in the sense of often relying on internal calls - 
 we start from a function $A$, execute some commands, go into a function $B$, execute its commands, and go back to $A$.
 When making a SNARK proof of such an execution, we typically linearize or ``flatten'' the cycle stemming from  the internal call, in one of the following two ways
@@ -601,13 +594,14 @@ contract address with a merkle root of a tree whose leaves are the verification 
 
 \end{enumerate}
 
-While running, a contract can read, create or delete notes belonging to the contract.
+\paragraph{Dealing with Global state}
+While running, a contract can read, add or delete notes belonging to it.
 We can thus think of the notes as global variables shared between the different functions.
 
 
 
 
-Let us think of all functions in this system as having multiple arguments, and returning accept or reject. (We can always move the output into the arguments, if it's not of this form.)
+Let us think of all functions in this system as having multiple arguments, and returning \acc or \rej. (We can always move the output into the arguments if a function is not of this form.)
 Here's a natural way to prove the mentioned execution: Put the arguments to $B$ in the public inputs of both the circuits of $A$ and $B$.
 Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
 
@@ -616,7 +610,8 @@ We can think of these operations as having timestamps incremented by one with ea
 We need to check, for example, that if a note was read in a certain timestamp, it was indeed created
 in an earlier timestamp.
 We can have the note operations - \set{add, read, delete} - performed by a function be included in the public inputs of its circuit.
-The issue is, what if $A$ is reading a note that was created in the internal call to $B$?
+The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
+Checking the existance of an add operation with smaller timestamp than that of the read requires a constraint between the inputs of both circuits.
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
 
 This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
@@ -639,8 +634,42 @@ mangrove, nexus, Jens's talk.
 
 
 \section{Preliminaries}
+\subsection{Terminology and Conventions}\label{sec:terminology}
+We assume our field \F is of prime order.
+We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than d. 
+We assume all algorithms described receive as an implicit parameter the security parameter $\lambda$.
+Similarly, we assume all integer parameters in the paper are implicitly functions of $\lambda$.
 
-Representing \G:
+Whenever we use the term \emph{efficient}, we mean an algorithm running in time \poly. Furthermore,
+we assume an \emph{object generator} \obgen that is run with input $\lambda$ before all protocols, and returns all fields and groups used. Specifically, in our protocol $\obgen(\lambda) = (\F, \G,g)$ where
+\begin{itemize}
+\item \F is a prime field of super-polynomial size $r = \lambda^{\omega(1)}$
+.
+\item $\G$ is a group of size $r$.
+\item $g$ is a uniformly chosen generator of \G.
+\end{itemize}
+We usually let the $\lambda$ parameter be implicit, i.e.\ write \F instead of $\F(\lambda)$.
+We write \G additively.
+% We use the notations $\enc1{x}\defeq x\cdot g_1$ and $\enc2{x}\defeq x\cdot g_2$.
+
+We often denote by $[n]$ the integers \set{1,\ldots,n}.
+% For example, when we refer below to the field $\F$, it is in fact a function $\F(\lambda)$ of $\lambda$, and part of
+% the output of $\obgen(\lambda)$.
+We use the acronym e.w.p. for ``except with probability''; i.e. e.w.p. $\gamma$ means with probability \emph{at least} $1-\gamma$.
+
+% \paragraph{universal SRS-based public-coin protocols}
+% We describe public-coin (meaning the verifier messages are uniformly chosen) interactive protocols between a prover and verifier; when deriving results for non-interactive protocols, we implicitly assume we can get a proof length equal to the total communication of the prover, using the Fiat-Shamir transform/a random oracle. Using this reduction between interactive and non-interactive protocols, we can refer to the ``proof length'' of an interactive protocol. 
+% 
+% We allow our protocols to have access to a structured reference string (SRS) that can be derived in deterministic \poly-time from an ``SRS of monomials'' of the form
+% \sett{\enc1{x^i}}{a\leq i \leq b}, \sett{\enc2{x^i}}{c\leq i \leq d}, for uniform $x\in \F$,
+% and some integers $a,b,c,d$ with absolute value bounded by \poly.
+% It then follows from Bowe et al. \cite{SecondMPC} that the required SRS can be derived in a universal and updatable setup requiring only one honest participant; in the sense that an adversary controlling all but one of the participants in the setup does not gain more than a \negl advantage in its probability of producing a proof of any statement.
+% 
+% For notational simplicity, we sometimes use the SRS \srs as an implicit parameter in protocols, and do not explicitly write it.
+% 
+% 
+
+\paragraph{Representing \G}
 Assume an injective function $R:\G \to \F^2$
 Whenever we discuss $a\in \G$ we assume it is represented as  $R(a)$.
 When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ with $R(a)=b$.
@@ -654,7 +683,7 @@ Relation \relapp of $\cm1,\ldots,\cm_S$
 We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
 For this, we first introduce record operations which is our specific notion of operating on a global state. 
 \subsection{Record operations}
-\emph{Records} are pairs $(v,c)$ - where $v\in \F$ is the \emph{note}, and $c\in \countrange$ is the \emph{counter}.
+\emph{Records} are pairs $(v,c)$ - where $v\in \F$ is the \emph{value}, and $c\in \countrange$ is the \emph{counter}.
 A \emph{record operation} has one of the following forms:
 \begin{itemize}
  \item $(\add,v,c)$,
@@ -688,31 +717,30 @@ We say $\ops$ is \emph{has output \recset} if:
 
 \subsection{The plonkish relation}
 Now we introduce a relation describing the individual function executions tailored to make it convenient in the next section to discuss an execution of a  sequence functions calling each other.
-Some choices of constants - like the maximal number inner calls being two, are abitrary.
+Some choices of constants - like the maximal number of inner calls being two, are abitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
-We fix a polynomial $G:\F^8\to \F$ that is an implicit parameter in the following definition of \relapp.
+We fix a polynomial $G:\F^8\to \F$ that is an implicit parameter in the following definition of the relation \relapp.
 
-\relapp consists of all pairs $(\instapp, \witapp)$ such that
-\begin{enumerate}
+\relapp consists of all pairs $(\instapp, \witapp)$ having the form 
+\begin{itemize}
  \item 
-
 $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$
-where $\f,\f_1,\f_2 \in \G,\args\in \F^4,\callnum\in \set{0,1,2}$; and
-$\witapp=(\witf,\wit)$
-
+where $\f,\f_1,\f_2 \in \G,\args\in \F^4,\callnum\in \set{0,1,2}$; 
+\item $\witapp=(\witf,\wit)$
 where 
 \begin{itemize}
  \item 
-
-
-$\witf=(\perm_1,\ldots,\perm_4,\sel_1,\ldots,\sel_4)$,where $\perm_j \in [|\instapp|+|\wit|]^n,\sel_j \in \F^n$ for each $j\in [4]$,
-\item and $\wit\in \F^N$.
+$\witf=(\perm_1,\ldots,\perm_4,\sel_1,\ldots,\sel_4)$,where $\perm_j \in [|\instapp|+N]^n,\sel_j \in \F^n$ for each $j\in [4]$
+\item $\wit\in \F^N$
 \end{itemize}
+\end{itemize}
+such that
+\begin{enumerate}
                                                                                 
-\item  Setting $x=(\instapp,\wit)$, for all $i\in [n]$,
+\item  Setting $x=(\instapp,\wit)$, for all $i\in [n]$
 \[G(\sel_{1,i},\ldots,\sel_{4,i},x_{\perm_{1,i}},\ldots,x_{\perm_{4,i}})=0.\]
-\item $\cm(\witf)=\f$.
+\item $\f=\cm(\witf)$.
 \end{enumerate}
 
 \subsection{Valid execution trees}\label{sec:validexec}
@@ -729,16 +757,16 @@ $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$. Then
     \item $\f\in \funcs$.
      \item The number of its children is \callnum.
      \item For $i\in [\callnum]$, let $(\f^i,\args^i,\callnum^i, \f^{i}_{1},\args^i_{1}, \f^i_{2},\args^i_{2},\ops^i)$ denote the first component of $\node$'s $i$'th child's label. Then $\f_i=\f^i$ and  $\args_i=\args^i$.
-     \item Let \ops be the multi-set union of the \ops field in all nodes' labels. Then \ops has output \recset.
+     \item Let \ops be the multi-set union of $\instapp.\ops$ over all nodes' labels $(\instapp,\witapp)$. Then \ops has output \recset.
      
     \end{itemize}
 
 \end{enumerate}
 Given a set of group elements \funcs say it has \emph{Merkle root \root} if \root is the root of a Merkle tree with the elements of  \funcs at the leaves using some pre-determined encoding.
 
-We define a relation capturing knowledge of an execution of a bounded length with a certain output set of records.
-The relation $\relexec$ of pairs $(\instexec,\witexec)$
-such that
+We define a relation \relexec capturing knowledge of an execution of bounded length with a certain output set of records.
+$\relexec$ consists of the pairs $(\instexec,\witexec)$
+of the form 
 \begin{itemize}
  \item $\instexec=(\root,C,\recset)$,
  \item $\witexec=(n,\tree)$,
@@ -825,7 +853,7 @@ Given \tree of length $n$ let $(\instapp_1,\witapp_1),\ldots,(\instapp_{n},\wita
 DFS order.
 Define a sequence of stacks $g_0,\ldots,g_n$ according to the sequence of labels.
 
-Namely, $g_0$ is the stack containing only $(\instapp_1.\f,\instapp_1.\args)$. And for each $i\in [n]$ $g_i$ is
+Namely, $g_0$ is the stack containing only $(\instapp_1.\f,\instapp_1.\args)$. And for each $i\in [n]$, $g_i$ is
 the stack obtained by popping $g[0]$ and adding $(\instapp_i.\f_j,\args_j)$ for $j\in [\instapp_i.\callnum]$.
 
 Now, define $z_0=(g_0,\root,\true)$ and for each $i\in [n]$, $z_i=(g_i,\root,\false)$.
@@ -835,17 +863,209 @@ Now, define $z_0=(g_0,\root,\true)$ and for each $i\in [n]$, $z_i=(g_i,\root,\fa
 We now need to refer to the record operations in each instance separately.
 For this purpose,
 for each $i\in [n]$, denote $\instapp_i=(\instnoops_i,\ops_i)$.
-
 For each $i\in [n]$, let $\path_i$ be the path from $\instapp_i.\f$ to \root.
-
 Define for each $i\in [n]$, $w_{i}=(\path_i,\instnoops_i,\witapp_i)$, $s_i=\ops_i$.
-
 Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
- and $\phi(\tree)=(n,z,w,s)$.
+ and $\phi(\tree)=(n,z,w,s)$. Given this definition of $\phi$ the statement of the lemma is straightforward to check.
 \end{proof}
 
 
-\section{Record operations}
+\section{Non-interactive folding schemes}
+We fix a vector space $K$ over \F, and an $\F$-linear function $\cm:\F^M\to K$,  that will be an implicit parameter in the following definition.
+% We'll say a relation \accrel is an \emph{extension} of a relation $\rel\subset D_1\times D_2$, if the domain of its witnesses is also $D_2$
+% while the domain of its instances is an extension of $D_1$. 
+\begin{dfn}\label{dfn:accschme}
+Fix relations \rel and \accrel.  An \emph{\accscheme{\rel}{\accrel}} is a pair of algorithms $(\prv,  \ver)$
+such that
+
+\begin{enumerate}
+ \item \prv on input $(\insttbase,\inst';\wit,\wit')$ produces a pair $(\instt,\wit^*)$ and  proof \prf .
+ \item \ver on input $(\insttbase,\inst',\instt,\prf)$ outputs \acc or \rej such that
+%  \item \ver receives as $\inst,\inst'$ as inputs and outputs \acc or \rej at then end.
+\begin{enumerate}
+ \item \textbf{Completeness:} If $(\insttbase,\wit)\in \accrel, (\inst',\wit')\in \rel$, and $\prv(\insttbase,\inst';\wit,\wit')=(\prf,\instt,\witstar)
+  $ then with probability one $(\instt,\witstar)\in \accrel$ and $\ver(\insttbase,\inst',\instt,\prf)=\acc$.
+\item \textbf{Knowledge soundness in the Algebraic Group Model:}
+
+For any efficient \adv the probability of the following event is \negl:
+\adv outputs $(\inst,\tau),\inst',(\inststar,\tau^*),\wit,\wit',\witstar$
+such that 
+\begin{enumerate}
+\item $\cm(\wit)=\inst,\cm(\wit')=\inst',\cm(\witstar)=\inststar$, 
+\item $\ver(\inst,\inst',\inststar,\prf)=\acc$,
+\item $((\inststar,\tau^*),\witstar)\in\accrel$, 
+\item $((\inst,\tau),\wit)\notin\accrel$ or $(\inst',\wit')\notin \rel$.
+\end{enumerate}
+
+\end{enumerate}
+\end{enumerate}
+\end{dfn}
+\subsection{Relations for folding schemes}
+We define a more general satisfiability relation than in \cite{protogal}.
+We have as parameters, integers $n,M,d$ and an $\F$-vector space $K$.
+We have a
+\begin{itemize}
+ \item \emph{Constraint function} $f:\F^M\to \F^n$ which is a vector of $n$ degree $d$ polynomials,
+\item \emph{Instance predicate} $\predinst:K \to \set{\acc,\rej}$,
+\item \emph{Commitment function} $\cm:\F^M \to K$ which is $\F$-linear and assumed
+to be collision resistant.
+\end{itemize}
+
+Given $(f,\predinst,\cm)$ we define a relation $\rel_{f,\predinst,\cm}$ consisting of all pairs
+$(\inst,\wit)$ such that
+\begin{itemize}
+ \item $f(\wit)=0^n$.
+ \item $\predinst(\inst)=\acc$.
+ \item $\inst=\cm(\wit)$
+\end{itemize}
+
+\paragraph{The relation $\relrand$:}
+ For brevity, let $\rel=\rel_{f,\predinst,\cm}$.
+  As in \cite{protogal}, we define the ``randomized relaxed'' version of $\rel, \relrand$. First, some required notation.
+ Let $t\defeq \log n$. For $i\in [n]$, let $S\subset \set{0,\ldots,t-1}$ be the set such that $i-1=\sumj{S}2^j$. We define the $t$-variate polynomial $\pow_i$ as
+ \[\pow_i(X_0,\ldots,X_{t-1}) = \prod_{\ell\in S} X_\ell\]
+ Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$.    
+  
+  Given the above notation, $\relrand$ consists  of the pairs $( \insttbase,\wit)$ with $\insttbase=(\inst,\betaa,e)$ such that
+ \begin{enumerate}
+  \item $\inst=\cm(\wit)$.
+  \item $\betaa\in \F^t, e\in \F$ and we have 
+  \[\sumi{n}\pow_{i}(\betaa) f_i(\wit) = e.\]
+ \end{enumerate}
+(Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
+\subsection{The \protogal scheme}
+Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, for the special case of folding $k=1$ instances.\\ \\ \noindent
+We define $Z(X)\def X\cdot(1-X)$.
+\underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}  
+\begin{enumerate}
+% \item \ver checks for each $i\in [k]$ that $\inst_i$ is \hash-consistent, and outputs \rej otherwise.
+%  \item \ver sends a challenge $\delta \in \F$.
+ \item  Compute $\delta=\hash(\insttbase,\inst_1)$. Define $\deltaa\defeq (\delta,\delta^2,\ldots,\delta^{2^{t-1}})\in \F^t$.
+ \item\label{step:computeF}  Compute the polynomial 
+ \[F(X)\defeq \sumi{n}\pow_i(\betaa+X\deltaa) f_i(\wit).\]
+ (Note that $F(0)=\sumi{n} \pow_i(\betaa) f_i(\wit) = e$.)
+\item\label{step:sendFcoeffs} Denote the non-constant coefficients of $F$ by $a\defeq (F_1,\ldots,F_{t})$.
+\item Compute $\alpha = \hash(\delta,a)$
+% \item\label{step:computeFalpha} Note that $F(\alpha)= e+\sumi{t}F_i \alpha^i$.
+\item\label{step:computeBetastar} Compute $\betaa^*\in \F^{t}$ where $\betaa^*_i\defeq \betaa_i+\alpha\cdot \deltaa_i$.
+\item\label{step:computeG} Define the polynomial $G(X)$ as 
+\[G(X)\defeq \sumi{n}\pow_i(\betaa^*) f_i(X\cdot \wit + (1-X)\wit_1).\]
+\item Compute the polynomial $K(X)$ such that 
+\[G(X)= F(\alpha) X + Z(X) K(X).\]
+\item\label{step:sendK} Let $b\defeq (K_0,\ldots,K_{d-2})$ be the coefficients of $K(X)$.
+\item Compute $\gamma=\hash(\alpha,b)$.
+\item\label{step:compute-estar} Compute 
+\[e^* \defeq F(\alpha)\gamma + Z(\gamma)K(\gamma).\]
+\end{enumerate}
+Finally, output
+\begin{itemize}
+\item the instance
+$\instt=(\inststar,\betaa^*,e^*),$
+where \[\inst^*\defeq  \gamma\cdot  \inst + (1-\gamma) \inst_1,\]
+
+
+\item the witness 
+$\witstar\defeq \gamma\cdot \wit +  \gamma\cdot \wit_1,$
+\item and the proof $\prf\defeq (a,b)$.\\
+\end{itemize}
+\noindent
+\underline{$\ver_{PG}(\insttbase,\inst_1, \instt,\pi=(a,b)):$}\noindent
+\begin{enumerate}
+ \item  Compute $\alpha,\beta,\delta,\gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
+
+\item  Check that $\instt$ is as computed in the prover algorithm. Output \acc iff this is the case. 
+\end{enumerate}
+
+
+
+For the knowledge soundness analysis we'll use a variant of the Zero-Testing assumption form \cite{novarecursive}.
+
+\begin{dfn}\label{dfn:ZTA}
+Fix $\cm:\F^M\to K$, hash function \hash, parameter $d$. The Zero-Testing Assumption (ZTA) for $(\hash,\cm,d)$ states the following. 
+
+For any efficient \adv and efficiently computable function $D$ into \polysofdeg{d},
+the probability of \adv outputting $x,\tau$ such that,
+when setting
+\begin{itemize}
+ \item $f(X)=D(x,\tau)$
+ \item $z=\hash(\cm(x),\tau)$
+ \end{itemize}
+ 
+ we have that $f$ is not the zero polynomial but $f(z)=0$,
+is \negl.
+\end{dfn}
+
+
+
+We extend $\cm$ to work 
+
+\begin{thm}\label{thm:pgsoundness}
+Set $d'\defeq \max \set{\log n,d}$. Denote by $\cmtwo$ the function $\cmtwo(\wit_1,\wit_2)\defeq (\cm(\wit_1),\cm(\wit_2))$.
+Assume that \cm is collision resistant and the ZTA holds for $(\hash, \cmtwo,d')$
+Then \protogal has knowledge soundness in the Algebraic Group Model.
+\end{thm}
+\begin{proof}
+ Let $E$ be the event that \adv has output
+$\insttbase=(\inst,\betaa,e),\inst_1,\instt=(\inststar,\betaa^*,e^*),\wit,\wit_1,\witstar,\prf$ such that 
+\begin{enumerate}
+\item $\cm(\wit)=\inst,\cm(\wit_1)=\inst_1,\cm(\witstar)=\inststar$. 
+\item $\ver(\inst,\inst_1,\inststar,\prf)=\acc$ 
+\item $(\instt,\witstar)\in\relrand$ 
+\item $(\instbase,\wit)\notin\relrand$ or $(\inst_1,\wit_1)\notin \rel$.
+\end{enumerate}
+According to Definition \ref{dfn:accschme} knowledge soundness is equivalent to $E$ having 
+probability \negl for any \adv.
+We construct an efficient \advprime that when $E$ occurs outputs either a collision of 
+\cm or an exception to ZTA. Hence, by the theorem assumption $E$ is contained in two events having
+probability \negl, and must have  probability \negl itself.
+
+Assume we are in event $E$.
+% Since  $\ver_{PG}(\insttbase,\inst_1,\instt,\prf)=\acc$, we have $\inststar=\gamma \inst +(1-\gamma)\inst_1$.
+% And since $(\instt,\witstar)\in \relrand$ we have $\cm(\witstar)=\inststar$.
+Using linearity of \cm, when $E$ occurs we have 
+\[\cm( \gamma\wit+(1-\gamma)\wit')=\gamma \inst +(1-\gamma)\inst_1=\inststar=\cm(\witstar).\]
+Thus, if $\witstar \neq \gamma \wit + (1-\gamma)\wit'$, \advprime can output $(\witstar,\gamma\wit+(1-\gamma)\wit')$
+as a collision of \cm.
+Now assume that $\witstar = \gamma \wit + (1-\gamma)\wit'$.
+Suppose $\prf=(a,b)$, with $a=(a_1,\ldots,a_t),b= (b_0,\ldots,b_{d-2})$.
+Define $F_0(X)\defeq e+\sum_{i\in [t]} a_iX^i,K'(X)\defeq \sum_{i=0}^{d-2} b_iX^i$.
+Let $\alpha,\beta,\delta,\gamma,\betaa,\deltaa$ be computed as in the prover description given $a,b$.
+Define the polynomials
+\[F_{ZTA}(X)\defeq F'(X)-\sum_{i\in [n]} \pow_i(\betaa+X\deltaa) f_i(\wit)\]
+\[G'(X)\defeq F'(\alpha)X+ Z(X)K'(X)-\sum_{i\in [n]}\pow_i( \betaa^*) f_i(X\wit +(1-X)\wit_1)\]
+
+Since $((\inststar,\betaa^*,e^*),\witstar)\in \relrand$ and $\ver_{PG}(\insttbase,\inst',\instt,\prf)=\acc$,
+\[F'(\alpha)\gamma + Z(\gamma)K'(\gamma)=e^*=\sum_{i\in [n]} \pow_i(\betaa^*) f(\witstar).\]
+
+This precisely means that $G'(\gamma)=0$.
+
+If $(\inst_1,\wit_1)\notin \rel$
+then (the honest) $G$ will have a $(1-X)\beta^* f(w_1)$ factor that can't be canceled out by $Z(X)K(X)$ so $G'$ can't be the zero polynomial (see PG paper analysis if not clear).
+
+And hence taking $d=(w,w_1,\beta,\alpha,\delta,K), D(d)=G'$ 
+we get a contradiction to ZTA. (A little care needs to be taken to define $h$ and $C$ so that we really get $h(C(w,w_1,\beta,\alpha,\delta,K))=\gamma$).
+
+Now assume $( (\phi,\beta,e),w)\notin R_{rand}$.
+And that $G'\equiv 0$ - otherwise we can contradict ZTA via $G'$ as above.
+
+Thus, if we write $G'(X)=c_1 X + c_2(1-X)+Z(X)K'(X)$ for some constants $c_1,c_2$ and polynomial $K'$ we must 
+have $c_1,c_2,K'=0$.
+Looking at the equation of $G'$
+we have $c_1=F(\alpha)-\beta^*f(w)$.
+
+Note that $c_1=F'(\alpha)$, so $F'(\alpha)=0$.
+
+We also have $F'(0)=e-\beta f(w)\neq 0$, and thus $F'$ is not the zero polynomial.
+
+Hence, in this case  $d=(w,\beta,e,w_1,\delta)$
+$D(d)=F'$ is a counterexample to ZTA.
+
+
+\end{proof}
+
+
+
+
 
 
 
