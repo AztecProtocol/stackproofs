@@ -542,6 +542,7 @@
 \newcommand{\predinst}{\ensuremath{\mathpgoth{f}}\xspace}
 \renewcommand{\empty}{\ensuremath{g_{\mathrm{empty}}}\xspace}
 \newcommand{\funcs}{\ensuremath{\mathrm{F}}\xspace}
+\newcommand{\ztafuncs}{\ensuremath{\mathcal{D}}\xspace}
 \newcommand{\instF}{\ensuremath{\mathrm{x}}\xspace}
 \newcommand{\witF}{\ensuremath{\mathrm{w}}\xspace}
 \newcommand{\instexec}{\ensuremath{\mathrm{x_{exec}}}\xspace}
@@ -937,8 +938,8 @@ $(\inst,\wit)$ such that
  \end{enumerate}
 (Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
 \subsection{The \protogal scheme}
-Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, for the special case of folding $k=1$ instances.\\ \\ \noindent
-We define $Z(X)\defeq X\cdot(1-X)$.
+Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, for the special case of folding $k=1$ instances.
+We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping arbitrary strings to elements of \Fstar.  \\ \\ \noindent
 \underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}  
 \begin{enumerate}
 % \item \ver checks for each $i\in [k]$ that $\inst_i$ is \hash-consistent, and outputs \rej otherwise.
@@ -984,17 +985,17 @@ $\witstar\defeq \gamma\cdot \wit +  \gamma\cdot \wit_1,$
 For the knowledge soundness analysis we'll use a variant of the Zero-Testing assumption form \cite{novarecursive}.
 
 \begin{dfn}\label{dfn:ZTA}
-Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$.
-We say the tuple $(D,x,\tau)$ is a \emph{degree $d$-relation for $(\hash,\cm)$} if
+Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$. Fix a family of functions \ztafuncs. 
+We say the tuple $(D,x,\tau)$ is a \emph{degree $d$-relation for $(\ztafuncs,\hash,\cm)$} if
 \begin{enumerate}
- \item $D$ is a \poly-size circuit outputting elements of \polysofdegeq{d}.
- \item $f(X)\defeq D(x,\tau)$ is a non-zero polynomial. 
+ \item $D\in \ztafuncs$.
+ \item $f(X)\defeq D(x,\tau)$ is an element of \polysofdegeq{d}. 
  \item Setting $z\defeq \hash(\cm(x),\tau)$, we have $f(z)=0$.
 \end{enumerate}
 
 
-The Zero-Testing Assumption (ZTA) for $(\hash,\cm,d)$ states that for any efficient \adv, the probability  that 
-\adv outputs a degree $d$-relation for $(\hash,\cm)$ is \negl.
+The Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability  that 
+\adv outputs a degree $d$-relation for $(\ztafuncs,\hash,\cm)$ is \negl.
 \end{dfn}
 
 
@@ -1002,7 +1003,8 @@ The Zero-Testing Assumption (ZTA) for $(\hash,\cm,d)$ states that for any effici
 
 \begin{thm}\label{thm:pgsoundness}
 Set $d'\defeq \max \set{ n,d}$. Denote  $\cmtwo(\wit_1,\wit_2)\defeq (\cm(\wit_1),\cm(\wit_2))$.
-Assume that \cm is collision resistant and the ZTA holds for $(\hash, \cmtwo,d')$
+Let \ztafuncs be a family of three functions to be defined in the proof.
+Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cmtwo,d')$
 Then \protogal is a \accscheme{\rel}{\relrand}.
 \end{thm}
 \begin{proof}
@@ -1040,18 +1042,17 @@ Since $((\inststar,\betaa^*,e^*),\witstar)\in \relrand$ and $\ver_{PG}(\insttbas
 \[G'(\gamma) = F_0(\alpha)\gamma + Z(\gamma)K'(\gamma)- \sum_{i\in [n]} \pow_i(\betaa^*) f(\gamma\wit +(1-\gamma)\wit_1)=e^*-\sum_{i\in [n]} \pow_i(\betaa^*) f(\witstar)=e^*-e^*=0.\]
 
 
-Set $x\defeq (\wit,\wit_1)$
-Set $\tau\defeq (\insttbase,\inst_1,\prf)$
-If $G\not\equiv 0$ \advprime outputs the degree $d'$-relation $(D,x,\tau)$,
-where $D$ is the function that computes $G'$ according to \perpg given $\insttbase,\inst_1,\prf$
+Set $x\defeq (\wit,\wit_1)$ and $\tau\defeq (\insttbase,\inst_1,\prf,\alpha,\delta)$.
+If $G\not\equiv 0$, \advprime outputs the degree $d'$-relation $(D_1,x,\tau)$,
+where $D_1$ is the function that computes $G'(X)$ according to \perpg given $(x,\tau)$
 
 Assume now that $G\equiv 0$.
 
 If $(\inst_1,\wit_1)\notin \rel$, using $Z(0)=0$ we have 
 \[G'(0)= \sum_{i\in [n]}\pow_i( \betaa^*) f_i(\wit_1)=0\]
-Define the polynomial $A(X,Y)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+X,\betaa_2 +XY,\ldots,\betaa_t+XY^{2^{t-1}})$.
-Thus we have $A(\alpha,\delta)=0$. But since $(\inst_1,\wit_1)\notin 0$ $A$ is a combination of linearly independent monomials $\pow_i(\betaa_1+X,\betaa_2 +XY,\ldots,\betaa_t+XY^{2^{t-1}})$ with at least one non-zero coefficient and so $A(X,Y)\not\equiv 0$. Hence setting $D$ to be the function that computes $A$ according to \perpg given $\insttbase,\inst_1$, 
-\advprime can output the degree $n$ relation $(D,x,(\insttbase,\inst_1))$.
+Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+\alpha,\betaa_2 +\alpha X,\ldots,\betaa_t+\alpha X^{2^{t-1}})$.
+We have $A(\delta)=0$. But since $(\inst_1,\wit_1)\notin \rel$, $A$ is a combination of the $n$ linearly independent polynomials $\sett{\pow_i(\betaa_1+\alpha,\betaa_2 +\alpha X,\ldots,\betaa_t+\alpha X^{2^{t-1}})}{i\in [n]}$ with at least one non-zero coefficient, and so $A(X)\not\equiv 0$. Hence, setting $D_2$ to be the function that computes $A$ given $(x,\insttbase,\inst_1,\alpha)$, 
+\advprime can output the degree $n$ relation $(D_2,x,(\insttbase,\inst_1,\alpha))$.
 
 
 Now, assume that $(\insttbase,\wit)\notin \relrand$.
@@ -1061,8 +1062,9 @@ As we're still assuming $G'\equiv 0$, we have
 But we also have $F'(\alpha)=G(1)$ and so $F'(\alpha)=0$.
 On the other hand
 \[F'(0)=e-\sumi{n}\pow_i(\betaa^*) f_i(\witstar)\neq 0\]
-Setting $\tau=(\insttbase,\inst_1)$ and $D$ to be the function that computes $F'$ given $x,\tau$ we
+Setting $\tau=(\insttbase,\inst_1,\alpha,\delta)$ and $D_3$ to be the function that computes $F'$ given $x,\tau$ we
 have that $(D,x,\tau)$ is a degree $\log n$ relation that \advprime can output in this case.
+Setting $\ztafuncs=\set{D_1,D_2,D_3}$ we have proven knowledge soundness under the theorem assumptions.
 \end{proof}
 
 
