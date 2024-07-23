@@ -271,7 +271,9 @@
 \newcommand{\inp}{\ensuremath{\mathsf{x}}\xspace}
 \newcommand{\wit}{\ensuremath{\omega}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
+\newcommand{\verpg}{\ensuremath{\ver_{PG}}\xspace}
 \newcommand{\per}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
+\newcommand{\perpg}{\ensuremath{\per_{PG}}\xspace}
 \newcommand{\sonic}{\ensuremath{\mathsf{Sonic}}\xspace}
 \newcommand{\aurora}{\ensuremath{\mathsf{Aurora}}\xspace}
 \newcommand{\auroralight}{\ensuremath{\mathsf{Auroralight}}\xspace}
@@ -309,6 +311,7 @@
 \newcommand{\elempowrs}[1]{\ensuremath{\mathsf{e}_{#1}}\xspace}
  \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
  \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
+ \newcommand{\polysofdegeq}[1]{\ensuremath{\F_{\leq #1}[X]}\xspace}
  \newcommand{\pols}{\ensuremath{\F[X]}\xspace}
  \newcommand{\bivar}[1]{\ensuremath{\F_{< #1}[X,Y]}\xspace}
  \newcommand{\sig}{\ensuremath{\mathscr{S}}\xspace}
@@ -506,7 +509,7 @@
 \newcommand{\modpoly}[1]{\ensuremath{\;\;\mod #1(X) }\xspace}
 \newcommand{\coeff}[2]{\ensuremath{(#1)_{[#2]} }\xspace}
 \newcommand{\kzg}[1]{\ensuremath{\mathsf{KZG}_{#1,\subgroup}}\xspace}
-\newcommand{\accscheme}[2]{$(#1\mapsto #2)$-accumulation/folding scheme\xspace}
+\newcommand{\accscheme}[2]{$(#1\mapsto #2)$-folding scheme\xspace}
 \newcommand{\accrel}{\ensuremath{\rel_{\mathrm{acc}}}\xspace}
 \newcommand{\relpair}{\ensuremath{\mathfrak{p}}\xspace}
 \newcommand{\inststar}{\ensuremath{\inst^*}\xspace}
@@ -611,7 +614,7 @@ We need to check, for example, that if a note was read in a certain timestamp, i
 in an earlier timestamp.
 We can have the note operations - \set{add, read, delete} - performed by a function be included in the public inputs of its circuit.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
-Checking the existance of an add operation with smaller timestamp than that of the read requires a constraint between the inputs of both circuits.
+Checking the existence of an $add$ operation with smaller timestamp requires a constraint between the inputs of both circuits; and for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
 
 This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
@@ -935,7 +938,7 @@ $(\inst,\wit)$ such that
 (Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
 \subsection{The \protogal scheme}
 Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, for the special case of folding $k=1$ instances.\\ \\ \noindent
-We define $Z(X)\def X\cdot(1-X)$.
+We define $Z(X)\defeq X\cdot(1-X)$.
 \underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}  
 \begin{enumerate}
 % \item \ver checks for each $i\in [k]$ that $\inst_i$ is \hash-consistent, and outputs \rej otherwise.
@@ -981,86 +984,85 @@ $\witstar\defeq \gamma\cdot \wit +  \gamma\cdot \wit_1,$
 For the knowledge soundness analysis we'll use a variant of the Zero-Testing assumption form \cite{novarecursive}.
 
 \begin{dfn}\label{dfn:ZTA}
-Fix $\cm:\F^M\to K$, hash function \hash, parameter $d$. The Zero-Testing Assumption (ZTA) for $(\hash,\cm,d)$ states the following. 
+Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$.
+We say the tuple $(D,x,\tau)$ is a \emph{degree $d$-relation for $(\hash,\cm)$} if
+\begin{enumerate}
+ \item $D$ is a \poly-size circuit outputting elements of \polysofdegeq{d}.
+ \item $f(X)\defeq D(x,\tau)$ is a non-zero polynomial. 
+ \item Setting $z\defeq \hash(\cm(x),\tau)$, we have $f(z)=0$.
+\end{enumerate}
 
-For any efficient \adv and efficiently computable function $D$ into \polysofdeg{d},
-the probability of \adv outputting $x,\tau$ such that,
-when setting
-\begin{itemize}
- \item $f(X)=D(x,\tau)$
- \item $z=\hash(\cm(x),\tau)$
- \end{itemize}
- 
- we have that $f$ is not the zero polynomial but $f(z)=0$,
-is \negl.
+
+The Zero-Testing Assumption (ZTA) for $(\hash,\cm,d)$ states that for any efficient \adv, the probability  that 
+\adv outputs a degree $d$-relation for $(\hash,\cm)$ is \negl.
 \end{dfn}
 
 
 
-We extend $\cm$ to work 
 
 \begin{thm}\label{thm:pgsoundness}
-Set $d'\defeq \max \set{\log n,d}$. Denote by $\cmtwo$ the function $\cmtwo(\wit_1,\wit_2)\defeq (\cm(\wit_1),\cm(\wit_2))$.
+Set $d'\defeq \max \set{ n,d}$. Denote  $\cmtwo(\wit_1,\wit_2)\defeq (\cm(\wit_1),\cm(\wit_2))$.
 Assume that \cm is collision resistant and the ZTA holds for $(\hash, \cmtwo,d')$
-Then \protogal has knowledge soundness in the Algebraic Group Model.
+Then \protogal is a \accscheme{\rel}{\relrand}.
 \end{thm}
 \begin{proof}
- Let $E$ be the event that \adv has output
-$\insttbase=(\inst,\betaa,e),\inst_1,\instt=(\inststar,\betaa^*,e^*),\wit,\wit_1,\witstar,\prf$ such that 
+The main thing to prove is knowledge soundness in the Algebraic Group Model.
+ Fix any efficient \adv. Let $E$ be the event that \adv outputs
+$\insttbase=(\inst,\betaa,e),\inst_1,\instt=(\inststar,\betaa^*,e^*),$ $\wit,\wit_1,\witstar,\prf$ such that 
 \begin{enumerate}
 \item $\cm(\wit)=\inst,\cm(\wit_1)=\inst_1,\cm(\witstar)=\inststar$. 
-\item $\ver(\inst,\inst_1,\inststar,\prf)=\acc$ 
+\item $\verpg(\insttbase,\inst_1,\instt,\prf)=\acc$ 
 \item $(\instt,\witstar)\in\relrand$ 
-\item $(\instbase,\wit)\notin\relrand$ or $(\inst_1,\wit_1)\notin \rel$.
+\item $(\insttbase,\wit)\notin\relrand$ or $(\inst_1,\wit_1)\notin \rel$.
 \end{enumerate}
-According to Definition \ref{dfn:accschme} knowledge soundness is equivalent to $E$ having 
-probability \negl for any \adv.
-We construct an efficient \advprime that when $E$ occurs outputs either a collision of 
-\cm or an exception to ZTA. Hence, by the theorem assumption $E$ is contained in two events having
+According to Definition \ref{dfn:accschme}, knowledge soundness is equivalent to $E$ having 
+probability \negl for any such \adv.
+We construct an efficient \advprime that runs \adv, and when $E$ occurs outputs either a collision of 
+\cm or a degree $d'$-relation for $(\hash,\cm)$. By the theorem assumption this implies $E$ is contained in two events of
 probability \negl, and must have  probability \negl itself.
 
 Assume we are in event $E$.
 % Since  $\ver_{PG}(\insttbase,\inst_1,\instt,\prf)=\acc$, we have $\inststar=\gamma \inst +(1-\gamma)\inst_1$.
 % And since $(\instt,\witstar)\in \relrand$ we have $\cm(\witstar)=\inststar$.
 Using linearity of \cm, when $E$ occurs we have 
-\[\cm( \gamma\wit+(1-\gamma)\wit')=\gamma \inst +(1-\gamma)\inst_1=\inststar=\cm(\witstar).\]
-Thus, if $\witstar \neq \gamma \wit + (1-\gamma)\wit'$, \advprime can output $(\witstar,\gamma\wit+(1-\gamma)\wit')$
+\[\cm( \gamma\wit+(1-\gamma)\wit_1)=\gamma \inst +(1-\gamma)\inst_1=\inststar=\cm(\witstar).\]
+Thus, if $\witstar \neq \gamma \wit + (1-\gamma)\wit_1$, \advprime can output $(\witstar,\gamma\wit+(1-\gamma)\wit_1)$
 as a collision of \cm.
-Now assume that $\witstar = \gamma \wit + (1-\gamma)\wit'$.
+Now assume that $\witstar = \gamma \wit + (1-\gamma)\wit_1$.
 Suppose $\prf=(a,b)$, with $a=(a_1,\ldots,a_t),b= (b_0,\ldots,b_{d-2})$.
 Define $F_0(X)\defeq e+\sum_{i\in [t]} a_iX^i,K'(X)\defeq \sum_{i=0}^{d-2} b_iX^i$.
 Let $\alpha,\beta,\delta,\gamma,\betaa,\deltaa$ be computed as in the prover description given $a,b$.
 Define the polynomials
-\[F_{ZTA}(X)\defeq F'(X)-\sum_{i\in [n]} \pow_i(\betaa+X\deltaa) f_i(\wit)\]
-\[G'(X)\defeq F'(\alpha)X+ Z(X)K'(X)-\sum_{i\in [n]}\pow_i( \betaa^*) f_i(X\wit +(1-X)\wit_1)\]
+\[F'(X)\defeq F_0(X)-\sum_{i\in [n]} \pow_i(\betaa+X\deltaa) f_i(\wit)\]
+\[G'(X)\defeq F_0(\alpha)X+ Z(X)K'(X)-\sum_{i\in [n]}\pow_i( \betaa^*) f_i(X\wit +(1-X)\wit_1)\]
 
 Since $((\inststar,\betaa^*,e^*),\witstar)\in \relrand$ and $\ver_{PG}(\insttbase,\inst',\instt,\prf)=\acc$,
-\[F'(\alpha)\gamma + Z(\gamma)K'(\gamma)=e^*=\sum_{i\in [n]} \pow_i(\betaa^*) f(\witstar).\]
-
-This precisely means that $G'(\gamma)=0$.
-
-If $(\inst_1,\wit_1)\notin \rel$
-then (the honest) $G$ will have a $(1-X)\beta^* f(w_1)$ factor that can't be canceled out by $Z(X)K(X)$ so $G'$ can't be the zero polynomial (see PG paper analysis if not clear).
-
-And hence taking $d=(w,w_1,\beta,\alpha,\delta,K), D(d)=G'$ 
-we get a contradiction to ZTA. (A little care needs to be taken to define $h$ and $C$ so that we really get $h(C(w,w_1,\beta,\alpha,\delta,K))=\gamma$).
-
-Now assume $( (\phi,\beta,e),w)\notin R_{rand}$.
-And that $G'\equiv 0$ - otherwise we can contradict ZTA via $G'$ as above.
-
-Thus, if we write $G'(X)=c_1 X + c_2(1-X)+Z(X)K'(X)$ for some constants $c_1,c_2$ and polynomial $K'$ we must 
-have $c_1,c_2,K'=0$.
-Looking at the equation of $G'$
-we have $c_1=F(\alpha)-\beta^*f(w)$.
-
-Note that $c_1=F'(\alpha)$, so $F'(\alpha)=0$.
-
-We also have $F'(0)=e-\beta f(w)\neq 0$, and thus $F'$ is not the zero polynomial.
-
-Hence, in this case  $d=(w,\beta,e,w_1,\delta)$
-$D(d)=F'$ is a counterexample to ZTA.
+\[G'(\gamma) = F_0(\alpha)\gamma + Z(\gamma)K'(\gamma)- \sum_{i\in [n]} \pow_i(\betaa^*) f(\gamma\wit +(1-\gamma)\wit_1)=e^*-\sum_{i\in [n]} \pow_i(\betaa^*) f(\witstar)=e^*-e^*=0.\]
 
 
+Set $x\defeq (\wit,\wit_1)$
+Set $\tau\defeq (\insttbase,\inst_1,\prf)$
+If $G\not\equiv 0$ \advprime outputs the degree $d'$-relation $(D,x,\tau)$,
+where $D$ is the function that computes $G'$ according to \perpg given $\insttbase,\inst_1,\prf$
+
+Assume now that $G\equiv 0$.
+
+If $(\inst_1,\wit_1)\notin \rel$, using $Z(0)=0$ we have 
+\[G'(0)= \sum_{i\in [n]}\pow_i( \betaa^*) f_i(\wit_1)=0\]
+Define the polynomial $A(X,Y)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+X,\betaa_2 +XY,\ldots,\betaa_t+XY^{2^{t-1}})$.
+Thus we have $A(\alpha,\delta)=0$. But since $(\inst_1,\wit_1)\notin 0$ $A$ is a combination of linearly independent monomials $\pow_i(\betaa_1+X,\betaa_2 +XY,\ldots,\betaa_t+XY^{2^{t-1}})$ with at least one non-zero coefficient and so $A(X,Y)\not\equiv 0$. Hence setting $D$ to be the function that computes $A$ according to \perpg given $\insttbase,\inst_1$, 
+\advprime can output the degree $n$ relation $(D,x,(\insttbase,\inst_1))$.
+
+
+Now, assume that $(\insttbase,\wit)\notin \relrand$.
+As we're still assuming $G'\equiv 0$, we have 
+\[G'(1)=F_0(\alpha)-\sumi{n}\pow_i(\betaa^*) f_i(\witstar)=0,
+\]
+But we also have $F'(\alpha)=G(1)$ and so $F'(\alpha)=0$.
+On the other hand
+\[F'(0)=e-\sumi{n}\pow_i(\betaa^*) f_i(\witstar)\neq 0\]
+Setting $\tau=(\insttbase,\inst_1)$ and $D$ to be the function that computes $F'$ given $x,\tau$ we
+have that $(D,x,\tau)$ is a degree $\log n$ relation that \advprime can output in this case.
 \end{proof}
 
 
