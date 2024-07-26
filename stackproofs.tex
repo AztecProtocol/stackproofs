@@ -555,6 +555,8 @@
 \newcommand{\recset}{\ensuremath{\mathsf{V}}\xspace}
 \newcommand{\tree}{\ensuremath{\mathsf{T}}\xspace}
 \newcommand{\node}{\ensuremath{\mathsf{n}}\xspace}
+\newcommand{\incsum}{\ensuremath{\mathrm{sum}}\xspace}
+\newcommand{\inchash}{\ensuremath{\mathrm{h}}\xspace}
 \newcommand{\finpred}{\ensuremath{\mathsf{f}}\xspace}
 \newcommand{\zksnark}{zk-SNARK\;}
 \begin{document}
@@ -800,7 +802,7 @@ $\inp=(\zfin,C,\recset),\wit=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldo
  \item $z_n=\zfin$.
  \item $n\leq C$.
  \item For each $i\in [n]$, $F(z_{i-1},w_i,s_i,z_i)=\acc$.
- \item $\finpred(s_1,\ldots,s_n,\recset)=\acc$.
+ \item $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
 \end{itemize}
 
 
@@ -808,7 +810,7 @@ we say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming 
 to $z$ and $w$ \prv requires space $O(|F|+|s|+\log n)$.
 
 
-\subsection{Valid executions as RCG}
+\subsection{Valid executions as RCG}\label{sec:exec->RFC}
 We now reduce valid executions as defined in Section \ref{sec:validexec} to RCG's.
 
 Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
@@ -835,7 +837,7 @@ $F(Z,W,Z^*,S)=\acc$ if and only if
 
 
 
-We define the function \finpred on input $(s_1,\ldots,s_n,\recset)$ to output \acc if and only if
+We define the function \finpred on input $(z_n,s_1,\ldots,s_n,\recset)$ to output \acc if and only if  $z_n.g=\empty$,
 each $s_i$ is a well-formed set of record operations, and when defining \ops as the multi-set union of $s_1,\ldots,s_n$ it  has output \recset.
 
 
@@ -872,6 +874,34 @@ Define for each $i\in [n]$, $w_{i}=(\path_i,\instnoops_i,\witapp_i)$, $s_i=\ops_
 Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
  and $\phi(\tree)=(n,z,w,s)$. Given this definition of $\phi$ the statement of the lemma is straightforward to check.
 \end{proof}
+
+\subsection{Removing the global state}
+We reduce the relation $\rel_{F,f}$ from the last section to 
+$\rel_{F^*,f^*}$:
+
+
+Let $F$ denote the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as from Section \ref{sec:exec->RFC}.
+
+Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
+\begin{itemize}
+ \item $Z=(Z_F,\inchash,\incsum)$.
+ \item $Z^*=(Z_F^*,\inchash^*,\incsum^*)$.
+ \item $W=(W_F,S_F,M)$
+\end{itemize}
+
+Under this notation
+$F^*(Z,W,Z^*)=\acc$ if and only if
+\begin{enumerate}
+\item $F(Z_F,W_F,S_F,Z_F^*)=\acc$.
+\item $\incsum^*$
+\item If $\init=\true$, $g$ contains exactly one element.
+ \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
+ \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
+ \item \path is a merkle path from \f to \root.
+ \item  $\root=\root^*$.
+ \item $g^*$ is the result of popping $(\f,\args)$ from $g$ and then pushing the $\instapp.\callnum$ elements
+ $(\instapp.\f_i,\args_i)$ for $i\in [\instapp.\callnum]$.
+\end{enumerate}
 
 
 \section{Non-interactive folding schemes}
@@ -969,7 +999,7 @@ where \[\inst^*\defeq  \gamma\cdot  \inst + (1-\gamma) \inst_1,\]
 
 
 \item the witness 
-$\witstar\defeq \gamma\cdot \wit +  \gamma\cdot \wit_1,$
+$\witstar\defeq \gamma\cdot \wit +  (1-\gamma)\cdot \wit_1,$
 \item and the proof $\prf\defeq (a,b)$.\\
 \end{itemize}
 \noindent
@@ -985,7 +1015,7 @@ $\witstar\defeq \gamma\cdot \wit +  \gamma\cdot \wit_1,$
 For the knowledge soundness analysis we'll use a variant of the Zero-Testing assumption from \cite{novarecursive}.
 
 \begin{dfn}\label{dfn:ZTA}
-Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$. Fix a family of functions \ztafuncs. 
+Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$. Fix the family of functions \ztafuncs. 
 We say the tuple $(D,x,\tau)$ is a \emph{degree $d$-relation for $(\ztafuncs,\hash,\cm)$} if
 \begin{enumerate}
  \item $D\in \ztafuncs$.
