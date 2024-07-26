@@ -884,8 +884,8 @@ Let $F$ denote the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as from Section \r
 
 Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
 \begin{itemize}
- \item $Z=(Z_F,\inchash,\incsum)$.
- \item $Z^*=(Z_F^*,\inchash^*,\incsum^*)$.
+ \item $Z=(Z_F,\inchash,\incsum,\beta,\gamma,\epsilon)$.
+ \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\beta^*\gamma^*,\epsilon^*)$.
  \item $W=(W_F,S_F,M)$
 \end{itemize}
 
@@ -893,7 +893,8 @@ Under this notation
 $F^*(Z,W,Z^*)=\acc$ if and only if
 \begin{enumerate}
 \item $F(Z_F,W_F,S_F,Z_F^*)=\acc$.
-\item $\incsum^*$
+\item $\incsum^*=\incsum+\sumi{M}\frac{\delta_i+\epsilon_i \eta_i}{v_i+\beta c_i + \gamma}$
+\item $\beta^*=\beta,\gamma^*=\gamma,\epsilon^*=\epsilon$.
 \item If $\init=\true$, $g$ contains exactly one element.
  \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
  \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
