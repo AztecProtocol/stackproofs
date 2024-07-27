@@ -895,14 +895,28 @@ $F^*(Z,W,Z^*)=\acc$ if and only if
 \item $F(Z_F,W_F,S_F,Z_F^*)=\acc$.
 \item $\incsum^*=\incsum+\sumi{M}\frac{\delta_i+\epsilon_i \eta_i}{v_i+\beta c_i + \gamma}$
 \item $\beta^*=\beta,\gamma^*=\gamma,\epsilon^*=\epsilon$.
-\item If $\init=\true$, $g$ contains exactly one element.
- \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
- \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
- \item \path is a merkle path from \f to \root.
- \item  $\root=\root^*$.
- \item $g^*$ is the result of popping $(\f,\args)$ from $g$ and then pushing the $\instapp.\callnum$ elements
- $(\instapp.\f_i,\args_i)$ for $i\in [\instapp.\callnum]$.
+\item $\inchash^*=\hash(\inchash,\cm(S_F,M))$
 \end{enumerate}
+
+$f^*(Z,V)=\acc$ if and only if
+\begin{enumerate}
+ \item $\incsum=\sum_{(v,c)\in V} \frac{1}{v+\beta c +\gamma}$
+ \item $\hash(\inchash,V)=(\beta,\gamma,\epsilon)$
+\end{enumerate}
+
+
+\begin{lemma}
+There is an efficiently computable and efficiently invertible map $\phi$ such that the following holds.
+Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
+Define $\zfin=(\empty,\root,\false)$. Let \tree be an execution tree of length $n$.
+
+Then  $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset),\phi(\tree))\in \rel_{F,\finpred}$.
+
+ 
+\end{lemma}
+
+
+
 
 
 \section{Non-interactive folding schemes}
