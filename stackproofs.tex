@@ -1020,7 +1020,7 @@ $\witstar\defeq \gamma\cdot \wit +  (1-\gamma)\cdot \wit_1,$
 \noindent
 \underline{$\ver_{PG}(\insttbase,\inst_1, \instt,\pi=(a,b)):$}\noindent
 \begin{enumerate}
- \item  Compute $\alpha,\beta,\delta,\gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
+ \item  Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
 
 \item  Check that $\instt$ is as computed in the prover algorithm. Output \acc iff this is the case. 
 \end{enumerate}
@@ -1083,29 +1083,29 @@ Define the polynomials
 \[G'(X)\defeq F_0(\alpha)X+ Z(X)K'(X)-\sum_{i\in [n]}\pow_i( \betaa^*) f_i(X\wit +(1-X)\wit_1)\]
 
 Since $((\inststar,\betaa^*,e^*),\witstar)\in \relrand$ and $\ver_{PG}(\insttbase,\inst',\instt,\prf)=\acc$,
-\[G'(\gamma) = F_0(\alpha)\gamma + Z(\gamma)K'(\gamma)- \sum_{i\in [n]} \pow_i(\betaa^*) f(\gamma\wit +(1-\gamma)\wit_1)=e^*-\sum_{i\in [n]} \pow_i(\betaa^*) f(\witstar)=e^*-e^*=0.\]
+\[G'(\gamma) = F_0(\alpha)\gamma + Z(\gamma)K'(\gamma)- \sum_{i\in [n]} \pow_i(\betaa^*) f_i(\gamma\wit +(1-\gamma)\wit_1)=e^*-\sum_{i\in [n]} \pow_i(\betaa^*) f_i(\witstar)=e^*-e^*=0.\]
 
 
 Set $x\defeq (\wit,\wit_1)$ and $\tau\defeq (\insttbase,\inst_1,\prf,\alpha,\delta)$.
-If $G\not\equiv 0$, \advprime outputs the degree $d'$-relation $(D_1,x,\tau)$,
+If $G'\not\equiv 0$, \advprime outputs the degree $d'$-relation $(D_1,x,\tau)$,
 where $D_1$ is the function that computes $G'(X)$ according to \perpg given $(x,\tau)$
 
-Assume now that $G\equiv 0$.
+Assume now that $G'\equiv 0$.
 
 If $(\inst_1,\wit_1)\notin \rel$, using $Z(0)=0$ we have 
 \[G'(0)= \sum_{i\in [n]}\pow_i( \betaa^*) f_i(\wit_1)=0\]
-Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+\alpha,\betaa_2 +\alpha X,\ldots,\betaa_t+\alpha X^{2^{t-1}})$.
-We have $A(\delta)=0$. But since $(\inst_1,\wit_1)\notin \rel$, $A$ is a combination of the $n$ linearly independent polynomials $\sett{\pow_i(\betaa_1+\alpha,\betaa_2 +\alpha X,\ldots,\betaa_t+\alpha X^{2^{t-1}})}{i\in [n]}$ with at least one non-zero coefficient, and so $A(X)\not\equiv 0$. Hence, setting $D_2$ to be the function that computes $A$ given $(x,\insttbase,\inst_1,\alpha)$, 
+Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+\alpha X,\betaa_2 +\alpha X^2,\ldots,\betaa_t+\alpha X^{2^{t-1}})$.
+We have $A(\delta)=0$. But since $(\inst_1,\wit_1)\notin \rel$, $A$ is a combination of the $n$ linearly independent polynomials $\sett{\pow_i(\betaa_1+\alpha X,\betaa_2 +\alpha X^2,\ldots,\betaa_t+\alpha X^{2^{t-1}})}{i\in [n]}$ with at least one non-zero coefficient, and so $A(X)\not\equiv 0$. Hence, setting $D_2$ to be the function that computes $A$ given $(x,\insttbase,\inst_1,\alpha)$, 
 \advprime can output the degree $n$ relation $(D_2,x,(\insttbase,\inst_1,\alpha))$.
 
 
 Now, assume that $(\insttbase,\wit)\notin \relrand$.
 As we're still assuming $G'\equiv 0$, we have 
-\[G'(1)=F_0(\alpha)-\sumi{n}\pow_i(\betaa^*) f_i(\witstar)=0,
+\[G'(1)=F_0(\alpha)-\sumi{n}\pow_i(\betaa^*) f_i(\wit)=0,
 \]
-But we also have $F'(\alpha)=G(1)$ and so $F'(\alpha)=0$.
+But we also have $F'(\alpha)=G'(1)$ and so $F'(\alpha)=0$.
 On the other hand
-\[F'(0)=e-\sumi{n}\pow_i(\betaa^*) f_i(\witstar)\neq 0\]
+\[F'(0)=e-\sumi{n}\pow_i(\betaa) f_i(\wit)\neq 0\]
 Setting $\tau=(\insttbase,\inst_1,\alpha,\delta)$ and $D_3$ to be the function that computes $F'$ given $x,\tau$ we
 have that $(D,x,\tau)$ is a degree $\log n$ relation that \advprime can output in this case.
 Setting $\ztafuncs=\set{D_1,D_2,D_3}$ we have proven knowledge soundness under the theorem assumptions.
