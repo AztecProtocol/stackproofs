@@ -533,6 +533,7 @@
 \newcommand{\false}{\ensuremath{\mathsf{false}}\xspace}
 \newcommand{\finstate}{\ensuremath{V}\xspace}
 \newcommand{\ops}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\op}{\ensuremath{\mathscr{o}}\xspace}
 \newcommand{\instapp}{\ensuremath{\mathfrak{x}}\xspace}
 \newcommand{\witapp}{\ensuremath{\mathfrak{w}}\xspace}
 \newcommand{\instnoops}{\ensuremath{\mathbf{x}}\xspace}
@@ -876,6 +877,26 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 \end{proof}
 
 \subsection{Removing the global state}
+\paragraph{Rational Identites:}
+\begin{claim}\label{clm:reducetologder}
+Let \recset be a set of records and \ops be a set of record operations.
+Then \ops has output \recset if and only if the following hold:
+\begin{enumerate}
+ \item \[\sumi{n}\frac{1}{X+vY+c}=\sum_{i:\op_i=\add}\frac{1}{X+v_iY+c}-\sum_{i:\op_i=\del}\frac{1}{X+v_iY+c}\]
+ \item For some $m\in \F^n$,   when defining $\delta_{i} =$
+ \begin{enumerate}
+  \item $m_i$ when $\op_i = \add$, 
+  \item $0$, when $\op_i =\del$,
+  \item $-1$, when $\op_i = \read$.
+ \end{enumerate}
+ we have
+ \[\sumi{n}\frac{\delta_i}{X+v_i Y +c_i}\]
+\end{enumerate}
+\end{claim}
+
+
+
+
 We reduce the relation $\rel_{F,f}$ from the last section to 
 $\rel_{F^*,f^*}$:
 
@@ -884,8 +905,8 @@ Let $F$ denote the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as from Section \r
 
 Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
 \begin{itemize}
- \item $Z=(Z_F,\inchash,\incsum,\beta,\gamma,\epsilon)$.
- \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\beta^*\gamma^*,\epsilon^*)$.
+ \item $Z=(Z_F,\inchash,\incsum,\alpha,\beta,\epsilon)$.
+ \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\epsilon^*)$.
  \item $W=(W_F,S_F,M)$
 \end{itemize}
 
@@ -893,25 +914,28 @@ Under this notation
 $F^*(Z,W,Z^*)=\acc$ if and only if
 \begin{enumerate}
 \item $F(Z_F,W_F,S_F,Z_F^*)=\acc$.
-\item $\incsum^*=\incsum+\sumi{M}\frac{\delta_i+\epsilon_i \eta_i}{v_i+\beta c_i + \gamma}$
+\item $\incsum^*=\incsum+\sumi{M}\frac{\delta_i+\epsilon_i \eta_i}{\alpha +\beta v_i+\ c_i}$
 \item $\beta^*=\beta,\gamma^*=\gamma,\epsilon^*=\epsilon$.
 \item $\inchash^*=\hash(\inchash,\cm(S_F,M))$
 \end{enumerate}
 
 $f^*(Z,V)=\acc$ if and only if
 \begin{enumerate}
- \item $\incsum=\sum_{(v,c)\in V} \frac{1}{v+\beta c +\gamma}$
- \item $\hash(\inchash,V)=(\beta,\gamma,\epsilon)$
+ \item $\incsum=\sum_{(v,c)\in V} \frac{1}{\alpha + \beta v+ c}$
+ \item $\hash(\inchash,V)=(\alpha,\beta,\epsilon)$
 \end{enumerate}
 
 
 \begin{lemma}
 There is an efficiently computable and efficiently invertible map $\phi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
-Define $\zfin=(\empty,\root,\false)$. Let \tree be an execution tree of length $n$.
-
-Then  $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset),\phi(\tree))\in \rel_{F,\finpred}$.
-
+Define $\zfin=(\empty,\root,\false)$. Assume the ZTA for the family of functions 
+Suppose efficient \adv outputs \wit such that $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ for some
+$\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\epsilon)$
+Then  $((\zfin,C,\recset),\phi(\tree))\in \rel_{F,\finpred}$  iff $((\zfin^*,C,\recset)$.
+Let \ztafuncs be a family of three functions to be defined in the proof.
+Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cmtwo,d')$
+Then e.w.p. \negl, $((\zfin,C,\recset),\phi(\wit))\in \rel_{F,f}$.
  
 \end{lemma}
 
