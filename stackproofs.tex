@@ -78,7 +78,9 @@
 \usepackage[titles,subfigure]{tocloft} % alter the style of the table of contents
 \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
 \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % no bold!
-
+\usepackage[scr=esstix]  % heavily sloped
+%             cal=esstix]   % slightly sloped
+           {mathalpha}
  %%% end article customizations
  
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,7 +271,9 @@
 \newcommand{\row}{\ensuremath{\mathsf{R}}\xspace}
 \newcommand{\col}{\ensuremath{\mathsf{C}}\xspace}
 \newcommand{\inp}{\ensuremath{\mathsf{x}}\xspace}
-\newcommand{\wit}{\ensuremath{\omega}\xspace}
+\newcommand{\wit}{\ensuremath{\mathsf{\omega}}\xspace}
+\newcommand{\inpF}{\ensuremath{\mathscr{x}}\xspace}
+\newcommand{\witF}{\ensuremath{\mathscr{w}}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
 \newcommand{\verpg}{\ensuremath{\ver_{PG}}\xspace}
 \newcommand{\per}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
@@ -510,7 +514,7 @@
 \newcommand{\coeff}[2]{\ensuremath{(#1)_{[#2]} }\xspace}
 \newcommand{\kzg}[1]{\ensuremath{\mathsf{KZG}_{#1,\subgroup}}\xspace}
 \newcommand{\accscheme}[2]{$(#1\mapsto #2)$-folding scheme\xspace}
-\newcommand{\accrel}{\ensuremath{\rel_{\mathrm{acc}}}\xspace}
+\newcommand{\accrel}{\ensuremath{\rel_{\mathpgoth{acc}}}\xspace}
 \newcommand{\relpair}{\ensuremath{\mathfrak{p}}\xspace}
 \newcommand{\inststar}{\ensuremath{\inst^*}\xspace}
 \newcommand{\witstar}{\ensuremath{\wit^*}\xspace}
@@ -520,7 +524,7 @@
 \newcommand{\roundnum}{\ensuremath{\mathpgoth{k}}\xspace}
 \newcommand{\manyvar}{\ensuremath{\mathfrak{J}}\xspace}
 \newcommand{\nmin}{\ensuremath{[n]_0}\xspace}
-\newcommand{\zfin}{\ensuremath{z_{\mathrm{final}}}\xspace}
+\newcommand{\zfin}{\ensuremath{z_{\mathscr{final}}}\xspace}
 \newcommand{\relapp}{\ensuremath{\rel_{app}}\xspace}
 \newcommand{\relexec}{\ensuremath{\rel_{\mathrm{exec}}}\xspace}
 \newcommand{\relF}{\ensuremath{\rel_{F}}\xspace}
@@ -533,7 +537,7 @@
 \newcommand{\false}{\ensuremath{\mathsf{false}}\xspace}
 \newcommand{\finstate}{\ensuremath{V}\xspace}
 \newcommand{\ops}{\ensuremath{\mathcal{O}}\xspace}
-\newcommand{\op}{\ensuremath{\mathscr{o}}\xspace}
+\newcommand{\op}{\ensuremath{\mathscr{op}}\xspace}
 \newcommand{\instapp}{\ensuremath{\mathfrak{x}}\xspace}
 \newcommand{\witapp}{\ensuremath{\mathfrak{w}}\xspace}
 \newcommand{\instnoops}{\ensuremath{\mathbf{x}}\xspace}
@@ -541,11 +545,11 @@
 \renewcommand{\root}{\ensuremath{\mathbf{r}}\xspace}
 \newcommand{\cmtwo}{\ensuremath{\cm^{\oplus{2}}}\xspace}
 \newcommand{\predinst}{\ensuremath{\mathpgoth{f}}\xspace}
-\renewcommand{\empty}{\ensuremath{g_{\mathrm{empty}}}\xspace}
+\renewcommand{\empty}{\ensuremath{g_{\mathscr{empty}}}\xspace}
 \newcommand{\funcs}{\ensuremath{\mathrm{F}}\xspace}
 \newcommand{\ztafuncs}{\ensuremath{\mathcal{D}}\xspace}
-\newcommand{\instF}{\ensuremath{\mathrm{x}}\xspace}
-\newcommand{\witF}{\ensuremath{\mathrm{w}}\xspace}
+% \newcommand{\instF}{\ensuremath{\mathrm{x}}\xspace}
+% \newcommand{\witF}{\ensuremath{\mathrm{w}}\xspace}
 \newcommand{\instexec}{\ensuremath{\mathrm{x_{exec}}}\xspace}
 \newcommand{\witexec}{\ensuremath{\mathrm{w_{exec}}}\xspace}
 \newcommand{\witf}{\ensuremath{\mathsf{w_f}}\xspace}
@@ -556,8 +560,8 @@
 \newcommand{\recset}{\ensuremath{\mathsf{V}}\xspace}
 \newcommand{\tree}{\ensuremath{\mathsf{T}}\xspace}
 \newcommand{\node}{\ensuremath{\mathsf{n}}\xspace}
-\newcommand{\incsum}{\ensuremath{\mathrm{sum}}\xspace}
-\newcommand{\inchash}{\ensuremath{\mathrm{h}}\xspace}
+\newcommand{\incsum}{\ensuremath{\text{\calligra{s}}}\xspace}
+\newcommand{\inchash}{\ensuremath{\mathscr{h}}\xspace}
 \newcommand{\finpred}{\ensuremath{\mathsf{f}}\xspace}
 \newcommand{\zksnark}{zk-SNARK\;}
 \begin{document}
@@ -796,8 +800,8 @@ We informally think of
 Let $D_1,D_2$ be the domains of $S,\recset$ respectively. \finpred is a function
 $\finpred:D_1^*\times D_2 \to \set{\acc,\rej}$ called the \emph{final predicate}.
 
-The relation $\rel=\rel_{F,\finpred}$ consists of pairs $(\inp,\wit)$ such that
-$\inp=(\zfin,C,\recset),\wit=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
+The relation $\rel=\rel_{F,\finpred}$ consists of pairs $(\inpF,\witF)$ such that
+$\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
 \begin{itemize}
  \item $z_0.\init = \true$.
  \item $z_n=\zfin$.
@@ -879,10 +883,10 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 \subsection{Removing the global state}
 \paragraph{Rational Identites:}
 \begin{claim}\label{clm:reducetologder}
-Let \recset be a set of records and \ops be a set of record operations.
+Let \recset be a set of records and $\ops=\sett{(\op_i,v_i,c_i)}{i\in [n]}$ be a set of record operations.
 Then \ops has output \recset if and only if the following hold:
 \begin{enumerate}
- \item \[\sumi{n}\frac{1}{X+vY+c}=\sum_{i:\op_i=\add}\frac{1}{X+v_iY+c}-\sum_{i:\op_i=\del}\frac{1}{X+v_iY+c}\]
+ \item As rational functions \[\sumi{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n]:\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   :\op_i=\del}\frac{1}{X+v_iY+c}.\]
  \item For some $m\in \F^n$,   when defining $\delta_{i} =$
  \begin{enumerate}
   \item $m_i$ when $\op_i = \add$, 
@@ -890,7 +894,7 @@ Then \ops has output \recset if and only if the following hold:
   \item $-1$, when $\op_i = \read$.
  \end{enumerate}
  we have
- \[\sumi{n}\frac{\delta_i}{X+v_i Y +c_i}\]
+ \[\sumi{n}\frac{\delta_i}{X+v_i Y +c_i}=0.\]
 \end{enumerate}
 \end{claim}
 
