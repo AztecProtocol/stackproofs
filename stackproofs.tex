@@ -811,12 +811,12 @@ $\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\l
 \end{itemize}
 
 
-we say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming access
+We say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming access
 to $z$ and $w$ \prv requires space $O(|F|+|s|+\log n)$.
 
 
-\subsection{Valid executions as RCG}\label{sec:exec->RFC}
-We now reduce valid executions as defined in Section \ref{sec:validexec} to RCG's.
+\subsection{Valid executions as RCGs}\label{sec:exec->RFC}
+We show how to represent checking valid executions as defined in Section \ref{sec:validexec} via RCGs.
 
 Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
 \begin{itemize}
@@ -883,20 +883,42 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 \subsection{Removing the global state}
 \paragraph{Rational Identites:}
 \begin{claim}\label{clm:reducetologder}
+Assume $|\F|$ has characteristic larger than $n$.
 Let \recset be a set of records and $\ops=\sett{(\op_i,v_i,c_i)}{i\in [n]}$ be a set of record operations.
 Then \ops has output \recset if and only if the following hold:
 \begin{enumerate}
- \item As rational functions \[\sumi{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n]:\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   :\op_i=\del}\frac{1}{X+v_iY+c}.\]
+ \item As rational functions \[\sumi{n}\frac{1}{X+c_i}=\sumi{n}\frac{1}{X+i}.\]
+ \item As rational functions \[\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   , \op_i=\del}\frac{1}{X+v_iY+c}.\]
  \item For some $m\in \F^n$,   when defining $\delta_{i} =$
  \begin{enumerate}
-  \item $m_i$ when $\op_i = \add$, 
-  \item $0$, when $\op_i =\del$,
-  \item $-1$, when $\op_i = \read$.
+  \item $m_i$ - when $\op_i = \add$, 
+  \item $0$ - when $\op_i =\del$,
+  \item $-1$ - when $\op_i = \read$,
  \end{enumerate}
  we have
  \[\sumi{n}\frac{\delta_i}{X+v_i Y +c_i}=0.\]
 \end{enumerate}
 \end{claim}
+\begin{proof}
+
+We focus on the only if direction. That is, if \ops doesn't have output \recset one of  the identites in the three items should not hold.
+ Let $M_{v,c}\defeq \frac{1}{X+vY+c}$. The main fact we use is that the rational functions $\sett{M_{v,c}}{v,c\in \F}$ are linearly independent.
+ Thus an identity involving linear combinations of them implies all coefficients of the combination are equal.
+ The event of \ops not having output \recset means one of the following occurs.
+ \begin{enumerate}
+  \item  The multi-set of counters $\sett{c_i}{i\in [n]}$ doesn't equal \set{1,\ldots,n}. Then either
+ for some $i\in [n]$ $c_i\notin [n]$. In which case, the coefficient of $M_{0,c_i}$ will be zero on the RHS of the first item, but non-zero on the LHS. Or some $c\in [n]$ appears more than once as a counter in \ops. In which case the coefficient of $M_{0,c}$ will be larger than one on the RHS of item one, but one on the LHS.
+ 
+ \item Me
+ In particular, $(\add,v,c)$ or $(\del,v,c)$ for a given $v,c$ can appear at most once in \ops.
+The second item tells us the elements $(v,c)$ for which $(\add,v,c)\in \ops$ but $(\del,v,c)\notin \ops$ are precisely the elements of \recset.
+If $(\read,v,c)\in \ops$ but $(\del,v,c)$
+Third identity tells us that any element read was indeed added.
+ \end{enumerate}
+\end{proof}
+
+
+
 
 
 
@@ -918,14 +940,14 @@ Under this notation
 $F^*(Z,W,Z^*)=\acc$ if and only if
 \begin{enumerate}
 \item $F(Z_F,W_F,S_F,Z_F^*)=\acc$.
-\item $\incsum^*=\incsum+\sumi{M}\frac{\delta_i+\epsilon_i \eta_i}{\alpha +\beta v_i+\ c_i}$
-\item $\beta^*=\beta,\gamma^*=\gamma,\epsilon^*=\epsilon$.
+\item $\incsum^*=\incsum+\sumi{M}\frac{\delta_i+\epsilon \eta_i}{\alpha +\beta v_i+\ c_i}+ \frac{\epsilon^2}{\alpha+c_i}$
+\item $\alpha^*=\alpha, \beta^*=\beta,\epsilon^*=\epsilon$.
 \item $\inchash^*=\hash(\inchash,\cm(S_F,M))$
 \end{enumerate}
 
-$f^*(Z,V)=\acc$ if and only if
+$\finpred^*(Z,V)=\acc$ if and only if
 \begin{enumerate}
- \item $\incsum=\sum_{(v,c)\in V} \frac{1}{\alpha + \beta v+ c}$
+ \item $\incsum=\sum_{(v,c)\in V} \frac{1}{\alpha + \beta v+ c}+\sumi{n}\frac{1}{\alpha+c_i}$
  \item $\hash(\inchash,V)=(\alpha,\beta,\epsilon)$
 \end{enumerate}
 
@@ -936,12 +958,23 @@ Let \funcs be a set of function commitments with Merkle root \root. Fix positive
 Define $\zfin=(\empty,\root,\false)$. Assume the ZTA for the family of functions 
 Suppose efficient \adv outputs \wit such that $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ for some
 $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\epsilon)$
-Then  $((\zfin,C,\recset),\phi(\tree))\in \rel_{F,\finpred}$  iff $((\zfin^*,C,\recset)$.
-Let \ztafuncs be a family of three functions to be defined in the proof.
-Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cmtwo,d')$
-Then e.w.p. \negl, $((\zfin,C,\recset),\phi(\wit))\in \rel_{F,f}$.
+Let \ztafuncs be the appropriate family of functions to be defined in the proof.
+Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cm,n)$
+Then e.w.p. \negl, $((\zfin,C,\recset),\phi(\wit))\in \rel_{F,\finpred}$.
  
 \end{lemma}
+\begin{proof}
+Given a witness $z'=(z'_0,\ldots,z'_n),w'=(w'_1,\ldots,w'_n)$ output by \adv, denote
+$z'_i=(z_{i},\inchash_i,\incsum_i,\alpha_i,\beta_i,\epsilon_i), w'=(w_{i},S_{i},M_i)$.
+Define $\witF=(z_{0},\ldots,z_{n}),(w_{1},\ldots,w_{n}),(s_{1},\ldots,s_{n})$ with 
+We know \witF satisfies the transition constraints, namely for 
+each $i\in [n]$, $F(z_{i-1},w_{i},s_i,z_i)=\acc$.
+We know that $n\leq C$
+It is left to show that e.w.p. \negl $\finpred(\zfin^*,\recset)=\acc$.
+Sketch:
+From $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ we know the equations from Claim \ref{clm:reducetologder} hold
+at $\alpha,\beta,\epsilon$. If they don't hold identically for \witF can contradict ZTA.
+\end{proof}
 
 
 
