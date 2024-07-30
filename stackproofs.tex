@@ -275,6 +275,10 @@
 \newcommand{\eps}{\ensuremath{\epsilon}\xspace}
 \newcommand{\inpF}{\ensuremath{\mathscr{x}}\xspace}
 \newcommand{\witF}{\ensuremath{\mathscr{w}}\xspace}
+\newcommand{\instFprime}{\ensuremath{\mathpgoth{x}}\xspace}
+\newcommand{\witFprime}{\ensuremath{\mathpgoth{w}}\xspace}
+\newcommand{\acchash}{\ensuremath{\mathpgoth{h}}\xspace}
+\newcommand{\cnt}{\ensuremath{\mathsf{count}}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
 \newcommand{\verpg}{\ensuremath{\ver_{PG}}\xspace}
 \newcommand{\per}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
@@ -1207,21 +1211,23 @@ $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue 
 until reaching one where no element corresponds to $a\in \G$.
 
 
-\section{Transforming $F$ into $F'$}
-\paragraph{Describing $F^*$}
-**public input:**
-$z$ - output for $F$
-$G$ - global state for $F$
-$count$ - counter of IVC step
-$h$ - supposed hash of accumulator
-**private input:**
-$acc$ - current accumulator instance
-$acc_{prev}$ - previous accumulator instance
-$inst$ - instance (of $F'$) to be accumulated.
-$w$ - private input for $F$
-$\pi$ - proof for protogalaxy verifier
+\section{Extending the transition function to include the folding constraints}\label{sec:FtoFprime}
 
-Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
+% As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the \protogal verifier.
+% \subsection{Describing $F'$}
+% $\instFprime=(z,\cnt,\acchash)$
+% $z$ - output for $F$
+% $\cnt$ - counter of IVC step
+% \acchash - supposed hash of accumulator
+% **private input:**
+% $\witFprime=(\instt,\insttbase,\inst,\witF,\prf)$
+% $\instt$ - current accumulator instance
+% $\instbase$ - previous accumulator instance
+% $\inst$ - instance (of $F'$) to be accumulated.
+% $\witF$ - private input for $F$
+% $\prf$ - proof for protogalaxy verifier
+% 
+% Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
 
 $F'(X,W)=\mathrm{accept}$ if and only if:
 \begin{enumerate}
