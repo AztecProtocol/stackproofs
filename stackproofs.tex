@@ -1153,10 +1153,18 @@ Assume now that $G'\equiv 0$.
 
 If $(\inst_1,\wit_1)\notin \rel$, using $Z(0)=0$ we have 
 \[G'(0)= \sum_{i\in [n]}\pow_i( \betaa^*) f_i(\wit_1)=0\]
-Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+\alpha X,\betaa_2 +\alpha X^2,\ldots,\betaa_t+\alpha X^{2^{t-1}})$.
-We have $A(\delta)=0$. But since $(\inst_1,\wit_1)\notin \rel$, $A$ is a combination of the $n$ linearly independent polynomials $\sett{\pow_i(\betaa_1+\alpha X,\betaa_2 +\alpha X^2,\ldots,\betaa_t+\alpha X^{2^{t-1}})}{i\in [n]}$ with at least one non-zero coefficient, and so $A(X)\not\equiv 0$. Hence, setting $D_2$ to be the function that computes $A$ given $(x,\insttbase,\inst_1,\alpha)$, 
-\advprime can output the degree $n$ relation $(D_2,x,(\insttbase,\inst_1,\alpha))$.
+Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+ X\delta ,\betaa_2 +X\delta ^2,\ldots,\betaa_t+X \delta^{2^{t-1}})$.
+We have $A(\alpha)=0$. Suppose first that $A(X)\not\equiv 0$.  Then setting $D_2$ to be the function that computes $A$ given $(x,\tau=(\insttbase,\inst_1,\delta,a))$, 
+\advprime can output the degree $n$ relation $(D_2,x,\tau)$. Now assume $A(X)\equiv 0$.
+Define the polynomial 
+\[B(X,Y)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+ XY ,\betaa_2 +XY^2,\ldots,\betaa_t+X Y^{2^{t-1}})\]
+We have that $B(X,\delta)\equiv 0$. 
+Write $B(X,Y)$ as a polynomial in $X$ over $\F[Y]$:
+\[B(X)=\sum_{i=0}^n C_i(Y)X^i\]
+From the independence of the polynomials \sett{\pow_i(\betaa_1+ XY ,\betaa_2 +XY^2,\ldots,\betaa_t+X Y^{2^{t-1}})}{i\in [n]}, we know that $B(X,Y)\not\equiv 0$ (cause we're in the case $(\inst_1,\wit_1)\notin \rel$) which means that one of the polynomials $C_i$ is non-zero. But $C_i(\delta)=0$.
+We can use this to define a degree $n$-relation involving a function $D_4$ that outputs $C_i$.
 
+But since $(\inst_1,\wit_1)\notin \rel$, $A$ is a combination of the $n$ linearly independent polynomials $\sett{\pow_i(\betaa_1+ X\delta ,\betaa_2 +X\delta ^2,\ldots,\betaa_t+X \delta^{2^{t-1}}))}{i\in [n]}$ with at least one non-zero coefficient, and so $A(X)\not\equiv 0$. 
 
 Now, assume that $(\insttbase,\wit)\notin \relrand$.
 As we're still assuming $G'\equiv 0$, we have 
