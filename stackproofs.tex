@@ -272,6 +272,7 @@
 \newcommand{\col}{\ensuremath{\mathsf{C}}\xspace}
 \newcommand{\inp}{\ensuremath{\mathsf{x}}\xspace}
 \newcommand{\wit}{\ensuremath{\mathsf{\omega}}\xspace}
+\newcommand{\eps}{\ensuremath{\epsilon}\xspace}
 \newcommand{\inpF}{\ensuremath{\mathscr{x}}\xspace}
 \newcommand{\witF}{\ensuremath{\mathscr{w}}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
@@ -826,7 +827,7 @@ Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
  \item $S$ is a set of record operations.
 \end{itemize}
 
-Under this notation
+\indent Under this notation
 $F(Z,W,Z^*,S)=\acc$ if and only if
 \begin{enumerate}
 \item If $\init=\true$, $g$ contains exactly one element.
@@ -889,11 +890,11 @@ Assume $\F$ has characteristic larger than $n+1$.
 Let \recset be a set of records and $\ops=\sett{(\op_i,v_i,vc_i,c_i)}{i\in [n]}$ be a set of record operations (defining $vc_i=0$ when $\op_i=\add$).
 Then \ops has output \recset if and only if the following rational function identities hold:
 \begin{enumerate}
- \item \[\sumi{n}\frac{1}{X+c_i}=\sumi{n}\frac{1}{X+i}.\]
  \item \[\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   , \op_i=\del}\frac{1}{X+v_iY+vc_i}.\]
  \item For some $m\in \F^n$,
  we have
  \[\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}=\sum_{i\in [n]   , \op_i=\read}\frac{1}{X+v_iY+vc_i}.\]
+ \item \[\sumi{n}\frac{1}{X+c_i}=\sumi{n}\frac{1}{X+i}.\]
 \end{enumerate}
 \end{claim}
 \begin{proof}
@@ -903,12 +904,12 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
  Thus, $\sum_{v,c} a_{v,c} M_{v,c} = \sum b_{v,c} M_{v,c}$ implies $a_{v,c}=b_{v,c}$ for each $(v,c)\in \F^2$.
  The event of \ops not having output \recset means one of the following occurs.
  \begin{enumerate}
-  \item  The multi-set of counters $\sett{c_i}{i\in [n]}$ doesn't equal \set{1,\ldots,n}. In this case, the LHS of the first identity will not have all one coefficients for the elements \sett{M_{0,c}}{i\in [n]} and so cannot equal the RHS.
+  \item  The multi-set of counters $\sett{c_i}{i\in [n]}$ doesn't equal \set{1,\ldots,n}. In this case, the LHS of the third identity will not have all one coefficients for the elements \sett{M_{0,c}}{i\in [n]} and so cannot equal the RHS.
   
   Note that when we are not in this case the counter in \ops are all distinct, which we assume for the next cases.
- \item For some $v,vc,c$, $(\del,v,vc,c)\in \ops$ but $(\add,v,vc)\notin \ops$; or for some $v,vc,c_1\neq c_2$, $(\del,v,vc,c_1),(\del,v,vc,c_2)\in \ops$: In the second identity RHS, we will have $M_{v,vc}$ with coefficient in the range  $\set{-1,\ldots,-n}$, while in the LHS it has coefficient one or zero.
- \item \recset is \emph{not} equal to the set $\recset'$ of $(v,c)$ for which $(\add,v,c)\in \ops$ but $(\del,v,c)\notin \ops$. We look at the second identity. $\recset'$ is precisely the set of $(v,c)$ with coefficient one on the RHS, while \recset is the set of $(v,c)$ with coefficient one on the LHS. Hence the second identity cannot hold in this case.
-\item For some $v,vc,c$, $(\read,v,vc,c)\in \ops$ but $(\add,v,vc)\notin \ops$: In the third identity RHS $M_{v,c}$ will have a coefficient in the range $\set{1,\ldots,n}$ while in the LHS it has coefficient zero.
+ \item For some $v,vc,c$, $(\del,v,vc,c)\in \ops$ but $(\add,v,vc)\notin \ops$; or for some $v,vc,c_1\neq c_2$, $(\del,v,vc,c_1),(\del,v,vc,c_2)\in \ops$: In the first identity RHS, we will have $M_{v,vc}$ with coefficient in the range  $\set{-1,\ldots,-n}$, while in the LHS it has coefficient one or zero.
+ \item \recset is \emph{not} equal to the set $\recset'$ of $(v,c)$ for which $(\add,v,c)\in \ops$ but $(\del,v,c)\notin \ops$. We look at the first identity. $\recset'$ is precisely the set of $(v,c)$ with coefficient one on the RHS, while \recset is the set of $(v,c)$ with coefficient one on the LHS. Hence the second identity cannot hold in this case.
+\item For some $v,vc,c$, $(\read,v,vc,c)\in \ops$ but $(\add,v,vc)\notin \ops$: In the second identity RHS $M_{v,c}$ will have a coefficient in the range $\set{1,\ldots,n}$ while in the LHS it has coefficient zero.
  \end{enumerate}
 \end{proof}
 
@@ -930,42 +931,45 @@ Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
  \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\epsilon^*)$.
  \item $W=(W_F,S_F,M)$
 \end{itemize}
-
+\noindent
 Under this notation
 $F^*(Z,W,Z^*)=\acc$ if and only if
 \begin{enumerate}
 \item $F(Z_F,W_F,S_F,Z_F^*)=\acc$.
-\item $\incsum^*=\incsum+\sumi{M}\frac{\delta_i+\epsilon \eta_i}{\alpha +\beta v_i+\ c_i}+ \frac{\epsilon^2}{\alpha+c_i}$
+
+\item Let $S_F=\sett{(\op_i,v_i,vc_i,c_i)}{i\in [m]}$. 
+We have $\incsum^*=\incsum+$
+\[\sum_{i\in [m];\op_i = \add}\frac{1+ \eps m_i}{\alpha +\beta v_i+\ c_i}-\sum_{i\in [m];\op_i = \read}\frac{ \eps }{\alpha +\beta v_i+vc_i}-\sum_{i\in [m];\op_i = \del}\frac{ 1 }{\alpha +\beta v_i+ vc_i}+ \sumi{m}\frac{\epsilon^2}{\alpha+c_i}.\]
 \item $\alpha^*=\alpha, \beta^*=\beta,\epsilon^*=\epsilon$.
-\item $\inchash^*=\hash(\inchash,\cm(S_F,M))$
+\item $\inchash^*=\hash(\inchash,\cm(S_F,M))$ \\
 \end{enumerate}
 
-$\finpred^*(Z,V)=\acc$ if and only if
+\noindent $\finpred^*(Z,\recset)=\acc$ if and only if
 \begin{enumerate}
- \item $\incsum=\sum_{(v,c)\in V} \frac{1}{\alpha + \beta v+ c}+\sumi{n}\frac{1}{\alpha+c_i}$
- \item $\hash(\inchash,V)=(\alpha,\beta,\epsilon)$
+ \item $\incsum=\sum_{(v,c)\in \recset} \frac{1}{\alpha + \beta v+ c}+\sumi{n}\frac{\epsilon^2}{\alpha+c_i}$
+ \item $\hash(\inchash,\recset)=(\alpha,\beta,\epsilon)$
 \end{enumerate}
 
 
 \begin{lemma}
-There is an efficiently computable and efficiently invertible map $\phi$ such that the following holds.
+There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
-Define $\zfin=(\empty,\root,\false)$. Assume the ZTA for the family of functions 
-Suppose efficient \adv outputs \wit such that $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ for some
-$\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\epsilon)$
+Fix some $\alpha,\beta,\epsilon\in \F$ and set of records \recset.
+Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\epsilon)$ and set $\inst\defeq (\zfin^*,C,\recset)$. Assume the ZTA for the appropriate family of functions appearing in the proof. 
+Suppose efficient \adv outputs \wit such that $(\inst,\wit)\in \rel_{F^*,\finpred^*}$.
+
 Let \ztafuncs be the appropriate family of functions to be defined in the proof.
 Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cm,n)$
-Then e.w.p. \negl, $((\zfin,C,\recset),\phi(\wit))\in \rel_{F,\finpred}$.
+Then e.w.p. \negl, $((\zfin,C,\recset),\varphi(\wit))\in \rel_{F,\finpred}$.
  
 \end{lemma}
 \begin{proof}
-Given a witness $z'=(z'_0,\ldots,z'_n),w'=(w'_1,\ldots,w'_n)$ output by \adv, denote
-$z'_i=(z_{i},\inchash_i,\incsum_i,\alpha_i,\beta_i,\epsilon_i), w'=(w_{i},S_{i},M_i)$.
-Define $\witF=(z_{0},\ldots,z_{n}),(w_{1},\ldots,w_{n}),(s_{1},\ldots,s_{n})$ with 
-We know \witF satisfies the transition constraints, namely for 
-each $i\in [n]$, $F(z_{i-1},w_{i},s_i,z_i)=\acc$.
-We know that $n\leq C$
-It is left to show that e.w.p. \negl $\finpred(\zfin^*,\recset)=\acc$.
+Given a witness $\wit=(z',w')$ with $z'=(z'_0,\ldots,z'_n),w'=(w'_1,\ldots,w'_n)$ output by \adv, denote
+$z'_i=(z_{i},\inchash_i,\incsum_i,\alpha_i,\beta_i,\epsilon_i), w'=(w_{i},s_{i},M_i)$.
+Define $\witF=\varphi(\wit)$ as $\witF\defeq (z_{0},\ldots,z_{n}),(w_{1},\ldots,w_{n}),(s_{1},\ldots,s_{n})$.
+From $(\inst,\wit)\in \rel_{F^*,\finpred^*}$,  we know \witF satisfies the transition constraints, namely for $i\in [n]$,
+$F(z_{i-1},w_i,s_i,z_i)=\acc$. We also know that $n\leq C$.
+It is left to show that e.w.p. \negl $\finpred(\zfin,\recset)=\acc$.
 Sketch:
 From $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ we know the equations from Claim \ref{clm:reducetologder} hold
 at $\alpha,\beta,\epsilon$. If they don't hold identically for \witF can contradict ZTA.
