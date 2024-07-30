@@ -881,39 +881,34 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 \end{proof}
 
 \subsection{Removing the global state}
-\paragraph{Rational Identites:}
+
+\paragraph{Rational Identities:}
+Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identites.
 \begin{claim}\label{clm:reducetologder}
-Assume $|\F|$ has characteristic larger than $n$.
-Let \recset be a set of records and $\ops=\sett{(\op_i,v_i,c_i)}{i\in [n]}$ be a set of record operations.
-Then \ops has output \recset if and only if the following hold:
+Assume $\F$ has characteristic larger than $n+1$.
+Let \recset be a set of records and $\ops=\sett{(\op_i,v_i,vc_i,c_i)}{i\in [n]}$ be a set of record operations (defining $vc_i=0$ when $\op_i=\add$).
+Then \ops has output \recset if and only if the following rational function identities hold:
 \begin{enumerate}
- \item As rational functions \[\sumi{n}\frac{1}{X+c_i}=\sumi{n}\frac{1}{X+i}.\]
- \item As rational functions \[\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   , \op_i=\del}\frac{1}{X+v_iY+c}.\]
- \item For some $m\in \F^n$,   when defining $\delta_{i} =$
- \begin{enumerate}
-  \item $m_i$ - when $\op_i = \add$, 
-  \item $0$ - when $\op_i =\del$,
-  \item $-1$ - when $\op_i = \read$,
- \end{enumerate}
+ \item \[\sumi{n}\frac{1}{X+c_i}=\sumi{n}\frac{1}{X+i}.\]
+ \item \[\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   , \op_i=\del}\frac{1}{X+v_iY+vc_i}.\]
+ \item For some $m\in \F^n$,
  we have
- \[\sumi{n}\frac{\delta_i}{X+v_i Y +c_i}=0.\]
+ \[\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}=\sum_{i\in [n]   , \op_i=\read}\frac{1}{X+v_iY+vc_i}.\]
 \end{enumerate}
 \end{claim}
 \begin{proof}
 
-We focus on the only if direction. That is, if \ops doesn't have output \recset one of  the identites in the three items should not hold.
- Let $M_{v,c}\defeq \frac{1}{X+vY+c}$. The main fact we use is that the rational functions $\sett{M_{v,c}}{v,c\in \F}$ are linearly independent.
- Thus an identity involving linear combinations of them implies all coefficients of the combination are equal.
+We focus on the only if direction. That is, if \ops doesn't have output \recset one of  the three identities should not hold.
+ Let $M_{v,c}\defeq \frac{1}{X+vY+c}$. The main fact we use is that the rational functions $\sett{M_{v,c}}{(v,c)\in \F^2}$ are linearly independent.
+ Thus, $\sum_{v,c} a_{v,c} M_{v,c} = \sum b_{v,c} M_{v,c}$ implies $a_{v,c}=b_{v,c}$ for each $(v,c)\in \F^2$.
  The event of \ops not having output \recset means one of the following occurs.
  \begin{enumerate}
-  \item  The multi-set of counters $\sett{c_i}{i\in [n]}$ doesn't equal \set{1,\ldots,n}. Then either
- for some $i\in [n]$ $c_i\notin [n]$. In which case, the coefficient of $M_{0,c_i}$ will be zero on the RHS of the first item, but non-zero on the LHS. Or some $c\in [n]$ appears more than once as a counter in \ops. In which case the coefficient of $M_{0,c}$ will be larger than one on the RHS of item one, but one on the LHS.
- 
- \item Me
- In particular, $(\add,v,c)$ or $(\del,v,c)$ for a given $v,c$ can appear at most once in \ops.
-The second item tells us the elements $(v,c)$ for which $(\add,v,c)\in \ops$ but $(\del,v,c)\notin \ops$ are precisely the elements of \recset.
-If $(\read,v,c)\in \ops$ but $(\del,v,c)$
-Third identity tells us that any element read was indeed added.
+  \item  The multi-set of counters $\sett{c_i}{i\in [n]}$ doesn't equal \set{1,\ldots,n}. In this case, the LHS of the first identity will not have all one coefficients for the elements \sett{M_{0,c}}{i\in [n]} and so cannot equal the RHS.
+  
+  Note that when we are not in this case the counter in \ops are all distinct, which we assume for the next cases.
+ \item For some $v,vc,c$, $(\del,v,vc,c)\in \ops$ but $(\add,v,vc)\notin \ops$; or for some $v,vc,c_1\neq c_2$, $(\del,v,vc,c_1),(\del,v,vc,c_2)\in \ops$: In the second identity RHS, we will have $M_{v,vc}$ with coefficient in the range  $\set{-1,\ldots,-n}$, while in the LHS it has coefficient one or zero.
+ \item \recset is \emph{not} equal to the set $\recset'$ of $(v,c)$ for which $(\add,v,c)\in \ops$ but $(\del,v,c)\notin \ops$. We look at the second identity. $\recset'$ is precisely the set of $(v,c)$ with coefficient one on the RHS, while \recset is the set of $(v,c)$ with coefficient one on the LHS. Hence the second identity cannot hold in this case.
+\item For some $v,vc,c$, $(\read,v,vc,c)\in \ops$ but $(\add,v,vc)\notin \ops$: In the third identity RHS $M_{v,c}$ will have a coefficient in the range $\set{1,\ldots,n}$ while in the LHS it has coefficient zero.
  \end{enumerate}
 \end{proof}
 
@@ -993,8 +988,7 @@ such that
  \item \ver on input $(\insttbase,\inst',\instt,\prf)$ outputs \acc or \rej such that
 %  \item \ver receives as $\inst,\inst'$ as inputs and outputs \acc or \rej at then end.
 \begin{enumerate}
- \item \textbf{Completeness:} If $(\insttbase,\wit)\in \accrel, (\inst',\wit')\in \rel$, and $\prv(\insttbase,\inst';\wit,\wit')=(\prf,\instt,\witstar)
-  $ then with probability one $(\instt,\witstar)\in \accrel$ and $\ver(\insttbase,\inst',\instt,\prf)=\acc$.
+ \item \textbf{Completeness:} If $(\insttbase,\wit)\in \accrel, (\inst',\wit')\in \rel$, and $\prv(\insttbase,\inst';\wit,\wit')=(\prf,\instt,\witstar)$ then with probability $1-\negl$,  $(\instt,\witstar)\in \accrel$ and $\ver(\insttbase,\inst',\instt,\prf)=\acc$.
 \item \textbf{Knowledge soundness in the Algebraic Group Model:}
 
 For any efficient \adv the probability of the following event is \negl:
