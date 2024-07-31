@@ -17,7 +17,7 @@
 \usepackage{authblk}
 \usepackage[utf8]{inputenc} % set input encoding (not needed with xelatex)
 \usepackage[strict]{changepage}
-\usepackage{bold-extra}    
+\usepackage{bold-extra}
     %%% examples of article customizations
     % these packages are optional, depending whether you want the features they provide.
     % see the latex companion or other references for full information.
@@ -544,7 +544,6 @@
 \newcommand{\instnoops}{\ensuremath{\mathbf{x}}\xspace}
  \renewcommand{\path}{\ensuremath{\mathbf{p}}\xspace}
 \renewcommand{\root}{\ensuremath{\mathbf{r}}\xspace}
-\newcommand{\cmtwo}{\ensuremath{\cm^{\oplus{2}}}\xspace}
 \newcommand{\predinst}{\ensuremath{\mathpgoth{f}}\xspace}
 \renewcommand{\empty}{\ensuremath{g_{\mathscr{empty}}}\xspace}
 \newcommand{\funcs}{\ensuremath{\mathrm{F}}\xspace}
@@ -602,7 +601,7 @@ For this purpose, a contract is deployed by
 \begin{enumerate}
 \item  Computing a verification key for each function of the contract.
 \item Adding a commitment to the verification keys of the contract in a global ``function tree''. More accurately, a leaf of this tree is a hash of the
-contract address with a merkle root of a tree whose leaves are the verification keys of that contract's functions.
+contract address with a Merkle root of a tree whose leaves are the verification keys of that contract's functions.
 
 \end{enumerate}
 
@@ -637,7 +636,7 @@ sequence of transitions ending in a desired final state.
 
 \end{itemize}
  One could ask, why not \emph{only} have a final predicate that includes the transition checks? 
-The point is that in our usecase the final predicate is applied to small parts of each iteration's witness - namely the note operations. As a result, the decomposition into a transition and final predicate can facilitate obtaining better prover efficiency, especially in terms of prover space.
+The point is that in our use case the final predicate is applied to small parts of each iteration's witness - namely the note operations. As a result, the decomposition into a transition and final predicate can facilitate obtaining better prover efficiency, especially in terms of prover space.
 Roughly, we'll require space sufficient for storing the inputs to the final predicate, in addition to the space required to prove a single transition.
 
 \subsection{Related work}
@@ -821,19 +820,19 @@ We show how to represent checking valid executions as defined in Section \ref{se
 
 Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
 \begin{itemize}
- \item $Z=(g,\root,\init)$ where $g$ is a stack of elements of the form $(\f,\args)$, \root is a root of a merkle tree, and \init a boolean.
+ \item $Z=(g,\root,\init)$ where $g$ is a stack of elements of the form $(\f,\args)$, \root is a root of a Merkle tree, and \init a boolean.
  \item $Z^*=(g^*,\root^*,\init^*)$ has the same form.
  \item $W=(\path,\instnoops,\witapp)$
  \item $S$ is a set of record operations.
 \end{itemize}
 
-\indent Under this notation
+\noindent Under this notation
 $F(Z,W,Z^*,S)=\acc$ if and only if
 \begin{enumerate}
 \item If $\init=\true$, $g$ contains exactly one element.
  \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
  \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
- \item \path is a merkle path from \f to \root.
+ \item \path is a Merkle path from \f to \root.
  \item  $\root=\root^*$.
  \item $g^*$ is the result of popping $(\f,\args)$ from $g$ and then pushing the $\instapp.\callnum$ elements
  $(\instapp.\f_i,\args_i)$ for $i\in [\instapp.\callnum]$.
@@ -893,13 +892,13 @@ Then \ops has output \recset if and only if the following rational function iden
  \item \[\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   , \op_i=\del}\frac{1}{X+v_iY+vc_i}.\]
  \item For some $m\in \F^n$,
  we have
- \[\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}=\sum_{i\in [n]   , \op_i=\read}\frac{1}{X+v_iY+vc_i}.\]
+ \[\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}=\sum_{i\in [n], \op_i=\read}\frac{1}{X+v_iY+vc_i}.\]
  \item \[\sumi{n}\frac{1}{X+c_i}=\sumi{n}\frac{1}{X+i}.\]
 \end{enumerate}
 \end{claim}
 \begin{proof}
 
-We focus on the only if direction. That is, if \ops doesn't have output \recset one of  the three identities should not hold.
+We focus on the only if direction. That is, if \ops doesn't have output \recset one of the three identities should not hold.
  Let $M_{v,c}\defeq \frac{1}{X+vY+c}$. The main fact we use is that the rational functions $\sett{M_{v,c}}{(v,c)\in \F^2}$ are linearly independent.
  Thus, $\sum_{v,c} a_{v,c} M_{v,c} = \sum b_{v,c} M_{v,c}$ implies $a_{v,c}=b_{v,c}$ for each $(v,c)\in \F^2$.
  The event of \ops not having output \recset means one of the following occurs.
@@ -980,19 +979,19 @@ at $\alpha,\beta,\epsilon$. If they don't hold identically for \witF can contrad
 
 
 \section{Non-interactive folding schemes}
-We fix a vector space $K$ over \F, and an $\F$-linear function $\cm:\F^M\to K$,  that will be an implicit parameter in the following definition.
+We fix a vector space $K$ over \F, and an $\F$-linear function $\cm:\F^M\to K$, that will be an implicit parameter in the following definition.
 % We'll say a relation \accrel is an \emph{extension} of a relation $\rel\subset D_1\times D_2$, if the domain of its witnesses is also $D_2$
 % while the domain of its instances is an extension of $D_1$. 
 \begin{dfn}\label{dfn:accschme}
-Fix relations \rel and \accrel.  An \emph{\accscheme{\rel}{\accrel}} is a pair of algorithms $(\prv,  \ver)$
+Fix relations \rel and \accrel. An \emph{\accscheme{\rel}{\accrel}} is a pair of algorithms $(\prv, \ver)$
 such that
 
 \begin{enumerate}
- \item \prv on input $(\insttbase,\inst';\wit,\wit')$ produces a pair $(\instt,\wit^*)$ and  proof \prf .
+ \item \prv on input $(\insttbase,\inst';\wit,\wit')$ produces a pair $(\instt,\wit^*)$ and proof \prf .
  \item \ver on input $(\insttbase,\inst',\instt,\prf)$ outputs \acc or \rej such that
 %  \item \ver receives as $\inst,\inst'$ as inputs and outputs \acc or \rej at then end.
 \begin{enumerate}
- \item \textbf{Completeness:} If $(\insttbase,\wit)\in \accrel, (\inst',\wit')\in \rel$, and $\prv(\insttbase,\inst';\wit,\wit')=(\prf,\instt,\witstar)$ then with probability $1-\negl$,  $(\instt,\witstar)\in \accrel$ and $\ver(\insttbase,\inst',\instt,\prf)=\acc$.
+ \item \textbf{Completeness:} If $(\insttbase,\wit)\in \accrel, (\inst',\wit')\in \rel$, and $\prv(\insttbase,\inst';\wit,\wit')=(\prf,\instt,\witstar)$ then with probability $1-\negl$, $(\instt,\witstar)\in \accrel$ and $\ver(\insttbase,\inst',\instt,\prf)=\acc$.
 \item \textbf{Knowledge soundness in the Algebraic Group Model:}
 
 For any efficient \adv the probability of the following event is \negl:
@@ -1021,20 +1020,20 @@ to be collision resistant.
 
 Given $(f,\predinst,\cm)$ we define a relation $\rel_{f,\predinst,\cm}$ consisting of all pairs
 $(\inst,\wit)$ such that
-\begin{itemize}
+\begin{enumerate}
  \item $f(\wit)=0^n$.
  \item $\predinst(\inst)=\acc$.
- \item $\inst=\cm(\wit)$
-\end{itemize}
+ \item $\inst=\cm(\wit)$.
+\end{enumerate}
 
 \paragraph{The relation $\relrand$:}
  For brevity, let $\rel=\rel_{f,\predinst,\cm}$.
   As in \cite{protogal}, we define the ``randomized relaxed'' version of $\rel, \relrand$. First, some required notation.
  Let $t\defeq \log n$. For $i\in [n]$, let $S\subset \set{0,\ldots,t-1}$ be the set such that $i-1=\sumj{S}2^j$. We define the $t$-variate polynomial $\pow_i$ as
- \[\pow_i(X_0,\ldots,X_{t-1}) = \prod_{\ell\in S} X_\ell\]
- Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$.    
+ \[\pow_i(X_0,\ldots,X_{t-1}) \defeq \prod_{\ell\in S} X_\ell.\]
+ Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$.
   
-  Given the above notation, $\relrand$ consists  of the pairs $( \insttbase,\wit)$ with $\insttbase=(\inst,\betaa,e)$ such that
+  Given the above notation, $\relrand$ consists of the pairs $( \insttbase,\wit)$ with $\insttbase=(\inst,\betaa,e)$ such that
  \begin{enumerate}
   \item $\inst=\cm(\wit)$.
   \item $\betaa\in \F^t, e\in \F$ and we have 
@@ -1043,17 +1042,17 @@ $(\inst,\wit)$ such that
 (Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
 \subsection{The \protogal scheme}
 Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, for the special case of folding $k=1$ instances.
-We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping arbitrary strings to elements of \Fstar.  \\ \\ \noindent
-\underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}  
+We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping arbitrary strings to elements of \Fstar. \\ \\ \noindent
+\underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}
 \begin{enumerate}
 % \item \ver checks for each $i\in [k]$ that $\inst_i$ is \hash-consistent, and outputs \rej otherwise.
 %  \item \ver sends a challenge $\delta \in \F$.
- \item  Compute $\delta=\hash(\insttbase,\inst_1)$. Define $\deltaa\defeq (\delta,\delta^2,\ldots,\delta^{2^{t-1}})\in \F^t$.
- \item\label{step:computeF}  Compute the polynomial 
+ \item Compute $\delta=\hash(\insttbase,\inst_1)$. Define $\deltaa\defeq (\delta,\delta^2,\ldots,\delta^{2^{t-1}})\in \F^t$.
+ \item\label{step:computeF} Compute the polynomial 
  \[F(X)\defeq \sumi{n}\pow_i(\betaa+X\deltaa) f_i(\wit).\]
  (Note that $F(0)=\sumi{n} \pow_i(\betaa) f_i(\wit) = e$.)
 \item\label{step:sendFcoeffs} Denote the non-constant coefficients of $F$ by $a\defeq (F_1,\ldots,F_{t})$.
-\item Compute $\alpha = \hash(\delta,a)$
+\item Compute $\alpha = \hash(\insttbase,\inst_1,a)$.
 % \item\label{step:computeFalpha} Note that $F(\alpha)= e+\sumi{t}F_i \alpha^i$.
 \item\label{step:computeBetastar} Compute $\betaa^*\in \F^{t}$ where $\betaa^*_i\defeq \betaa_i+\alpha\cdot \deltaa_i$.
 \item\label{step:computeG} Define the polynomial $G(X)$ as 
@@ -1061,7 +1060,7 @@ We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping 
 \item Compute the polynomial $K(X)$ such that 
 \[G(X)= F(\alpha) X + Z(X) K(X).\]
 \item\label{step:sendK} Let $b\defeq (K_0,\ldots,K_{d-2})$ be the coefficients of $K(X)$.
-\item Compute $\gamma=\hash(\alpha,b)$.
+\item Compute $\gamma=\hash(\insttbase,\inst_1,a,b)$.
 \item\label{step:compute-estar} Compute 
 \[e^* \defeq F(\alpha)\gamma + Z(\gamma)K(\gamma).\]
 \end{enumerate}
@@ -1069,19 +1068,19 @@ Finally, output
 \begin{itemize}
 \item the instance
 $\instt=(\inststar,\betaa^*,e^*),$
-where \[\inst^*\defeq  \gamma\cdot  \inst + (1-\gamma) \inst_1,\]
+where \[\inst^*\defeq \gamma\cdot \inst + (1-\gamma) \inst_1,\]
 
 
 \item the witness 
-$\witstar\defeq \gamma\cdot \wit +  (1-\gamma)\cdot \wit_1,$
+$\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \item and the proof $\prf\defeq (a,b)$.\\
 \end{itemize}
 \noindent
 \underline{$\ver_{PG}(\insttbase,\inst_1, \instt,\pi=(a,b)):$}\noindent
 \begin{enumerate}
- \item  Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
+ \item Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
 
-\item  Check that $\instt$ is as computed in the prover algorithm. Output \acc iff this is the case. 
+\item Check that $\instt$ is computed as in the prover algorithm. Output \acc iff this is the case. 
 \end{enumerate}
 
 
@@ -1093,11 +1092,11 @@ Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$. Fix the family of fun
 We say the tuple $(D,x,\tau)$ is a \emph{degree $d$-relation for $(\ztafuncs,\hash,\cm)$} if
 \begin{enumerate}
  \item $D\in \ztafuncs$.
- \item $f(X)\defeq D(x,\tau)$ is a non-zero element of \polysofdegeq{d}. 
+ \item $f(X)\defeq D(x,\tau)$ is a non-zero element of \polysofdegeq{d}.
  \item Setting $z\defeq \hash(\cm(x),\tau)$, we have $f(z)=0$.
 \end{enumerate}
 
-The Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability  that 
+The Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability that 
 \adv outputs a degree $d$-relation for $(\ztafuncs,\hash,\cm)$ is \negl.
 \end{dfn}
 
@@ -1105,9 +1104,9 @@ The Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for 
 
 
 \begin{thm}\label{thm:pgsoundness}
-Set $d'\defeq \max \set{ n,d}$. Denote  $\cmtwo(\wit_1,\wit_2)\defeq (\cm(\wit_1),\cm(\wit_2))$.
-Let \ztafuncs be a family of three functions to be defined in the proof.
-Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cmtwo,d')$
+Set $d'\defeq \max \set{ n,d}$. Denote $\cm'((\wit,\betaa,e),\wit_1)\defeq ((\cm(\wit),\betaa,e),\cm(\wit_1))$.
+Let \ztafuncs be a family of four functions to be defined in the proof.
+Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cm',d')$.
 Then \protogal is a \accscheme{\rel}{\relrand}.
 \end{thm}
 \begin{proof}
@@ -1115,19 +1114,19 @@ The main thing to prove is knowledge soundness in the Algebraic Group Model.
  Fix any efficient \adv. Let $E$ be the event that \adv outputs
 $\insttbase=(\inst,\betaa,e),\inst_1,\instt=(\inststar,\betaa^*,e^*),$ $\wit,\wit_1,\witstar,\prf$ such that 
 \begin{enumerate}
-\item $\cm(\wit)=\inst,\cm(\wit_1)=\inst_1,\cm(\witstar)=\inststar$. 
-\item $\verpg(\insttbase,\inst_1,\instt,\prf)=\acc$ 
-\item $(\instt,\witstar)\in\relrand$ 
+\item $\cm(\wit)=\inst,\cm(\wit_1)=\inst_1,\cm(\witstar)=\inststar$,
+\item $\verpg(\insttbase,\inst_1,\instt,\prf)=\acc$,
+\item $(\instt,\witstar)\in\relrand$,
 \item $(\insttbase,\wit)\notin\relrand$ or $(\inst_1,\wit_1)\notin \rel$.
 \end{enumerate}
 According to Definition \ref{dfn:accschme}, knowledge soundness is equivalent to $E$ having 
 probability \negl for any such \adv.
 We construct an efficient \advprime that runs \adv, and when $E$ occurs outputs either a collision of 
 \cm or a degree $d'$-relation for $(\hash,\cm)$. By the theorem assumption this implies $E$ is contained in two events of
-probability \negl, and must have  probability \negl itself.
+probability \negl, and must have probability \negl itself.
 
 Assume we are in event $E$.
-% Since  $\ver_{PG}(\insttbase,\inst_1,\instt,\prf)=\acc$, we have $\inststar=\gamma \inst +(1-\gamma)\inst_1$.
+% Since $\ver_{PG}(\insttbase,\inst_1,\instt,\prf)=\acc$, we have $\inststar=\gamma \inst +(1-\gamma)\inst_1$.
 % And since $(\instt,\witstar)\in \relrand$ we have $\cm(\witstar)=\inststar$.
 Using linearity of \cm, when $E$ occurs we have 
 \[\cm( \gamma\wit+(1-\gamma)\wit_1)=\gamma \inst +(1-\gamma)\inst_1=\inststar=\cm(\witstar).\]
@@ -1136,46 +1135,46 @@ as a collision of \cm.
 Now assume that $\witstar = \gamma \wit + (1-\gamma)\wit_1$.
 Suppose $\prf=(a,b)$, with $a=(a_1,\ldots,a_t),b= (b_0,\ldots,b_{d-2})$.
 Define $F_0(X)\defeq e+\sum_{i\in [t]} a_iX^i,K'(X)\defeq \sum_{i=0}^{d-2} b_iX^i$.
-Let $\alpha,\beta,\delta,\gamma,\betaa,\deltaa$ be computed as in the prover description given $a,b$.
+Let $\delta,\deltaa,\alpha,\betaa^*, \gamma$ be computed as in the prover description given $a,b$.
 Define the polynomials
-\[F'(X)\defeq F_0(X)-\sum_{i\in [n]} \pow_i(\betaa+X\deltaa) f_i(\wit)\]
-\[G'(X)\defeq F_0(\alpha)X+ Z(X)K'(X)-\sum_{i\in [n]}\pow_i( \betaa^*) f_i(X\wit +(1-X)\wit_1)\]
+\begin{align*}
+F'(X) &\defeq F_0(X)-\sum_{i\in [n]} \pow_i(\betaa+X\deltaa) f_i(\wit), \\
+G'(X) &\defeq F_0(\alpha)X+ Z(X)K'(X)-\sum_{i\in [n]}\pow_i( \betaa^*) f_i(X\wit +(1-X)\wit_1).
+\end{align*}
 
 Since $((\inststar,\betaa^*,e^*),\witstar)\in \relrand$ and $\ver_{PG}(\insttbase,\inst',\instt,\prf)=\acc$,
-\[G'(\gamma) = F_0(\alpha)\gamma + Z(\gamma)K'(\gamma)- \sum_{i\in [n]} \pow_i(\betaa^*) f_i(\gamma\wit +(1-\gamma)\wit_1)=e^*-\sum_{i\in [n]} \pow_i(\betaa^*) f_i(\witstar)=e^*-e^*=0.\]
+\begin{align*}
+G'(\gamma) &= F_0(\alpha)\gamma + Z(\gamma)K'(\gamma)- \sum_{i\in [n]} \pow_i(\betaa^*) f_i(\gamma\wit +(1-\gamma)\wit_1) \\
+           &= e^*-\sum_{i\in [n]} \pow_i(\betaa^*) f_i(\witstar) = e^*-e^* = 0.
+\end{align*}
 
-
-Set $x\defeq (\wit,\wit_1)$ and $\tau\defeq (\insttbase,\inst_1,\prf,\alpha,\delta)$.
-If $G'\not\equiv 0$, \advprime outputs the degree $d'$-relation $(D_1,x,\tau)$,
-where $D_1$ is the function that computes $G'(X)$ according to \perpg given $(x,\tau)$
+Set $x\defeq ((\wit,\betaa,e),\wit_1)$ and $\tau_1\defeq (a,b)$.
+If $G'\not\equiv 0$, \advprime outputs the degree $d'$-relation $(D_1,x,\tau_1)$,
+where $D_1$ is the function that computes $G'(X)$ given $x,\tau_1$.
 
 Assume now that $G'\equiv 0$.
 
 If $(\inst_1,\wit_1)\notin \rel$, using $Z(0)=0$ we have 
-\[G'(0)= \sum_{i\in [n]}\pow_i( \betaa^*) f_i(\wit_1)=0\]
-Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+ X\delta ,\betaa_2 +X\delta ^2,\ldots,\betaa_t+X \delta^{2^{t-1}})$.
-We have $A(\alpha)=0$. Suppose first that $A(X)\not\equiv 0$.  Then setting $D_2$ to be the function that computes $A$ given $(x,\tau=(\insttbase,\inst_1,\delta,a))$, 
-\advprime can output the degree $n$ relation $(D_2,x,\tau)$. Now assume $A(X)\equiv 0$.
+\[G'(0)= -\sum_{i\in [n]}\pow_i( \betaa^*) f_i(\wit_1)=0.\]
+Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+X \delta,\betaa_2 +X \delta^2,\ldots,\betaa_t+X \delta^{2^{t-1}})$.
+We have $A(\alpha)=0$. Suppose first that $A(X)\not\equiv 0$. Then setting $D_2$ to be the function that computes $A(X)$ given $x$ and $\tau_2\defeq a$, \advprime can output the degree $n$ relation $(D_2,x,\tau_2)$. Now assume $A(X)\equiv 0$.
 Define the polynomial 
-\[B(X,Y)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+ XY ,\betaa_2 +XY^2,\ldots,\betaa_t+X Y^{2^{t-1}})\]
-We have that $B(X,\delta)\equiv 0$. 
+\[B(X,Y)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+XY,\betaa_2+XY^2,\ldots,\betaa_t+X Y^{2^{t-1}}).\]
+We have that $B(X,\delta)\equiv 0$.
 Write $B(X,Y)$ as a polynomial in $X$ over $\F[Y]$:
-\[B(X)=\sum_{i=0}^n C_i(Y)X^i\]
-From the independence of the polynomials \sett{\pow_i(\betaa_1+ XY ,\betaa_2 +XY^2,\ldots,\betaa_t+X Y^{2^{t-1}})}{i\in [n]}, we know that $B(X,Y)\not\equiv 0$ (cause we're in the case $(\inst_1,\wit_1)\notin \rel$) which means that one of the polynomials $C_i$ is non-zero. But $C_i(\delta)=0$.
-We can use this to define a degree $n$-relation involving a function $D_4$ that outputs $C_i$.
-
-% But since $(\inst_1,\wit_1)\notin \rel$, $A$ is a combination of the $n$ linearly independent polynomials $\sett{\pow_i(\betaa_1+ X\delta ,\betaa_2 +X\delta ^2,\ldots,\betaa_t+X \delta^{2^{t-1}}))}{i\in [n]}$ with at least one non-zero coefficient, and so $A(X)\not\equiv 0$. 
+\[B(X)=\sum_{i=0}^t C_i(Y)X^i.\]
+Because we're in the case $(\inst_1,\wit_1)\notin \rel$, $B$ is a combination of the $n$ linearly independent polynomials $\sett{\pow_i(\betaa_1+XY,\betaa_2+XY^2,\ldots,\betaa_t+X Y^{2^{t-1}})}{i\in [n]}$ with at least one non-zero coefficient, and so $B(X,Y)\not\equiv 0$. This means one of the polynomials $C_i$ is non-zero, while $C_i(\delta)=0$.
+We can use this to let \advprime output the degree $n$ relation $(D_3,x,\tau_3)$, where $D_3$ is the function that computes $C_i$ given $x$ and $\tau_3\defeq\emptyset$.
 
 Now, assume that $(\insttbase,\wit)\notin \relrand$.
 As we're still assuming $G'\equiv 0$, we have 
-\[G'(1)=F_0(\alpha)-\sumi{n}\pow_i(\betaa^*) f_i(\wit)=0,
-\]
+\[G'(1)=F_0(\alpha)-\sumi{n}\pow_i(\betaa^*) f_i(\wit)=0.\]
 But we also have $F'(\alpha)=G'(1)$ and so $F'(\alpha)=0$.
-On the other hand
-\[F'(0)=e-\sumi{n}\pow_i(\betaa) f_i(\wit)\neq 0\]
-Setting $\tau=(\insttbase,\inst_1,\alpha,\delta)$ and $D_3$ to be the function that computes $F'$ given $x,\tau$ we
-have that $(D,x,\tau)$ is a degree $\log n$ relation that \advprime can output in this case.
-Setting $\ztafuncs=\set{D_1,D_2,D_3}$ we have proven knowledge soundness under the theorem assumptions.
+On the other hand,
+\[F'(0)=e-\sumi{n}\pow_i(\betaa) f_i(\wit)\neq 0.\]
+Setting $\tau_4\defeq a$ and $D_4$ to be the function that computes $F'$ given $x,\tau_4$, we
+have that $(D_4,x,\tau_4)$ is a degree $\log n$ relation that \advprime can output in this case.
+Setting $\ztafuncs=\set{D_1,D_2,D_3,D_4}$ we have proven knowledge soundness under the theorem assumptions.
 \end{proof}
 
 
@@ -1205,7 +1204,7 @@ with $<c,\srs>=a$. We fix some mapping $G:\F^4\to \G\cup \set{*}$. $*$ means the
 For our security proof, we require a notion of ``recursive extraction'' used by \cite{novarecursive}:
 Specifically, we assume that if $c$ output by \A along with $a$, thought of as $c\in(\F^4)^{n/4}$, contains an element $c_i$ with $G(c_i)=a\in \G$, then \A outputs 
 $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue outputting representations
-until reaching one where no element correponds to $a\in \G$.
+until reaching one where no element corresponds to $a\in \G$.
 
 
 \section{Transforming $F$ into $F'$}
