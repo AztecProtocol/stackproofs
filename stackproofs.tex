@@ -485,6 +485,8 @@
  \renewcommand{\a}{\ensuremath{\mathsf{a}}\xspace}
 \renewcommand{\b}{\ensuremath{\mathsf{b}_0}\xspace}
 \renewcommand{\c}{\ensuremath{\mathsf{c}}\xspace}
+\newcommand{\vc}{\ensuremath{\mathsf{c_v}}\xspace}
+\renewcommand{\v}{\ensuremath{\mathsf{v}}\xspace}
 \renewcommand{\r}{\ensuremath{\mathsf{r}}\xspace}
 \newcommand{\f}{\ensuremath{\mathsf{f}}\xspace}
 \renewcommand{\g}{\ensuremath{\mathsf{g}}\xspace}
@@ -687,54 +689,50 @@ We use the acronym e.w.p. for ``except with probability''; i.e. e.w.p. $\gamma$ 
 % 
 
 \paragraph{Representing \G}
-Assume an injective function $R:\G \to \F^2$
+Assume an injective function $R:\G \to \F^2$.
 Whenever we discuss $a\in \G$ we assume it is represented as  $R(a)$.
 When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ with $R(a)=b$.
-\subsection{Relations of the app functions}
-Define a relation including the selectors
-Fixed polynomial $f(x_1,\ldots,x_{S})$
-$S=n+d+\ell$
-Relation \relapp of $\cm1,\ldots,\cm_S$
 
 \section{The execution model:}
 We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
 For this, we first introduce record operations which is our specific notion of operating on a global state. 
 \subsection{Record operations}
-\emph{Records} are pairs $(v,c)$ - where $v\in \F$ is the \emph{value}, and $c\in \countrange$ is the \emph{counter}.
+\emph{Records} are pairs $(\v,\c)$ - where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is the \emph{counter}.
 A \emph{record operation} has one of the following forms:
 \begin{itemize}
- \item $(\add,v,c)$,
-\item $(\del,v,vc,c)$,
-\item $(\read,v,vc,c)$.
+ \item $(\add,\v,\c)$,
+\item $(\del,\v,\vc,\c)$,
+\item $(\read,\v,\vc,\c)$.
 
 \end{itemize}
-Here $v\in \F$ is a note value and $c,vc\in \countrange$ are counters.
-$c$ is interpreted as the counter of the current operation, and $vc$ is interpreted as the counter of the operation where
+Here $\v\in \F$ is a value and $\c,\vc \in \countrange$ are counters.
+$\c$ is interpreted as the counter of the current operation. $\vc$
+  is interpreted as the counter of the operation where
 the note was added in the case of a \read or \del operation.
 
 
 
 We say a sequence \ops of record operations of size $M$ is \emph{consistent} if 
 \begin{enumerate}
-\item The counter values $c$ are distinct in all elements of \ops, and as a set equal to \countrange.
-\item The $vc$ fields in all $\del$ operations $(\del,v,vc,c)\in \ops$ are distinct.
-\item If $(v,\read,vc,c)\in \ops$, then $vc<c$ and $(\add, v,vc)\in \ops$.
-\item If $(v,\del,vc,c)\in \ops$ then $vc<c$ and $(\add,v,vc)\in \ops$.
+\item The counter values $\c$ are distinct in all elements of \ops, and as a set equal to \countrange.
+\item The $\vc$ fields in all $\del$ operations $(\del,\v,\vc,\c)\in \ops$ are distinct.
+\item If $(\v,\read,\vc,\c)\in \ops$, then $\vc<\c$ and $(\add, \v,\vc)\in \ops$.
+\item If $(\v,\del,\vc,\c)\in \ops$ then $\vc<\c$ and $(\add,\v,\vc)\in \ops$.
 \end{enumerate}
 
 Let \recset be set of records 
 We say $\ops$ is \emph{has output \recset} if:
 \begin{itemize}
  \item $\ops$ is consistent.
- \item $\recset=\set{(v,c) | (\add,v,c)\in \ops\;\&\; \forall c',(\del,v,c,c')\notin \ops }$. In words,
- $V$ is the set of notes that were added and not deleted.
+ \item $\recset=\set{(\v,\c) | (\add,\v,\c)\in \ops\;\&\; \forall \c'\in \countrange,(\del,\v,\c,\c')\notin \ops }$. In words,
+ \recset is the set of notes that were added and not deleted.
 \end{itemize}
 
 
 
 \subsection{The plonkish relation}
 Now we introduce a relation describing the individual function executions tailored to make it convenient in the next section to discuss an execution of a  sequence functions calling each other.
-Some choices of constants - like the maximal number of inner calls per function being two, are abitrary.
+Some choices of constants - like \args being of size four, are arbitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
 We fix a polynomial $G:\F^8\to \F$ that is an implicit parameter in the following definition of the relation \relapp.
@@ -1247,7 +1245,7 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
     
 \item If $\cnt=0$:
 \begin{enumerate}
-    \item $F(\true, \inst.z, w,z)=\acc$
+    \item $F(\true, \instFprime_0.z, w,z)=\acc$
 
     \end{enumerate}
 \end{enumerate}
