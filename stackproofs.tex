@@ -734,7 +734,7 @@ We say $\ops$ is \emph{has output \recset} if:
 
 \subsection{The plonkish relation}
 Now we introduce a relation describing the individual function executions tailored to make it convenient in the next section to discuss an execution of a  sequence functions calling each other.
-Some choices of constants - like the maximal number of inner calls being two, are abitrary.
+Some choices of constants - like the maximal number of inner calls per function being two, are abitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
 We fix a polynomial $G:\F^8\to \F$ that is an implicit parameter in the following definition of the relation \relapp.
@@ -762,7 +762,7 @@ such that
 
 \subsection{Valid execution trees}\label{sec:validexec}
 
-By an \emph{exeuction tree of length $n$} we mean a tree \tree with $n$ vertices of maximal degree two, whose nodes are
+By an \emph{exeuction tree of length $n$} we mean a binary tree \tree with $n$ vertices, whose nodes are
 labeled by pairs $(\instapp,\witapp)$.
 Let \funcs be a set of elements of \G.
 Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
@@ -856,7 +856,7 @@ In the lemma below, we denote by \empty the empty stack.
 
 
 \begin{lemma}\label{lem:execasRCG}
-There is an efficiently computable and efficiently invertible map $\phi$ such that the following holds.
+There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Define $\zfin=(\empty,\root,\false)$. Let \tree be an execution tree of length $n$.
 
