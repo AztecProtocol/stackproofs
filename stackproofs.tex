@@ -277,7 +277,9 @@
 \newcommand{\witF}{\ensuremath{\mathscr{w}}\xspace}
 \newcommand{\instFprime}{\ensuremath{\mathpgoth{x}}\xspace}
 \newcommand{\witFprime}{\ensuremath{\mathpgoth{w}}\xspace}
-\newcommand{\acchash}{\ensuremath{\mathpgoth{h}}\xspace}
+\newcommand{\acchash}{\ensuremath{\mathscr{h}}\xspace}
+\newcommand{\accprev}{\ensuremath{\mathscr{acc_0}}\xspace}
+\newcommand{\accnew}{\ensuremath{\mathscr{acc}}\xspace}
 \newcommand{\cnt}{\ensuremath{\mathsf{count}}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
 \newcommand{\verpg}{\ensuremath{\ver_{PG}}\xspace}
@@ -1213,37 +1215,39 @@ until reaching one where no element corresponds to $a\in \G$.
 
 \section{Extending the transition function to include the folding constraints}\label{sec:FtoFprime}
 
-% As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the \protogal verifier.
-% \subsection{Describing $F'$}
-% $\instFprime=(z,\cnt,\acchash)$
-% $z$ - output for $F$
-% $\cnt$ - counter of IVC step
-% \acchash - supposed hash of accumulator
-% **private input:**
-% $\witFprime=(\instt,\insttbase,\inst,\witF,\prf)$
-% $\instt$ - current accumulator instance
-% $\instbase$ - previous accumulator instance
-% $\inst$ - instance (of $F'$) to be accumulated.
-% $\witF$ - private input for $F$
-% $\prf$ - proof for protogalaxy verifier
-% 
+As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the \protogal verifier.
+\subsection{Describing $F'$}
+$\instFprime=(z,\cnt,\acchash)$
+\begin{itemize}
+ \item $z$ - output for $F$
+\item $\cnt$ - counter of IVC step
+\item\acchash - supposed hash of accumulator
+\end{itemize}
+$\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
+\begin{itemize}
+\item$\instt$ - current accumulator instance
+\item$\insttbase$ - previous accumulator instance
+\item$\instFprime_0$ - instance (of $F'$) to be accumulated.
+\item$w$ - private input for $F$
+\item$\prf$ - proof for protogalaxy verifier
+\end{itemize}
+
 % Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
 
-$F'(X,W)=\mathrm{accept}$ if and only if:
+$F'(\instFprime,\witFprime)=\acc$ if and only if:
 \begin{enumerate}
- \item  $hash(acc)=h$.
-\item $V_{PG}(acc_{prev}, inst, \pi, acc )= \mathrm{acc}$
-\item $inst.h=hash(acc_{prev})$.
-\item If $count>0$:
+ \item  $\hash(\instt)=\acchash$.
+\item $V_{PG}(\insttbase, \instFprime_0, \prf, \instt )= \acc$.
+\item $\inst.\acchash=\hash(\insttbase)$.
+\item If $\cnt>0$:
 \begin{enumerate}
-    \item $inst.G = G$.
-    \item $inst.count=count-1$.
-    \item $F(false,G, inst.z, w,z)=\mathrm{acc}$
+    \item $\instFprime_0.\cnt=\cnt-1$.
+    \item $F(\false,\instFprime_0.z, w,z)=\acc$
     \end{enumerate}
     
-\item If $count=0$:
+\item If $\cnt=0$:
 \begin{enumerate}
-    \item $F(true,G, inst.z, w,z)=\mathrm{acc}$
+    \item $F(\true, \inst.z, w,z)=\acc$
 
     \end{enumerate}
 \end{enumerate}
