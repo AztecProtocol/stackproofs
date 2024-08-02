@@ -539,7 +539,7 @@
 \newcommand{\add}{\ensuremath{\mathsf{add}}\xspace}
 \newcommand{\del}{\ensuremath{\mathsf{del}}\xspace}
 \renewcommand{\read}{\ensuremath{\mathsf{read}}\xspace}
-\newcommand{\countrange}{\ensuremath{[n]}\xspace}
+\newcommand{\countrange}{\ensuremath{[M]}\xspace}
 \newcommand{\true}{\ensuremath{\mathsf{true}}\xspace}
 \newcommand{\false}{\ensuremath{\mathsf{false}}\xspace}
 \newcommand{\finstate}{\ensuremath{V}\xspace}
@@ -714,9 +714,9 @@ the note was added in the case of a \read or \del operation.
 
 
 
-We say a sequence \ops of record operations of size $n$ is \emph{consistent} if 
+We say a sequence \ops of record operations of size $M$ is \emph{consistent} if 
 \begin{enumerate}
-\item The counter values $c$ are distinct in all elements of \ops, and as a set equal to $\{1,\ldots,n\}$.
+\item The counter values $c$ are distinct in all elements of \ops, and as a set equal to \countrange.
 \item The $vc$ fields in all $\del$ operations $(\del,v,vc,c)\in \ops$ are distinct.
 \item If $(v,\read,vc,c)\in \ops$, then $vc<c$ and $(\add, v,vc)\in \ops$.
 \item If $(v,\del,vc,c)\in \ops$ then $vc<c$ and $(\add,v,vc)\in \ops$.
