@@ -1,9 +1,5 @@
-% !tex encoding = utf-8 unicode
-
-% this is a simple template for a latex document using the "article" class.
-% see "book", "report", "letter" for other types of document.
-
 \documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage{hyperref}
 \usepackage{fullpage}
 
 
@@ -37,7 +33,6 @@
 \usepackage{amsfonts} % math fonts such as \mathbb{}
 \usepackage{amssymb} % \therefore
 % \usepackage{bickham}
-\usepackage{hyperref}
 \usepackage{cryptocode}
 \usepackage{framed} 
     % \usepackage[parfill]{parskip} % activate to begin paragraphs with an empty line rather than an indent
@@ -1255,6 +1250,7 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
  \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
  \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
+ \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
 
 We can describe the full prover for $\rel_{F,\finpred}$
 We define the relation \relfin of pairs $\instfin,\witfin$ such that
@@ -1271,7 +1267,7 @@ $\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\l
 
 \item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\wit,\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly, and $e$ is set to $e=\sum_{i\in [n]}pow_i(\betaa)f_i(\wit)$. 
 
-\item. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \pi)$. Here $inst_0$ satisfies $inst_0.z=z_0$, and doesn't need to be a satisfiable instance.
+\item.  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$. 
 
 \item. For each $i=2..n$, compute 
 $(X_i,W_i,\pi_i) = P_{PG}(X_{i-1},W_{i-1},x_{i-1},w_{i-1})$
@@ -1285,8 +1281,71 @@ $V(G,z_{final}, (X,W,x,w))$:
 \end{enumerate}
 
 
-
-
+% ### The RC scheme (WIP)
+% Let $P_{PG}(X,W,x,w)\rightarrow (X',W',\pi)$ be the protogalaxy prover for $F'$. We think of $P_{PG}$ as returning a tuple $(X',W',\pi)$ - respectively,
+% the new accumulator instance, new accumulator witness, and a proof that the new accumulator is correct given the previous one and instance.
+% $P$:
+% Given $G, z_{final},F,n,z_0,\ldots,z_{n-1},\omega_0,\ldots,\omega_{n-1}$
+% 
+% 1. Let $X_1$ be a randomly chosen satisfiable accumulator. Namley, $X_1=(\omega,\mathbf{\beta},e)$ where $\omega$ and $\beta$ are chosen randomly And $e$ is set to $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$. 
+% 2. Let $x_1=(z_1,G,0,hash(acc_{empty}))$, $w_1=(acc_{empty},acc_{empty}, inst_0, \omega_0, \pi)$. Here $inst_0$ satisfied $inst_0.z=z_0$, and doesn't need to be a satifiable instance.
+% 
+% 2. For each $i=2..n$, compute 
+% $(X_i,W_i,\pi_i) = P_{PG}(X_{i-1},W_{i-1},x_{i-1},w_{i-1})$
+% $x_i = (z_i,G,i-1,hash(X_i)), w_i=(X_i,X_{i-1},x_{i-1},\omega_{i-1},\pi_i)$
+% 
+% 3. Output $(X_n,W_n,x_n,w_n)$.
+% 
+% $V(G,z_{final}, (X,W,x,w))$:
+% 1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
+% 2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
+% ### Making the RC-scheme zero-knowledge
+% 
+% We look at the relation $R_{final}$ (depending on $F$)
+% defined as pairs $(x,w)$ where
+% 
+% - $x=(z_{final},G,C,\phi^*)$
+% - $w=(w^*,\phi,\phi_0,\pi)$
+% 
+% 
+% such that
+% - $\phi$ is an instance of $R_{acc}$, $\phi_0$ is an instance of $R$
+% - $\phi_0.n\leq C$
+% - $\pi$ is an accepting proof that $(\phi,\phi_0)$ fold into $\phi^*$
+% - $(\phi^*, w^*)\in R_{acc}$.
+% - $\phi_0.h=hash(\phi)$
+% - $\phi.z=z_{final}$
+% 
+% 
+% 
+% *The zk-prover:*
+% 
+% 1. After running the [prover described above](#The-RC-scheme-WIP) for the RC-scheme, let $(X_n,W_n,x_n,w_n)$ be the final output of that prover.
+% 2. Run the PG folding prover one more time to obtain $(\phi^*,w^*,\pi) = P_{PG}(X_{n},W_{n},x_{n},w_{n})$
+% 3. Set $\phi=X_n, \phi_0=x_n$.
+% 4. Create a zk-SNARK proof $\pi_{final}$ for $R_{final}$ with $x=(z_{final},G,C,\phi^*),w=(w^*,\phi,\phi_0,\pi)$.
+% 5. Output $(x,\pi_{final})$.
+% 
+% 
+% *It might be convenient to have $\pi_{final}$ consist of two zk-snark proofs sharing $\phi^*$ as a public input where one proof shows the existence of $w^*$ such that $(\phi^*,w^*)\in R_{acc}$ and the second proof the conditions in $R_{final}$ between $x$ and $w\setminus w^*$.*
+% 
+% 
+% *Sketch of zk simulator:*
+% $z_{final},G,C$ are part of the original input given to the simulator.
+% Since $X_1$ was uniform, and $\phi^*=(cm,\beta,e)$ is the result of combining instances independent of $X_1$ into $X_1$,
+% $cm$ is the commitment of a uniformly distributed $\omega$
+% and $\beta\in F^t$ is uniformly distributed. Thus to simulate $\phi^*$ we can choose $\omega,\beta$ uniformly,
+% and compute the resultant $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$. 
+% Then we can simulate $\pi_{final}$ using the zk-snark simulator.
+% 
+% *Sketch of knowledge soundness:*
+% Given $(x,\pi_{final})$ the snark extractor gives us
+% the witness $w=(w^*,\phi,\phi_0,\pi)$
+% so that $(x,w)\in R_{final}$
+% Now, given  $w$ and $\phi^*$
+% the folding extractor gives us the witnesses $w,w_0$ for $\phi,\phi_0$. $w_0$ will contain a previous accumulator $acc_{prev}$ and instance $inst$ such that $inst.count=\phi_0.count -1$, along with a proof $\pi$ that $acc_{prev}, inst$ fold into $\phi$. Using the folding extractor again we can obtain witnesses to $acc_{prev},inst$.
+% $inst$'s witness will contain an instance with $count=\phi_0.count-2$ that folds into $acc_{prev}$. Continuing like this we can extract a full witness for the RC claim $(z_{final},G,C)$.
+% 
 \section*{Acknowledgements}
 \bibliographystyle{alpha}
 \bibliography{references}
