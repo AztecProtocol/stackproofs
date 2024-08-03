@@ -884,7 +884,7 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
  and $\phi(\tree)=(n,z,w,s)$. Given this definition of $\phi$ the statement of the lemma is straightforward to check.
 \end{proof}
 
-\subsection{Removing the global state}
+\subsection{Removing the global state}\label{sec:Fstar}
 
 \paragraph{Rational Identities:}
 Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identites.
@@ -1213,7 +1213,9 @@ until reaching one where no element corresponds to $a\in \G$.
 
 \section{Extending the transition function to include the folding constraints}\label{sec:FtoFprime}
 
-As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the \protogal verifier.
+As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the folding verifier.
+We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable in $F$ is not used, and \finpred depends only on $(\zfin,\recset)$.
+We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,f\finpred^*)$ from Secti
 \subsection{Describing $F'$}
 $\instFprime=(z,\cnt,\acchash)$
 \begin{itemize}
@@ -1248,6 +1250,38 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
     \item $F(\true, \instFprime_0.z, w,z)=\acc$
 
     \end{enumerate}
+\end{enumerate}
+ \renewcommand{\acc}{\insttbase}
+ \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
+ \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
+ \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
+
+We can describe the full prover for $\rel_{F,\finpred}$
+We define the relation \relfin of pairs $\instfin,\witfin$ such that
+\begin{itemize}
+ \item $\instfin = (\acc,\recset,C,\zfin)$
+ \item $\witfin = (\wit,\accprev,\inst)$
+\end{itemize}
+
+$\prv(\inpF,\witF)$
+\begin{enumerate}
+ \item Let
+$\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
+% \item For $i\in [n]$, let 
+
+\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\wit,\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly, and $e$ is set to $e=\sum_{i\in [n]}pow_i(\betaa)f_i(\wit)$. 
+
+\item. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \pi)$. Here $inst_0$ satisfies $inst_0.z=z_0$, and doesn't need to be a satisfiable instance.
+
+\item. For each $i=2..n$, compute 
+$(X_i,W_i,\pi_i) = P_{PG}(X_{i-1},W_{i-1},x_{i-1},w_{i-1})$
+$x_i = (z_i,i-1,\hash(X_i)), w_i=(X_i,X_{i-1},x_{i-1},\wit{i-1},\prf_i)$
+
+\item Output $(X_n,W_n,x_n,w_n)$.
+
+$V(G,z_{final}, (X,W,x,w))$:
+1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
+2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
 \end{enumerate}
 
 
