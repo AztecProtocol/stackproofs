@@ -201,6 +201,7 @@
 
 \newcommand{\rej}{\ensuremath{\mathsf{reject}}\xspace}
 \newcommand{\acc}{\ensuremath{\mathsf{accept}}\xspace}
+\newcommand{\accept}{\ensuremath{\mathsf{accept}}\xspace}
 \newcommand{\res}{\ensuremath{\mathsf{res}}\xspace}
 \newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
  \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
@@ -1247,6 +1248,7 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
     \end{enumerate}
 \end{enumerate}
  \renewcommand{\acc}{\insttbase}
+ \newcommand{\accwit}{\wit}
  \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
  \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
@@ -1262,16 +1264,17 @@ We define the relation \relfin of pairs $\instfin,\witfin$ such that
 $\prv(\inpF,\witF)$
 \begin{enumerate}
  \item Let
-$\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
+$\inpF =(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n)$. Recall that $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$. 
 % \item For $i\in [n]$, let 
 
-\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\wit,\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly, and $e$ is set to $e=\sum_{i\in [n]}pow_i(\betaa)f_i(\wit)$. 
+\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\wit,\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$. 
+
 
 \item.  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$. 
 
 \item. For each $i=2..n$, compute 
-$(X_i,W_i,\pi_i) = P_{PG}(X_{i-1},W_{i-1},x_{i-1},w_{i-1})$
-$x_i = (z_i,i-1,\hash(X_i)), w_i=(X_i,X_{i-1},x_{i-1},\wit{i-1},\prf_i)$
+$(\acc_i,\accwit_i,\pi_i) = P_{PG}(\acc_{i-1},\accwit_{i-1},\inst_{i-1},\wit_{i-1})$
+$\inst_i = (z_i,i-1,\hash(\acc_i)), w_i=(X_i,X_{i-1},x_{i-1},\wit{i-1},\prf_i)$
 
 \item Output $(X_n,W_n,x_n,w_n)$.
 
