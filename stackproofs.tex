@@ -1,9 +1,5 @@
-% !tex encoding = utf-8 unicode
-
-% this is a simple template for a latex document using the "article" class.
-% see "book", "report", "letter" for other types of document.
-
 \documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage{hyperref}
 \usepackage{fullpage}
 
 
@@ -37,7 +33,6 @@
 \usepackage{amsfonts} % math fonts such as \mathbb{}
 \usepackage{amssymb} % \therefore
 % \usepackage{bickham}
-\usepackage{hyperref}
 \usepackage{cryptocode}
 \usepackage{framed} 
     % \usepackage[parfill]{parskip} % activate to begin paragraphs with an empty line rather than an indent
@@ -206,6 +201,7 @@
 
 \newcommand{\rej}{\ensuremath{\mathsf{reject}}\xspace}
 \newcommand{\acc}{\ensuremath{\mathsf{accept}}\xspace}
+\newcommand{\accept}{\ensuremath{\mathsf{accept}}\xspace}
 \newcommand{\res}{\ensuremath{\mathsf{res}}\xspace}
 \newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
  \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
@@ -278,7 +274,6 @@
 \newcommand{\instFprime}{\ensuremath{\mathpgoth{x}}\xspace}
 \newcommand{\witFprime}{\ensuremath{\mathpgoth{w}}\xspace}
 \newcommand{\acchash}{\ensuremath{\mathscr{h}}\xspace}
-\newcommand{\accprev}{\ensuremath{\mathscr{acc_0}}\xspace}
 \newcommand{\accnew}{\ensuremath{\mathscr{acc}}\xspace}
 \newcommand{\cnt}{\ensuremath{\mathsf{count}}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
@@ -485,6 +480,8 @@
  \renewcommand{\a}{\ensuremath{\mathsf{a}}\xspace}
 \renewcommand{\b}{\ensuremath{\mathsf{b}_0}\xspace}
 \renewcommand{\c}{\ensuremath{\mathsf{c}}\xspace}
+\newcommand{\vc}{\ensuremath{\mathsf{c_v}}\xspace}
+\renewcommand{\v}{\ensuremath{\mathsf{v}}\xspace}
 \renewcommand{\r}{\ensuremath{\mathsf{r}}\xspace}
 \newcommand{\f}{\ensuremath{\mathsf{f}}\xspace}
 \renewcommand{\g}{\ensuremath{\mathsf{g}}\xspace}
@@ -570,13 +567,14 @@
 \newcommand{\inchash}{\ensuremath{\mathscr{h}}\xspace}
 \newcommand{\finpred}{\ensuremath{\mathsf{f}}\xspace}
 \newcommand{\zksnark}{zk-SNARK\;}
+\newcommand{\accprev}{\ensuremath{}\xspace}
 \begin{document}
     \maketitle
 \begin{abstract}
 The goal of this note is to describe and analyze a simplified variant of the zk-SNARK construction used in the Aztec protocol.
 Taking inspiration from the popular notion of Incrementally Verifiable Computation\cite{ivc} (IVC)
 we define a related notion of \emph{Repeated Computation with Global state} (RCG). As opposed to IVC, in RCG we assume the computation terminates before proving starts, and in addition to the local transitions some global consistency checks of the whole computation are allowed. However, we require the space efficiency of the prover to be close to that of an IVC prover not required to prove this global consistency.
-We show how RCG is useful for desigining a proof system for a private smart contract system like Aztec.
+We show how RCG is useful for designing a proof system for a private smart contract system like Aztec.
 \end{abstract}
 \section{Introduction}
 Incrementally Verifiable Computation (IVC) \cite{ivc} and its generalization to Proof Carrying Data (PCD) \cite{pcd} are useful tools for constructing space-efficient SNARK provers.
@@ -687,54 +685,50 @@ We use the acronym e.w.p. for ``except with probability''; i.e. e.w.p. $\gamma$ 
 % 
 
 \paragraph{Representing \G}
-Assume an injective function $R:\G \to \F^2$
+Assume an injective function $R:\G \to \F^2$.
 Whenever we discuss $a\in \G$ we assume it is represented as  $R(a)$.
 When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ with $R(a)=b$.
-\subsection{Relations of the app functions}
-Define a relation including the selectors
-Fixed polynomial $f(x_1,\ldots,x_S)$
-$S=n+d+\ell$
-Relation \relapp of $\cm1,\ldots,\cm_S$
 
 \section{The execution model:}
 We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
 For this, we first introduce record operations which is our specific notion of operating on a global state. 
 \subsection{Record operations}
-\emph{Records} are pairs $(v,c)$ - where $v\in \F$ is the \emph{value}, and $c\in \countrange$ is the \emph{counter}.
+\emph{Records} are pairs $(\v,\c)$ - where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is the \emph{counter}.
 A \emph{record operation} has one of the following forms:
 \begin{itemize}
- \item $(\add,v,c)$,
-\item $(\del,v,vc,c)$,
-\item $(\read,v,vc,c)$.
+ \item $(\add,\v,\c)$,
+\item $(\del,\v,\vc,\c)$,
+\item $(\read,\v,\vc,\c)$.
 
 \end{itemize}
-Here $v\in \F$ is a note value and $c,vc\in \countrange$ are counters.
-$c$ is interpreted as the counter of the current operation, and $vc$ is interpreted as the counter of the operation where
+Here $\v\in \F$ is a value and $\c,\vc \in \countrange$ are counters.
+$\c$ is interpreted as the counter of the current operation. $\vc$
+  is interpreted as the counter of the operation where
 the note was added in the case of a \read or \del operation.
 
 
 
 We say a sequence \ops of record operations of size $M$ is \emph{consistent} if 
 \begin{enumerate}
-\item The counter values $c$ are distinct in all elements of \ops, and as a set equal to \countrange.
-\item The $vc$ fields in all $\del$ operations $(\del,v,vc,c)\in \ops$ are distinct.
-\item If $(v,\read,vc,c)\in \ops$, then $vc<c$ and $(\add, v,vc)\in \ops$.
-\item If $(v,\del,vc,c)\in \ops$ then $vc<c$ and $(\add,v,vc)\in \ops$.
+\item The counter values $\c$ are distinct in all elements of \ops, and as a set equal to \countrange.
+\item The $\vc$ fields in all $\del$ operations $(\del,\v,\vc,\c)\in \ops$ are distinct.
+\item If $(\v,\read,\vc,\c)\in \ops$, then $\vc<\c$ and $(\add, \v,\vc)\in \ops$.
+\item If $(\v,\del,\vc,\c)\in \ops$ then $\vc<\c$ and $(\add,\v,\vc)\in \ops$.
 \end{enumerate}
 
 Let \recset be set of records 
 We say $\ops$ is \emph{has output \recset} if:
 \begin{itemize}
  \item $\ops$ is consistent.
- \item $\recset=\set{(v,c) | (\add,v,c)\in \ops\;\&\; \forall c',(\del,v,c,c')\notin \ops }$. In words,
- $V$ is the set of notes that were added and not deleted.
+ \item $\recset=\set{(\v,\c) | (\add,\v,\c)\in \ops\;\&\; \forall \c'\in \countrange,(\del,\v,\c,\c')\notin \ops }$. In words,
+ \recset is the set of notes that were added and not deleted.
 \end{itemize}
 
 
 
 \subsection{The plonkish relation}
 Now we introduce a relation describing the individual function executions tailored to make it convenient in the next section to discuss an execution of a  sequence functions calling each other.
-Some choices of constants - like the maximal number of inner calls per function being two, are abitrary.
+Some choices of constants - like \args being of size four, are arbitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
 We fix a polynomial $G:\F^8\to \F$ that is an implicit parameter in the following definition of the relation \relapp.
@@ -865,7 +859,7 @@ Then  $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset
 \end{lemma}
 \begin{proof}
 We describe the operation of $\varphi$.
-Given \tree of length $n$ let $(\instapp_1,\witapp_1),\ldots,(\instapp_n,\witapp_n)$ be the labels of its nodes according to 
+Given \tree of length $n$ let $(\instapp_1,\witapp_1),\ldots,(\instapp_n,\witapp_n)$ be the labels of its nodes according to
 DFS order.
 Define a sequence of stacks $g_0,\ldots,g_n$ according to the sequence of labels.
 
@@ -885,7 +879,7 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
  and $\varphi(\tree)=(n,z,w,s)$. Given this definition of $\varphi$ the statement of the lemma is straightforward to check.
 \end{proof}
 
-\subsection{Removing the global state}
+\subsection{Removing the global state}\label{sec:Fstar}
 
 \paragraph{Rational Identities:}
 Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identites.
@@ -959,7 +953,7 @@ $\incsum^*=\incsum\;+$
 There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Fix some $\alpha,\beta,\varepsilon\in \F$ and set of records \recset.
-Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\varepsilon)$ and set $\inst\defeq (\zfin^*,C,\recset)$. Assume the ZTA for the appropriate family of functions appearing in the proof. 
+Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\varepsilon)$ and set $\inst\defeq (\zfin^*,C,\recset)$. Assume the ZTA for the appropriate family of functions appearing in the proof.
 Suppose efficient \adv outputs \wit such that $(\inst,\wit)\in \rel_{F^*,\finpred^*}$.
 
 Let \ztafuncs be the appropriate family of functions to be defined in the proof.
@@ -988,14 +982,14 @@ Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero polynomial when multi
 \end{proof}
 
 \begin{dfn}[$t$-variate ZTA]
-Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$. Fix the family of functions \ztafuncs. 
+Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$. Fix the family of functions \ztafuncs.
 We say the tuple $(D,x,\tau)$ is a \emph{degree-$d$ relation for $(\ztafuncs,\hash,\cm)$} if
 \begin{enumerate}
  \item $D\in \ztafuncs$.
  \item $f(X_1,\ldots,X_t)\defeq D(x,\tau)$ is a non-zero element of $\F_{\leq d}[X_1,\ldots,X_t]$.
  \item Setting $z_i\defeq \hash(\cm(x),\tau,i)$ for $i\in[t]$, we have $f(z_1,\ldots,z_t)=0$.
 \end{enumerate}
-The $t$-variate Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability that 
+The $t$-variate Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability that
 \adv outputs a degree-$d$ relation for $(\ztafuncs,\hash,\cm)$ is \negl.
 \end{dfn}
 
@@ -1247,15 +1241,19 @@ $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue 
 until reaching one where no element corresponds to $a\in \G$.
 
 
-\section{Extending the transition function to include the folding constraints}\label{sec:FtoFprime}
+\section{The main construction}\label{sec:FtoFprime}
+We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable in $F$ is not used, and accordingly \finpred depends only on $(\zfin,\recset)$.
+We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,\finpred^*)$ from Section \ref{sec:Fstar}.
 
-As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the \protogal verifier.
-\subsection{Describing $F'$}
+\subsection{The extended function $F'$}
+As in \cite{nova,othernova}, we first describe an extended function $F'$ that includes the folding verifier. Loosely speaking, this is what enables bootstrapping a folding scheme into an IVC. We describe the function arguments first.\\
+
+\noindent
 $\instFprime=(z,\cnt,\acchash)$
 \begin{itemize}
  \item $z$ - output for $F$
 \item $\cnt$ - counter of IVC step
-\item\acchash - supposed hash of accumulator
+\item $\acchash$  - supposed hash of accumulator
 \end{itemize}
 $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \begin{itemize}
@@ -1268,11 +1266,12 @@ $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 
 % Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
 
+\noindent
 $F'(\instFprime,\witFprime)=\acc$ if and only if:
 \begin{enumerate}
  \item  $\hash(\instt)=\acchash$.
 \item $V_{PG}(\insttbase, \instFprime_0, \prf, \instt )= \acc$.
-\item $\inst.\acchash=\hash(\insttbase)$.
+\item $\instFprime_0.\acchash=\hash(\insttbase)$.
 \item If $\cnt>0$:
 \begin{enumerate}
     \item $\instFprime_0.\cnt=\cnt-1$.
@@ -1281,11 +1280,148 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
     
 \item If $\cnt=0$:
 \begin{enumerate}
-    \item $F(\true, \inst.z, w,z)=\acc$
+    \item $F(\true, \instFprime_0.z, w,z)=\acc$
 
     \end{enumerate}
 \end{enumerate}
+ \renewcommand{\acc}{\insttbase}
+ \newcommand{\witacc}{\wit}
+ \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
+ \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
+ \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
+ \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
+%  \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
+ \newcommand{\prvpg}{\ensuremath{\prv_{\cm,n,f}}\xspace}
+ \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
+ \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
 
+ Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.
+ \subsection{The relation \relfin}
+We define the relation \relfin of pairs $\instfin,\witfin$ such that
+\begin{itemize}
+ \item $\instfin = (\acc,\recset,C,\zfin)$
+ \item $\witfin = (\witacc,\acc_0,\inst,\prf)$
+\end{itemize}
+such that
+\begin{enumerate}
+ \item $(\acc,\witacc)\in\relrand$.
+\item $\verpg(\acc_0,\inst,\prf,\acc)=\accept$.
+\item $\inst.z=\zfin$.
+\end{enumerate}
+
+Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
+
+
+\subsection{The final construction}
+We now describe the full prover for $\rel_{F,\finpred}$.\\
+
+\underline{$\prv(\inpF,\witF)$:}
+\begin{enumerate}
+ \item Let
+$\inpF =(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n)$. Recall that $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$.
+% \item For $i\in [n]$, let
+
+\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\wit,\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$.
+
+
+\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$.
+
+\item For each $2\leq i\leq n$, compute
+\begin{enumerate}
+ \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\inst_{i-1},\wit_{i-1})$
+\item $\inst_i = (z_i,i-1,\hash(\acc_i))$,
+\item $\wit_i=(\acc_i,\acc_{i-1},\inst_{i-1},w_{i},\prf_i)$
+\end{enumerate}
+\item
+$(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\wit_{n})$.
+\item Let $\prf = \prvsnark(\instfin,\witfin)$ where
+\begin{itemize}
+ \item $\instfin = (\acc,\recset,C,\zfin)$
+ \item $\witfin = (\witacc,\acc_n,\inst_n,\prf^*)$
+\end{itemize}
+\item Output $\acc,\prf$.
+\end{enumerate}
+
+
+$V(G,z_{final}, (X,W,x,w))$:
+1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
+2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
+
+% ### The RC scheme (WIP)
+% Let $P_{PG}(X,W,x,w)\rightarrow (X',W',\pi)$ be the protogalaxy prover for $F'$. We think of $P_{PG}$ as returning a tuple $(X',W',\pi)$ - respectively,
+% the new accumulator instance, new accumulator witness, and a proof that the new accumulator is correct given the previous one and instance.
+% $P$:
+% Given $G, z_{final},F,n,z_0,\ldots,z_{n-1},\omega_0,\ldots,\omega_{n-1}$
+%
+% 1. Let $X_1$ be a randomly chosen satisfiable accumulator. Namley, $X_1=(\omega,\mathbf{\beta},e)$ where $\omega$ and $\beta$ are chosen randomly And $e$ is set to $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$.
+% 2. Let $x_1=(z_1,G,0,hash(acc_{empty}))$, $w_1=(acc_{empty},acc_{empty}, inst_0, \omega_0, \pi)$. Here $inst_0$ satisfied $inst_0.z=z_0$, and doesn't need to be a satifiable instance.
+%
+% 2. For each $i=2..n$, compute
+% $(X_i,W_i,\pi_i) = P_{PG}(X_{i-1},W_{i-1},x_{i-1},w_{i-1})$
+% $x_i = (z_i,G,i-1,hash(X_i)), w_i=(X_i,X_{i-1},x_{i-1},\omega_{i-1},\pi_i)$
+%
+% 3. Output $(X_n,W_n,x_n,w_n)$.
+%
+% $V(G,z_{final}, (X,W,x,w))$:
+% 1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
+% 2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
+% ### Making the RC-scheme zero-knowledge
+%
+% We look at the relation $R_{final}$ (depending on $F$)
+% defined as pairs $(x,w)$ where
+%
+% - $x=(z_{final},G,C,\phi^*)$
+% - $w=(w^*,\phi,\phi_0,\pi)$
+%
+%
+% such that
+% - $\phi$ is an instance of $R_{acc}$, $\phi_0$ is an instance of $R$
+% - $\phi_0.n\leq C$
+% - $\pi$ is an accepting proof that $(\phi,\phi_0)$ fold into $\phi^*$
+% - $(\phi^*, w^*)\in R_{acc}$.
+% - $\phi_0.h=hash(\phi)$
+% - $\phi.z=z_{final}$
+%
+%
+%
+% *The zk-prover:*
+%
+% 1. After running the [prover described above](#The-RC-scheme-WIP) for the RC-scheme, let $(X_n,W_n,x_n,w_n)$ be the final output of that prover.
+% 2. Run the PG folding prover one more time to obtain $(\phi^*,w^*,\pi) = P_{PG}(X_{n},W_{n},x_{n},w_{n})$
+% 3. Set $\phi=X_n, \phi_0=x_n$.
+% 4. Create a zk-SNARK proof $\pi_{final}$ for $R_{final}$ with $x=(z_{final},G,C,\phi^*),w=(w^*,\phi,\phi_0,\pi)$.
+% 5. Output $(x,\pi_{final})$.
+%
+%
+% *It might be convenient to have $\pi_{final}$ consist of two zk-snark proofs sharing $\phi^*$ as a public input where one proof shows the existence of $w^*$ such that $(\phi^*,w^*)\in R_{acc}$ and the second proof the conditions in $R_{final}$ between $x$ and $w\setminus w^*$.*
+%
+%
+% *Sketch of zk simulator:*
+% $z_{final},G,C$ are part of the original input given to the simulator.
+% Since $X_1$ was uniform, and $\phi^*=(cm,\beta,e)$ is the result of combining instances independent of $X_1$ into $X_1$,
+% $cm$ is the commitment of a uniformly distributed $\omega$
+% and $\beta\in F^t$ is uniformly distributed. Thus to simulate $\phi^*$ we can choose $\omega,\beta$ uniformly,
+% and compute the resultant $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$.
+% Then we can simulate $\pi_{final}$ using the zk-snark simulator.
+%
+% *Sketch of knowledge soundness:*
+% Given $(x,\pi_{final})$ the snark extractor gives us
+% the witness $w=(w^*,\phi,\phi_0,\pi)$
+% so that $(x,w)\in R_{final}$
+% Now, given  $w$ and $\phi^*$
+% the folding extractor gives us the witnesses $w,w_0$ for $\phi,\phi_0$. $w_0$ will contain a previous accumulator $acc_{prev}$ and instance $inst$ such that $inst.count=\phi_0.count -1$, along with a proof $\pi$ that $acc_{prev}, inst$ fold into $\phi$. Using the folding extractor again we can obtain witnesses to $acc_{prev},inst$.
+% $inst$'s witness will contain an instance with $count=\phi_0.count-2$ that folds into $acc_{prev}$. Continuing like this we can extract a full witness for the RC claim $(z_{final},G,C)$.
+%
+\section{General Final predicate}
+
+Sketch:
+If we can end the IVC with a commitment $S$ to the concatenation of the \set{S_i} from all iterations. Then we can modify the final zk-SNARK in the last section to also check
+that $\finpred(S_1,\ldots,S_n)=\accept$.
+
+For this purpose, instead of the $F^*$ in section \ref{sec:Fstar} we add protogalaxy constraints to obtain a commitment of the concatenation of the previous
+one with the $S_i$ of this iteration.
+
+Estimate of added prover complexity for concatenation constraints, using linearity.
 
 
 
