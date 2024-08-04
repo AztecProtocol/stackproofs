@@ -268,7 +268,7 @@
 \newcommand{\col}{\ensuremath{\mathsf{C}}\xspace}
 \newcommand{\inp}{\ensuremath{\mathsf{x}}\xspace}
 \newcommand{\wit}{\ensuremath{\mathsf{\omega}}\xspace}
-\newcommand{\eps}{\ensuremath{\epsilon}\xspace}
+\newcommand{\eps}{\ensuremath{\varepsilon}\xspace}
 \newcommand{\inpF}{\ensuremath{\mathscr{x}}\xspace}
 \newcommand{\witF}{\ensuremath{\mathscr{w}}\xspace}
 \newcommand{\instFprime}{\ensuremath{\mathpgoth{x}}\xspace}
@@ -925,8 +925,8 @@ Let $F$ denote the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as from Section \r
 
 Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
 \begin{itemize}
- \item $Z=(Z_F,\inchash,\incsum,\alpha,\beta,\varepsilon)$.
- \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\varepsilon^*)$.
+ \item $Z=(Z_F,\inchash,\incsum,\alpha,\beta,\eps)$.
+ \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\eps^*)$.
  \item $W=(W_F,S_F,M)$
 \end{itemize}
 \noindent
@@ -937,23 +937,23 @@ $F^*(Z,W,Z^*)=\acc$ if and only if
 
 \item Let $S_F=\sett{(\op_i,v_i,vc_i,c_i)}{i\in [m]}$. We have \\
 $\incsum^*=\incsum\;+$
-\[\sum_{i\in [m];\op_i = \add}\frac{1+ \eps m_i}{\alpha +\beta v_i+\ c_i}-\sum_{i\in [m];\op_i = \read}\frac{ \eps }{\alpha +\beta v_i+vc_i}-\sum_{i\in [m];\op_i = \del}\frac{ 1 }{\alpha +\beta v_i+ vc_i}+ \sumi{m}\frac{\varepsilon^2}{\alpha+c_i}.\]
-\item $\alpha^*=\alpha, \beta^*=\beta,\varepsilon^*=\varepsilon$.
+\[\sum_{i\in [m];\op_i = \add}\frac{1+ \eps m_i}{\alpha +\beta v_i+\ c_i}-\sum_{i\in [m];\op_i = \read}\frac{ \eps }{\alpha +\beta v_i+vc_i}-\sum_{i\in [m];\op_i = \del}\frac{ 1 }{\alpha +\beta v_i+ vc_i}+ \sumi{m}\frac{\eps^2}{\alpha+c_i}.\]
+\item $\alpha^*=\alpha, \beta^*=\beta,\eps^*=\eps$.
 \item $\inchash^*=\hash(\inchash,\cm(S_F,M))$. \\
 \end{enumerate}
 
 \noindent $\finpred^*(Z,\recset)=\acc$ if and only if
 \begin{enumerate}
- \item $\incsum=\sum_{(v,c)\in \recset} \frac{1}{\alpha + \beta v+ c}+\sumi{n}\frac{\varepsilon^2}{\alpha+i}$,
- \item $\hash(\inchash,\recset,1)=\alpha$, $\hash(\inchash,\recset,2)=\beta$, $\hash(\inchash,\recset,3)=\varepsilon$.
+ \item $\incsum=\sum_{(v,c)\in \recset} \frac{1}{\alpha + \beta v+ c}+\sumi{n}\frac{\eps^2}{\alpha+i}$,
+ \item $\hash(\inchash,\recset,1)=\alpha$, $\hash(\inchash,\recset,2)=\beta$, $\hash(\inchash,\recset,3)=\eps$.
 \end{enumerate}
 
 
 \begin{lemma}
 There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
-Fix some $\alpha,\beta,\varepsilon\in \F$ and set of records \recset.
-Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\varepsilon)$ and set $\inst\defeq (\zfin^*,C,\recset)$. Assume the ZTA for the appropriate family of functions appearing in the proof.
+Fix some $\alpha,\beta,\eps\in \F$ and set of records \recset.
+Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and set $\inst\defeq (\zfin^*,C,\recset)$. Assume the ZTA for the appropriate family of functions appearing in the proof.
 Suppose efficient \adv outputs \wit such that $(\inst,\wit)\in \rel_{F^*,\finpred^*}$.
 
 Let \ztafuncs be the appropriate family of functions to be defined in the proof.
@@ -963,22 +963,22 @@ Then e.w.p. \negl, $((\zfin,C,\recset),\varphi(\wit))\in \rel_{F,\finpred}$.
 \end{lemma}
 \begin{proof}
 Given a witness $\wit=(n,z',w')$ with $z'=(z_0',\ldots,z_n'),w'=(w_1',\ldots,w_n')$ output by \adv, denote
-$z_i'=(z_i,\inchash_i,\incsum_i,\alpha_i,\beta_i,\varepsilon_i), w_i'=(w_i,s_i,M_i)$.
+$z_i'=(z_i,\inchash_i,\incsum_i,\alpha_i,\beta_i,\eps_i), w_i'=(w_i,s_i,M_i)$.
 Define $\witF=\varphi(\wit)$ as $\witF\defeq (n,(z_0,\ldots,z_n),(w_1,\ldots,w_n),(s_1,\ldots,s_n))$.
 From $(\inst,\wit)\in \rel_{F^*,\finpred^*}$,  we know \witF satisfies the transition constraints, namely for $i\in [n]$,
 $F(z_{i-1},w_i,z_i,s_i)=\acc$. We also know that $z_0.\init = \true$, $z_n=\zfin$, and $n\leq C$.
 It is left to show that e.w.p. \negl $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
 
 From $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ we know the equations from Claim \ref{clm:reducetologder} hold
-at $\alpha,\beta,\varepsilon$, i.e, defining the rational function
+at $\alpha,\beta,\eps$, i.e, defining the rational function
 \begin{align*}
 r(X,Y,Z)\defeq&\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}-\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}+\sum_{i\in [n], \op_i=\del}\frac{1}{X+v_iY+vc_i} \\
 &+Z\left(\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}-\sum_{i\in [n], \op_i=\read}\frac{1}{X+v_iY+vc_i}\right) \\
 &+Z^2\left(\sumi{n}\frac{1}{X+c_i}-\sumi{n}\frac{1}{X+i}\right),
 \end{align*}
-we have $r(\alpha,\beta,\varepsilon)=0$. If any of the three rational identities from Claim \ref{clm:reducetologder} does not hold, we have $r(X,Y,Z)\not\equiv 0$, which allows us to construct an adversary \advprime against the $3$-variate ZTA for $(\ztafuncs,\hash,\cm,d)$.
+we have $r(\alpha,\beta,\eps)=0$. If any of the three rational identities from Claim \ref{clm:reducetologder} does not hold, we have $r(X,Y,Z)\not\equiv 0$, which allows us to construct an adversary \advprime against the $3$-variate ZTA for $(\ztafuncs,\hash,\cm,d)$.
 
-Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero polynomial when multiplying $r(X,Y,Z)$ with all of its denominators. Note that $f(\alpha,\beta,\varepsilon)=0$. Define $D$ as the function that computes $f(X,Y,Z)$ given $x\defeq\wit$, $\tau\defeq\recset$, and set $\ztafuncs\defeq\{D\}$. Then \advprime outputs the degree-$d$ relation $(D,x,\tau)$, which has probability \negl.
+Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero polynomial when multiplying $r(X,Y,Z)$ with all of its denominators. Note that $f(\alpha,\beta,\eps)=0$. Define $D$ as the function that computes $f(X,Y,Z)$ given $x\defeq\wit$, $\tau\defeq\recset$, and set $\ztafuncs\defeq\{D\}$. Then \advprime outputs the degree-$d$ relation $(D,x,\tau)$, which has probability \negl.
 \end{proof}
 
 \begin{dfn}[$t$-variate ZTA]
