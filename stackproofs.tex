@@ -274,7 +274,6 @@
 \newcommand{\instFprime}{\ensuremath{\mathpgoth{x}}\xspace}
 \newcommand{\witFprime}{\ensuremath{\mathpgoth{w}}\xspace}
 \newcommand{\acchash}{\ensuremath{\mathscr{h}}\xspace}
-\newcommand{\accprev}{\ensuremath{\mathscr{acc_0}}\xspace}
 \newcommand{\accnew}{\ensuremath{\mathscr{acc}}\xspace}
 \newcommand{\cnt}{\ensuremath{\mathsf{count}}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
@@ -568,13 +567,14 @@
 \newcommand{\inchash}{\ensuremath{\mathscr{h}}\xspace}
 \newcommand{\finpred}{\ensuremath{\mathsf{f}}\xspace}
 \newcommand{\zksnark}{zk-SNARK\;}
+\newcommand{\accprev}{\ensuremath{}\xspace}
 \begin{document}
     \maketitle
 \begin{abstract}
 The goal of this note is to describe and analyze a simplified variant of the zk-SNARK construction used in the Aztec protocol.
 Taking inspiration from the popular notion of Incrementally Verifiable Computation\cite{ivc} (IVC)
 we define a related notion of \emph{Repeated Computation with Global state} (RCG). As opposed to IVC, in RCG we assume the computation terminates before proving starts, and in addition to the local transitions some global consistency checks of the whole computation are allowed. However, we require the space efficiency of the prover to be close to that of an IVC prover not required to prove this global consistency.
-We show how RCG is useful for desigining a proof system for a private smart contract system like Aztec.
+We show how RCG is useful for designing a proof system for a private smart contract system like Aztec.
 \end{abstract}
 \section{Introduction}
 Incrementally Verifiable Computation (IVC) \cite{ivc} and its generalization to Proof Carrying Data (PCD) \cite{pcd} are useful tools for constructing space-efficient SNARK provers.
@@ -1208,16 +1208,18 @@ until reaching one where no element corresponds to $a\in \G$.
 
 
 \section{The main construction}\label{sec:FtoFprime}
-We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable in $F$ is not used, and \finpred depends only on $(\zfin,\recset)$.
-We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,f\finpred^*)$ from Section \ref{sec:Fstar}
+We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable in $F$ is not used, and accordingly \finpred depends only on $(\zfin,\recset)$.
+We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,\finpred^*)$ from Section \ref{sec:Fstar}.
 
 \subsection{The extended function $F'$}
-As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the folding verifier.
+As in \cite{nova,othernova}, we first describe an extended function $F'$ that includes the folding verifier. Loosely speaking, this is what enables bootstrapping a folding scheme into an IVC. We describe the function arguments first.\\
+
+\noindent
 $\instFprime=(z,\cnt,\acchash)$
 \begin{itemize}
  \item $z$ - output for $F$
 \item $\cnt$ - counter of IVC step
-\item\acchash - supposed hash of accumulator
+\item $\acchash$  - supposed hash of accumulator
 \end{itemize}
 $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \begin{itemize}
@@ -1230,11 +1232,12 @@ $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 
 % Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
 
+\noindent
 $F'(\instFprime,\witFprime)=\acc$ if and only if:
 \begin{enumerate}
  \item  $\hash(\instt)=\acchash$.
 \item $V_{PG}(\insttbase, \instFprime_0, \prf, \instt )= \acc$.
-\item $\inst.\acchash=\hash(\insttbase)$.
+\item $\instFprime_0.\acchash=\hash(\insttbase)$.
 \item If $\cnt>0$:
 \begin{enumerate}
     \item $\instFprime_0.\cnt=\cnt-1$.
@@ -1253,24 +1256,32 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
  \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
  \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
+%  \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
+ \newcommand{\prvpg}{\ensuremath{\prv_{\cm,n,f}}\xspace}
+ \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
+ \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
 
  Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.
-We can describe the full prover for $\rel_{F,\finpred}$
+ \subsection{The relation \relfin}
 We define the relation \relfin of pairs $\instfin,\witfin$ such that
 \begin{itemize}
  \item $\instfin = (\acc,\recset,C,\zfin)$
- \item $\witfin = (\accwit,\accprev,\inst)$
+ \item $\witfin = (\witacc,\acc_0,\inst,\prf)$
 \end{itemize}
 such that
 \begin{enumerate}
  \item $(\acc,\witacc)\in\relrand$.
- 
+\item $\verpg(\acc_0,\inst,\prf,\acc)=\accept$. 
+\item $\inst.z=\zfin$.
 \end{enumerate}
 
+Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
 
 
+\subsection{The final construction}
+We now describe the full prover for $\rel_{F,\finpred}$.\\
 
-$\prv(\inpF,\witF)$
+\underline{$\prv(\inpF,\witF)$:}
 \begin{enumerate}
  \item Let
 $\inpF =(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n)$. Recall that $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$. 
@@ -1279,19 +1290,28 @@ $\inpF =(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n)$. Recal
 \item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\wit,\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$. 
 
 
-\item.  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$. 
+\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$. 
 
-\item. For each $i=2..n$, compute 
-$(\acc_i,\accwit_i,\pi_i) = P_{PG}(\acc_{i-1},\accwit_{i-1},\inst_{i-1},\wit_{i-1})$
-$\inst_i = (z_i,i-1,\hash(\acc_i)), w_i=(X_i,X_{i-1},x_{i-1},\wit{i-1},\prf_i)$
+\item For each $2\leq i\leq n$, compute 
+\begin{enumerate}
+ \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\inst_{i-1},\wit_{i-1})$
+\item $\inst_i = (z_i,i-1,\hash(\acc_i))$,
+\item $\wit_i=(\acc_i,\acc_{i-1},\inst_{i-1},w_{i},\prf_i)$
+\end{enumerate}
+\item 
+$(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\wit_{n})$.
+\item Let $\prf = \prvsnark(\instfin,\witfin)$ where
+\begin{itemize}
+ \item $\instfin = (\acc,\recset,C,\zfin)$
+ \item $\witfin = (\witacc,\acc_n,\inst_n,\prf^*)$
+\end{itemize}
+\item Output $\acc,\prf$.
+\end{enumerate}
 
-\item Output $(X_n,W_n,x_n,w_n)$.
 
 $V(G,z_{final}, (X,W,x,w))$:
 1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
 2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
-\end{enumerate}
-
 
 % ### The RC scheme (WIP)
 % Let $P_{PG}(X,W,x,w)\rightarrow (X',W',\pi)$ be the protogalaxy prover for $F'$. We think of $P_{PG}$ as returning a tuple $(X',W',\pi)$ - respectively,
