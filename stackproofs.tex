@@ -1207,12 +1207,12 @@ $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue 
 until reaching one where no element corresponds to $a\in \G$.
 
 
-\section{Extending the transition function to include the folding constraints}\label{sec:FtoFprime}
-
-As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the folding verifier.
+\section{The main construction}\label{sec:FtoFprime}
 We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable in $F$ is not used, and \finpred depends only on $(\zfin,\recset)$.
-We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,f\finpred^*)$ from Secti
-\subsection{Describing $F'$}
+We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,f\finpred^*)$ from Section \ref{sec:Fstar}
+
+\subsection{The extended function $F'$}
+As in \cite{nova,othernova}, we describe an extended function $F'$ that includes the folding verifier.
 $\instFprime=(z,\cnt,\acchash)$
 \begin{itemize}
  \item $z$ - output for $F$
@@ -1248,18 +1248,27 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
     \end{enumerate}
 \end{enumerate}
  \renewcommand{\acc}{\insttbase}
- \newcommand{\accwit}{\wit}
+ \newcommand{\witacc}{\wit}
  \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
  \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
  \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
 
+ Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.
 We can describe the full prover for $\rel_{F,\finpred}$
 We define the relation \relfin of pairs $\instfin,\witfin$ such that
 \begin{itemize}
  \item $\instfin = (\acc,\recset,C,\zfin)$
- \item $\witfin = (\wit,\accprev,\inst)$
+ \item $\witfin = (\accwit,\accprev,\inst)$
 \end{itemize}
+such that
+\begin{enumerate}
+ \item $(\acc,\witacc)\in\relrand$.
+ 
+\end{enumerate}
+
+
+
 
 $\prv(\inpF,\witF)$
 \begin{enumerate}
@@ -1349,6 +1358,19 @@ $V(G,z_{final}, (X,W,x,w))$:
 % the folding extractor gives us the witnesses $w,w_0$ for $\phi,\phi_0$. $w_0$ will contain a previous accumulator $acc_{prev}$ and instance $inst$ such that $inst.count=\phi_0.count -1$, along with a proof $\pi$ that $acc_{prev}, inst$ fold into $\phi$. Using the folding extractor again we can obtain witnesses to $acc_{prev},inst$.
 % $inst$'s witness will contain an instance with $count=\phi_0.count-2$ that folds into $acc_{prev}$. Continuing like this we can extract a full witness for the RC claim $(z_{final},G,C)$.
 % 
+\section{General Final predicate}
+
+Sketch:
+If we can end the IVC with a commitment $S$ to the concatenation of the \set{S_i} from all iterations. Then we can modify the final zk-SNARK in the last section to also check
+that $\finpred(S_1,\ldots,S_n)=\accept$.
+
+For this purpose, instead of the $F^*$ in section \ref{sec:Fstar} we add protogalaxy constraints to obtain a commitment of the concatenation of the previous 
+one with the $S_i$ of this iteration.
+
+Estimate of added prover complexity for concatenation constraints, using linearity.
+
+
+
 \section*{Acknowledgements}
 \bibliographystyle{alpha}
 \bibliography{references}
