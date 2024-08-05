@@ -268,7 +268,7 @@
 \newcommand{\col}{\ensuremath{\mathsf{C}}\xspace}
 \newcommand{\inp}{\ensuremath{\mathsf{x}}\xspace}
 \newcommand{\wit}{\ensuremath{\mathsf{\omega}}\xspace}
-\newcommand{\eps}{\ensuremath{\epsilon}\xspace}
+\newcommand{\eps}{\ensuremath{\varepsilon}\xspace}
 \newcommand{\inpF}{\ensuremath{\mathscr{x}}\xspace}
 \newcommand{\witF}{\ensuremath{\mathscr{w}}\xspace}
 \newcommand{\instFprime}{\ensuremath{\mathpgoth{x}}\xspace}
@@ -362,7 +362,7 @@
 \newcommand{\sumpoly}[1]{\sum_{i=0}^{#1-1}}
 \newcommand{\summ}[1]{\sum_{i\in[#1]}}
 \newcommand{\sumj}[1]{\sum_{j\in[#1]}}
-\newcommand{\ZeroH}{\ensuremath{Z_{H}} \xspace}
+\newcommand{\ZeroH}{\ensuremath{Z_H} \xspace}
 \newcommand{\lpoly}{\ensuremath{\mathsf{a}}\xspace}
 \newcommand{\rpoly}{\ensuremath{\mathsf{b}}\xspace}
 \newcommand{\opoly}{\ensuremath{\mathsf{c}}\xspace}
@@ -464,7 +464,7 @@
 \newcommand{\subgroup}{\ensuremath{\mathbb{H}}\xspace}
 \newcommand{\biggroup}{\ensuremath{\mathbb{V}}\xspace}
 \newcommand{\subtable}{\ensuremath{T_0}\xspace}
-\newcommand{\tablelang}{\ensuremath{\lang_{T}}\xspace}
+\newcommand{\tablelang}{\ensuremath{\lang_T}\xspace}
 \newcommand{\vanishingtablelang}{\ensuremath{\lang_{\subspace}}\xspace}
 \newcommand{\nonorm}[1]{\ensuremath{\Gamma^T_{#1}}\xspace}
 \newcommand{\unnorm}[2]{\ensuremath{\Gamma^{#1}_{#2}}\xspace}
@@ -531,7 +531,7 @@
 \newcommand{\zfin}{\ensuremath{z_{\mathscr{final}}}\xspace}
 \newcommand{\relapp}{\ensuremath{\rel_{app}}\xspace}
 \newcommand{\relexec}{\ensuremath{\rel_{\mathrm{exec}}}\xspace}
-\newcommand{\relF}{\ensuremath{\rel_{F}}\xspace}
+\newcommand{\relF}{\ensuremath{\rel_F}\xspace}
 \newcommand{\init}{\ensuremath{\mathsf{init}}\xspace}
 \newcommand{\add}{\ensuremath{\mathsf{add}}\xspace}
 \newcommand{\del}{\ensuremath{\mathsf{del}}\xspace}
@@ -767,7 +767,7 @@ $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$. Then
     \begin{itemize}
     \item $\f\in \funcs$.
      \item The number of its children is \callnum.
-     \item For $i\in [\callnum]$, let $(\f^i,\args^i,\callnum^i, \f^{i}_{1},\args^i_{1}, \f^i_{2},\args^i_{2},\ops^i)$ denote the first component of $\node$'s $i$'th child's label. Then $\f_i=\f^i$ and  $\args_i=\args^i$.
+     \item For $i\in [\callnum]$, let $(\f^i,\args^i,\callnum^i, \f^i_1,\args^i_1, \f^i_2,\args^i_2,\ops^i)$ denote the first component of $\node$'s $i$'th child's label. Then $\f_i=\f^i$ and  $\args_i=\args^i$.
      \item Let \ops be the multi-set union of $\instapp.\ops$ over all nodes' labels $(\instapp,\witapp)$. Then \ops has output \recset.
      
     \end{itemize}
@@ -787,13 +787,12 @@ such that $n\leq C$, and  \tree is a valid execution tree of length $n$ with fun
 \section{Repeated Computation with Global state}
 An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
 \noindent
-We call $F(Z,W,S,Z^*)\to \set{\acc,\rej}$ the \emph{transition predicate}.
+We call $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ the \emph{transition predicate}.
 
 We informally think of 
 \begin{itemize}
-\item $Z^*$ as the output of $F$ (although the actual output is \set{\acc,\rej}).
-
 \item $Z$ as the public input and $W$ as the private input of $F$.
+\item $Z^*$ as the output of $F$ (although the actual output is \set{\acc,\rej}).
 \item $S$ as the part of the private input that will be used in the final predicate.
 \end{itemize}
 
@@ -806,7 +805,7 @@ $\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\l
  \item $z_0.\init = \true$.
  \item $z_n=\zfin$.
  \item $n\leq C$.
- \item For each $i\in [n]$, $F(z_{i-1},w_i,s_i,z_i)=\acc$.
+ \item For each $i\in [n]$, $F(z_{i-1},w_i,z_i,s_i)=\acc$.
  \item $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
 \end{itemize}
 
@@ -854,13 +853,13 @@ There is an efficiently computable and efficiently invertible map $\varphi$ such
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Define $\zfin=(\empty,\root,\false)$. Let \tree be an execution tree of length $n$.
 
-Then  $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset),\phi(\tree))\in \rel_{F,\finpred}$.
+Then  $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset),\varphi(\tree))\in \rel_{F,\finpred}$.
 
  
 \end{lemma}
 \begin{proof}
-We describe the operation of $\phi$.
-Given \tree of length $n$ let $(\instapp_1,\witapp_1),\ldots,(\instapp_{n},\witapp_{n})$ be the labels of its nodes according to 
+We describe the operation of $\varphi$.
+Given \tree of length $n$ let $(\instapp_1,\witapp_1),\ldots,(\instapp_n,\witapp_n)$ be the labels of its nodes according to
 DFS order.
 Define a sequence of stacks $g_0,\ldots,g_n$ according to the sequence of labels.
 
@@ -875,9 +874,9 @@ We now need to refer to the record operations in each instance separately.
 For this purpose,
 for each $i\in [n]$, denote $\instapp_i=(\instnoops_i,\ops_i)$.
 For each $i\in [n]$, let $\path_i$ be the path from $\instapp_i.\f$ to \root.
-Define for each $i\in [n]$, $w_{i}=(\path_i,\instnoops_i,\witapp_i)$, $s_i=\ops_i$.
+Define for each $i\in [n]$, $w_i=(\path_i,\instnoops_i,\witapp_i)$, $s_i=\ops_i$.
 Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
- and $\phi(\tree)=(n,z,w,s)$. Given this definition of $\phi$ the statement of the lemma is straightforward to check.
+ and $\varphi(\tree)=(n,z,w,s)$. Given this definition of $\varphi$ the statement of the lemma is straightforward to check.
 \end{proof}
 
 \subsection{Removing the global state}\label{sec:Fstar}
@@ -889,7 +888,7 @@ Assume $\F$ has characteristic larger than $n+1$.
 Let \recset be a set of records and $\ops=\sett{(\op_i,v_i,vc_i,c_i)}{i\in [n]}$ be a set of record operations (defining $vc_i=0$ when $\op_i=\add$).
 Then \ops has output \recset if and only if the following rational function identities hold:
 \begin{enumerate}
- \item \[\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n]   , \op_i=\del}\frac{1}{X+v_iY+vc_i}.\]
+ \item \[\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}-\sum_{i\in [n], \op_i=\del}\frac{1}{X+v_iY+vc_i}.\]
  \item For some $m\in \F^n$,
  we have
  \[\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}=\sum_{i\in [n], \op_i=\read}\frac{1}{X+v_iY+vc_i}.\]
@@ -926,52 +925,87 @@ Let $F$ denote the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as from Section \r
 
 Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
 \begin{itemize}
- \item $Z=(Z_F,\inchash,\incsum,\alpha,\beta,\epsilon)$.
- \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\epsilon^*)$.
+ \item $Z=(Z_F,\inchash,\incsum,\alpha,\beta,\eps)$.
+ \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\eps^*)$.
  \item $W=(W_F,S_F,M)$
 \end{itemize}
 \noindent
 Under this notation
 $F^*(Z,W,Z^*)=\acc$ if and only if
 \begin{enumerate}
-\item $F(Z_F,W_F,S_F,Z_F^*)=\acc$.
+\item $F(Z_F,W_F,Z_F^*,S_F)=\acc$.
 
 \item Let $S_F=\sett{(\op_i,v_i,vc_i,c_i)}{i\in [m]}$. We have \\
 $\incsum^*=\incsum\;+$
-\[\sum_{i\in [m];\op_i = \add}\frac{1+ \eps m_i}{\alpha +\beta v_i+\ c_i}-\sum_{i\in [m];\op_i = \read}\frac{ \eps }{\alpha +\beta v_i+vc_i}-\sum_{i\in [m];\op_i = \del}\frac{ 1 }{\alpha +\beta v_i+ vc_i}+ \sumi{m}\frac{\epsilon^2}{\alpha+c_i}.\]
-\item $\alpha^*=\alpha, \beta^*=\beta,\epsilon^*=\epsilon$.
-\item $\inchash^*=\hash(\inchash,\cm(S_F,M))$ \\
+\[\sum_{i\in [m];\op_i = \add}\frac{1+ \eps m_i}{\alpha +\beta v_i+\ c_i}-\sum_{i\in [m];\op_i = \read}\frac{ \eps }{\alpha +\beta v_i+vc_i}-\sum_{i\in [m];\op_i = \del}\frac{ 1 }{\alpha +\beta v_i+ vc_i}+ \sumi{m}\frac{\eps^2}{\alpha+c_i}.\]
+\item $\alpha^*=\alpha, \beta^*=\beta,\eps^*=\eps$.
+\item $\inchash^*=\hash(\inchash,\cm(S_F,M))$. \\
 \end{enumerate}
 
 \noindent $\finpred^*(Z,\recset)=\acc$ if and only if
 \begin{enumerate}
- \item $\incsum=\sum_{(v,c)\in \recset} \frac{1}{\alpha + \beta v+ c}+\sumi{n}\frac{\epsilon^2}{\alpha+c_i}$
- \item $\hash(\inchash,\recset)=(\alpha,\beta,\epsilon)$
+ \item $\incsum=\sum_{(v,c)\in \recset} \frac{1}{\alpha + \beta v+ c}+\sumi{n}\frac{\eps^2}{\alpha+i}$,
+ \item $\hash(\inchash,\recset,1)=\alpha$, $\hash(\inchash,\recset,2)=\beta$, $\hash(\inchash,\recset,3)=\eps$.
 \end{enumerate}
 
 
 \begin{lemma}
 There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
-Fix some $\alpha,\beta,\epsilon\in \F$ and set of records \recset.
-Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\epsilon)$ and set $\inst\defeq (\zfin^*,C,\recset)$. Assume the ZTA for the appropriate family of functions appearing in the proof. 
+Fix some $\alpha,\beta,\eps\in \F$ and set of records \recset.
+Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and set $\inst\defeq (\zfin^*,C,\recset)$. Assume the ZTA for the appropriate family of functions appearing in the proof.
 Suppose efficient \adv outputs \wit such that $(\inst,\wit)\in \rel_{F^*,\finpred^*}$.
 
 Let \ztafuncs be the appropriate family of functions to be defined in the proof.
-Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, \cm,n)$
+Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash,\cm,n)$.
 Then e.w.p. \negl, $((\zfin,C,\recset),\varphi(\wit))\in \rel_{F,\finpred}$.
  
 \end{lemma}
 \begin{proof}
-Given a witness $\wit=(z',w')$ with $z'=(z'_0,\ldots,z'_n),w'=(w'_1,\ldots,w'_n)$ output by \adv, denote
-$z'_i=(z_{i},\inchash_i,\incsum_i,\alpha_i,\beta_i,\epsilon_i), w'=(w_{i},s_{i},M_i)$.
-Define $\witF=\varphi(\wit)$ as $\witF\defeq (z_{0},\ldots,z_{n}),(w_{1},\ldots,w_{n}),(s_{1},\ldots,s_{n})$.
+Given a witness $\wit=(n,z',w')$ with $z'=(z_0',\ldots,z_n'),w'=(w_1',\ldots,w_n')$ output by \adv, denote
+$z_i'=(z_i,\inchash_i,\incsum_i,\alpha_i,\beta_i,\eps_i), w_i'=(w_i,s_i,M_i)$.
+Define $\witF=\varphi(\wit)$ as $\witF\defeq (n,(z_0,\ldots,z_n),(w_1,\ldots,w_n),(s_1,\ldots,s_n))$.
 From $(\inst,\wit)\in \rel_{F^*,\finpred^*}$,  we know \witF satisfies the transition constraints, namely for $i\in [n]$,
-$F(z_{i-1},w_i,s_i,z_i)=\acc$. We also know that $n\leq C$.
-It is left to show that e.w.p. \negl $\finpred(\zfin,\recset)=\acc$.
-Sketch:
+$F(z_{i-1},w_i,z_i,s_i)=\acc$. We also know that $z_0.\init = \true$, $z_n=\zfin$, and $n\leq C$.
+It is left to show that e.w.p. \negl $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
+
 From $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ we know the equations from Claim \ref{clm:reducetologder} hold
-at $\alpha,\beta,\epsilon$. If they don't hold identically for \witF can contradict ZTA.
+at $\alpha,\beta,\eps$, i.e, defining the rational function
+\begin{align*}
+r(X,Y,Z)\defeq&\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}-\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}+\sum_{i\in [n], \op_i=\del}\frac{1}{X+v_iY+vc_i} \\
+&+Z\left(\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}-\sum_{i\in [n], \op_i=\read}\frac{1}{X+v_iY+vc_i}\right) \\
+&+Z^2\left(\sumi{n}\frac{1}{X+c_i}-\sumi{n}\frac{1}{X+i}\right),
+\end{align*}
+we have $r(\alpha,\beta,\eps)=0$. If any of the three rational identities from Claim \ref{clm:reducetologder} does not hold, we have $r(X,Y,Z)\not\equiv 0$, which allows us to construct an adversary \advprime against the $3$-variate ZTA for $(\ztafuncs,\hash,\cm,d)$.
+
+Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero polynomial when multiplying $r(X,Y,Z)$ with all of its denominators. Note that $f(\alpha,\beta,\eps)=0$. Define $D$ as the function that computes $f(X,Y,Z)$ given $x\defeq\wit$, $\tau\defeq\recset$, and set $\ztafuncs\defeq\{D\}$. Then \advprime outputs the degree-$d$ relation $(D,x,\tau)$, which has probability \negl.
+\end{proof}
+
+\begin{dfn}[$t$-variate ZTA]
+Fix $\cm:\F^M\to K$, hash function \hash, and integer $d$. Fix the family of functions \ztafuncs.
+We say the tuple $(D,x,\tau)$ is a \emph{degree-$d$ relation for $(\ztafuncs,\hash,\cm)$} if
+\begin{enumerate}
+ \item $D\in \ztafuncs$.
+ \item $f(X_1,\ldots,X_t)\defeq D(x,\tau)$ is a non-zero element of $\F_{\leq d}[X_1,\ldots,X_t]$.
+ \item Setting $z_i\defeq \hash(\cm(x),\tau,i)$ for $i\in[t]$, we have $f(z_1,\ldots,z_t)=0$.
+\end{enumerate}
+The $t$-variate Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability that
+\adv outputs a degree-$d$ relation for $(\ztafuncs,\hash,\cm)$ is \negl.
+\end{dfn}
+
+\begin{lemma}
+Fix a family of functions \ztafuncs whose outputs are polynomials in $\F_{\leq d}[X_1,\ldots,X_t]$. Let $\ztafuncs_t$ be a family of functions to be defined in the proof. Then the univariate ZTA for $(\ztafuncs_t,\hash,\cm,d)$ implies the $t$-variate ZTA for $(\ztafuncs,\hash,\cm,d)$ and $t=\poly$.
+\end{lemma}
+\begin{proof}
+Let \adv be an adversary against the $t$-variate ZTA that outputs the degree-$d$ relation $(D,x,\tau)$ for $(\ztafuncs,\hash,\cm)$. We construct the adversary \advprime against the univariate ZTA that outputs a degree-$d$ relation for $(\ztafuncs_t,\hash,\cm)$, where $\ztafuncs_t$ will be the union of all the functions $D_i$ defined in the following.
+
+Write $f(X_1,\ldots,X_t)\defeq D(x,\tau)$ as a polynomial in $X_t$ over $\F[X_1,\ldots,X_{t-1}]$:
+\[f(X_t)=\sum_{i=0}^d C_i(X_1,\ldots,X_{t-1}) X_t^i.\]
+Suppose first that $f(z_1,\ldots,z_{t-1},X_t)\not\equiv 0$. Then \advprime can output the degree-$d$ relation $(D_t,x,\tau_t)$, where $D_t$ is the function that computes $f_t(X)\defeq f(z_1,\ldots,z_{t-1},X)$ given $x$ and $\tau_t\defeq(\tau,t)$. Note that $f_t(z_t)=0$ with $z_t=\hash(\cm(x),\tau_t)$.
+
+Otherwise, there is a non-zero polynomial $C_i\in\F_{\leq d}[X_1,\ldots,X_{t-1}]$ which satisfies $C_i(z_1,\ldots,z_{t-1})=0$. If $C_i(z_1,\ldots,z_{t-2},X_{t-1})\not\equiv 0$, \advprime can output the degree-$d$ relation $(D_{t-1},x,\tau_{t-1})$, where $D_{t-1}$ is the function that computes $f_{t-1}(X)\defeq C_i(z_1,\ldots,z_{t-2},X)$ given $x$ and $\tau_{t-1}\defeq(\tau,t-1)$.
+
+Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have a univariate non-zero polynomial $C_i\in\F_{\leq d}[X_1]$ with $C_i(z_1)=0$. In this base case, \advprime can output the degree-$d$ relation $(D_1,x,\tau_1)$, where $D_1$ is the function that computes $f_1(X)\defeq C_i(X)$ given $x$ and $\tau_1\defeq(\tau,1)$, finishing the proof.
 \end{proof}
 
 
@@ -1037,7 +1071,7 @@ $(\inst,\wit)$ such that
  \begin{enumerate}
   \item $\inst=\cm(\wit)$.
   \item $\betaa\in \F^t, e\in \F$ and we have 
-  \[\sumi{n}\pow_{i}(\betaa) f_i(\wit) = e.\]
+  \[\sumi{n}\pow_i(\betaa) f_i(\wit) = e.\]
  \end{enumerate}
 (Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
 \subsection{The \protogal scheme}
@@ -1051,10 +1085,10 @@ We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping 
  \item\label{step:computeF} Compute the polynomial 
  \[F(X)\defeq \sumi{n}\pow_i(\betaa+X\deltaa) f_i(\wit).\]
  (Note that $F(0)=\sumi{n} \pow_i(\betaa) f_i(\wit) = e$.)
-\item\label{step:sendFcoeffs} Denote the non-constant coefficients of $F$ by $a\defeq (F_1,\ldots,F_{t})$.
+\item\label{step:sendFcoeffs} Denote the non-constant coefficients of $F$ by $a\defeq (F_1,\ldots,F_t)$.
 \item Compute $\alpha = \hash(\insttbase,\inst_1,a)$.
 % \item\label{step:computeFalpha} Note that $F(\alpha)= e+\sumi{t}F_i \alpha^i$.
-\item\label{step:computeBetastar} Compute $\betaa^*\in \F^{t}$ where $\betaa^*_i\defeq \betaa_i+\alpha\cdot \deltaa_i$.
+\item\label{step:computeBetastar} Compute $\betaa^*\in \F^t$ where $\betaa^*_i\defeq \betaa_i+\alpha\cdot \deltaa_i$.
 \item\label{step:computeG} Define the polynomial $G(X)$ as 
 \[G(X)\defeq \sumi{n}\pow_i(\betaa^*) f_i(X\cdot \wit + (1-X)\wit_1).\]
 \item Compute the polynomial $K(X)$ such that 
@@ -1270,7 +1304,7 @@ We define the relation \relfin of pairs $\instfin,\witfin$ such that
 such that
 \begin{enumerate}
  \item $(\acc,\witacc)\in\relrand$.
-\item $\verpg(\acc_0,\inst,\prf,\acc)=\accept$. 
+\item $\verpg(\acc_0,\inst,\prf,\acc)=\accept$.
 \item $\inst.z=\zfin$.
 \end{enumerate}
 
@@ -1289,15 +1323,15 @@ $\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall t
 \item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\wit),\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly\footnote{According to \cm one may  choose only a subset of \wit's indices randomly, and set the rest to zero such that $\cm(\wit)$ is random.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$. 
 
 
-\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$. 
+\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$.
 
-\item For each $2\leq i\leq n$, compute 
+\item For each $2\leq i\leq n$, compute
 \begin{enumerate}
  \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\inst_{i-1},\wit_{i-1})$
 \item $\inst_i = (z_i,i-1,\hash(\acc_i))$,
 \item $\wit_i=(\acc_i,\acc_{i-1},\inst_{i-1},w_{i},\prf_i)$
 \end{enumerate}
-\item 
+\item
 $(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\wit_{n})$.
 \item Let $\prf = \prvsnark(\instfin,\witfin)$ where
 \begin{itemize}
@@ -1317,28 +1351,28 @@ $V(G,z_{final}, (X,W,x,w))$:
 % the new accumulator instance, new accumulator witness, and a proof that the new accumulator is correct given the previous one and instance.
 % $P$:
 % Given $G, z_{final},F,n,z_0,\ldots,z_{n-1},\omega_0,\ldots,\omega_{n-1}$
-% 
-% 1. Let $X_1$ be a randomly chosen satisfiable accumulator. Namley, $X_1=(\omega,\mathbf{\beta},e)$ where $\omega$ and $\beta$ are chosen randomly And $e$ is set to $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$. 
+%
+% 1. Let $X_1$ be a randomly chosen satisfiable accumulator. Namley, $X_1=(\omega,\mathbf{\beta},e)$ where $\omega$ and $\beta$ are chosen randomly And $e$ is set to $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$.
 % 2. Let $x_1=(z_1,G,0,hash(acc_{empty}))$, $w_1=(acc_{empty},acc_{empty}, inst_0, \omega_0, \pi)$. Here $inst_0$ satisfied $inst_0.z=z_0$, and doesn't need to be a satifiable instance.
-% 
-% 2. For each $i=2..n$, compute 
+%
+% 2. For each $i=2..n$, compute
 % $(X_i,W_i,\pi_i) = P_{PG}(X_{i-1},W_{i-1},x_{i-1},w_{i-1})$
 % $x_i = (z_i,G,i-1,hash(X_i)), w_i=(X_i,X_{i-1},x_{i-1},\omega_{i-1},\pi_i)$
-% 
+%
 % 3. Output $(X_n,W_n,x_n,w_n)$.
-% 
+%
 % $V(G,z_{final}, (X,W,x,w))$:
 % 1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
 % 2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
 % ### Making the RC-scheme zero-knowledge
-% 
+%
 % We look at the relation $R_{final}$ (depending on $F$)
 % defined as pairs $(x,w)$ where
-% 
+%
 % - $x=(z_{final},G,C,\phi^*)$
 % - $w=(w^*,\phi,\phi_0,\pi)$
-% 
-% 
+%
+%
 % such that
 % - $\phi$ is an instance of $R_{acc}$, $\phi_0$ is an instance of $R$
 % - $\phi_0.n\leq C$
@@ -1346,29 +1380,29 @@ $V(G,z_{final}, (X,W,x,w))$:
 % - $(\phi^*, w^*)\in R_{acc}$.
 % - $\phi_0.h=hash(\phi)$
 % - $\phi.z=z_{final}$
-% 
-% 
-% 
+%
+%
+%
 % *The zk-prover:*
-% 
+%
 % 1. After running the [prover described above](#The-RC-scheme-WIP) for the RC-scheme, let $(X_n,W_n,x_n,w_n)$ be the final output of that prover.
 % 2. Run the PG folding prover one more time to obtain $(\phi^*,w^*,\pi) = P_{PG}(X_{n},W_{n},x_{n},w_{n})$
 % 3. Set $\phi=X_n, \phi_0=x_n$.
 % 4. Create a zk-SNARK proof $\pi_{final}$ for $R_{final}$ with $x=(z_{final},G,C,\phi^*),w=(w^*,\phi,\phi_0,\pi)$.
 % 5. Output $(x,\pi_{final})$.
-% 
-% 
+%
+%
 % *It might be convenient to have $\pi_{final}$ consist of two zk-snark proofs sharing $\phi^*$ as a public input where one proof shows the existence of $w^*$ such that $(\phi^*,w^*)\in R_{acc}$ and the second proof the conditions in $R_{final}$ between $x$ and $w\setminus w^*$.*
-% 
-% 
+%
+%
 % *Sketch of zk simulator:*
 % $z_{final},G,C$ are part of the original input given to the simulator.
 % Since $X_1$ was uniform, and $\phi^*=(cm,\beta,e)$ is the result of combining instances independent of $X_1$ into $X_1$,
 % $cm$ is the commitment of a uniformly distributed $\omega$
 % and $\beta\in F^t$ is uniformly distributed. Thus to simulate $\phi^*$ we can choose $\omega,\beta$ uniformly,
-% and compute the resultant $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$. 
+% and compute the resultant $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$.
 % Then we can simulate $\pi_{final}$ using the zk-snark simulator.
-% 
+%
 % *Sketch of knowledge soundness:*
 % Given $(x,\pi_{final})$ the snark extractor gives us
 % the witness $w=(w^*,\phi,\phi_0,\pi)$
@@ -1376,14 +1410,14 @@ $V(G,z_{final}, (X,W,x,w))$:
 % Now, given  $w$ and $\phi^*$
 % the folding extractor gives us the witnesses $w,w_0$ for $\phi,\phi_0$. $w_0$ will contain a previous accumulator $acc_{prev}$ and instance $inst$ such that $inst.count=\phi_0.count -1$, along with a proof $\pi$ that $acc_{prev}, inst$ fold into $\phi$. Using the folding extractor again we can obtain witnesses to $acc_{prev},inst$.
 % $inst$'s witness will contain an instance with $count=\phi_0.count-2$ that folds into $acc_{prev}$. Continuing like this we can extract a full witness for the RC claim $(z_{final},G,C)$.
-% 
+%
 \section{General Final predicate}
 
 Sketch:
 If we can end the IVC with a commitment $S$ to the concatenation of the \set{S_i} from all iterations. Then we can modify the final zk-SNARK in the last section to also check
 that $\finpred(S_1,\ldots,S_n)=\accept$.
 
-For this purpose, instead of the $F^*$ in section \ref{sec:Fstar} we add protogalaxy constraints to obtain a commitment of the concatenation of the previous 
+For this purpose, instead of the $F^*$ in section \ref{sec:Fstar} we add protogalaxy constraints to obtain a commitment of the concatenation of the previous
 one with the $S_i$ of this iteration.
 
 Estimate of added prover complexity for concatenation constraints, using linearity.
