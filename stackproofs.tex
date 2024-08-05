@@ -879,7 +879,7 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
  and $\varphi(\tree)=(n,z,w,s)$. Given this definition of $\varphi$ the statement of the lemma is straightforward to check.
 \end{proof}
 
-\subsection{Removing the global state}\label{sec:Fstar}
+\section{Removing the global state}\label{sec:Fstar}
 
 \paragraph{Rational Identities:}
 Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identites.
@@ -970,15 +970,14 @@ $F(z_{i-1},w_i,z_i,s_i)=\acc$. We also know that $z_0.\init = \true$, $z_n=\zfin
 It is left to show that e.w.p. \negl $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
 
 From $((\zfin^*,C,\recset),\wit)\in \rel_{F^*,\finpred^*}$ we know the equations from Claim \ref{clm:reducetologder} hold
-at $\alpha,\beta,\eps$, i.e, defining the rational function
+at $\alpha,\beta,\eps$. That is, defining the rational function
 \begin{align*}
 r(X,Y,Z)\defeq&\sum_{(v,c)\in \recset}\frac{1}{X+vY+c}-\sum_{i\in [n],\op_i=\add}\frac{1}{X+v_iY+c_i}+\sum_{i\in [n], \op_i=\del}\frac{1}{X+v_iY+vc_i} \\
 &+Z\left(\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+v_iY+c_i}-\sum_{i\in [n], \op_i=\read}\frac{1}{X+v_iY+vc_i}\right) \\
 &+Z^2\left(\sumi{n}\frac{1}{X+c_i}-\sumi{n}\frac{1}{X+i}\right),
 \end{align*}
-we have $r(\alpha,\beta,\eps)=0$. If any of the three rational identities from Claim \ref{clm:reducetologder} does not hold, we have $r(X,Y,Z)\not\equiv 0$, which allows us to construct an adversary \advprime against the $3$-variate ZTA for $(\ztafuncs,\hash,\cm,d)$.
-
-Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero polynomial when multiplying $r(X,Y,Z)$ with all of its denominators. Note that $f(\alpha,\beta,\eps)=0$. Define $D$ as the function that computes $f(X,Y,Z)$ given $x\defeq\wit$, $\tau\defeq\recset$, and set $\ztafuncs\defeq\{D\}$. Then \advprime outputs the degree-$d$ relation $(D,x,\tau)$, which has probability \negl.
+we have $r(\alpha,\beta,\eps)=0$. If any of the three rational identities from Claim \ref{clm:reducetologder} does not hold, we have $r(X,Y,Z)\not\equiv 0$.
+Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero polynomial when multiplying $r(X,Y,Z)$ with all of its denominators. Note that $f(\alpha,\beta,\eps)=0$. Define $D$ as the function that computes $f(X,Y,Z)$ given $x\defeq\wit$, $\tau\defeq\recset$, and set $\ztafuncs\defeq\{D\}$. Then we can define an efficient adversary \advprime against the $3$-variate ZTA for $(\ztafuncs,\hash,\cm,d)$ that outputs the degree-$d$ relation $(D,x,\tau)$, which has probability \negl.
 \end{proof}
 
 \begin{dfn}[$t$-variate ZTA]
