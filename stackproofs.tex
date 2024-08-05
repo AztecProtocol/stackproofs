@@ -716,7 +716,7 @@ We say a sequence \ops of record operations of size $M$ is \emph{consistent} if
 \item If $(\v,\del,\vc,\c)\in \ops$ then $\vc<\c$ and $(\add,\v,\vc)\in \ops$.
 \end{enumerate}
 
-Let \recset be set of records 
+Let \recset be a set of records.
 We say $\ops$ is \emph{has output \recset} if:
 \begin{itemize}
  \item $\ops$ is consistent.
@@ -1196,7 +1196,6 @@ Function $F$ should have ``introspection'' ability to look at commitments.
 commitment function will output two representations of $\cm(w)$ - in \G and in \F and 
 
 or PI will include \F representation. which will then be part of $w$. \V will check representations match.
-\subsection{Proving \protogal under zero-testing assumption}
 \section{The Algebraic Group Model with recursive extraction}
 As in \cite{agm}, we assume when \adv outputs $a\in \G$ it outputs a vector $c\in \F^n$ 
 with $<c,\srs>=a$. We fix some mapping $G:\F^4\to \G\cup \set{*}$. $*$ means the input doesn't correspond to \G element. We assume that this is the representation \adv uses for elements of \G.
@@ -1251,13 +1250,13 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
     \end{enumerate}
 \end{enumerate}
  \renewcommand{\acc}{\insttbase}
- \newcommand{\witacc}{\wit}
+ \newcommand{\witacc}{\ensuremath{\mathsf{w}}\xspace}
  \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
  \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
  \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
 %  \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
- \newcommand{\prvpg}{\ensuremath{\prv_{\cm,n,f}}\xspace}
+ \newcommand{\prvpg}{\ensuremath{\prv^{\mathrm{PG}}_{\cm,n,f}}\xspace}
  \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
  \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
 
@@ -1284,10 +1283,10 @@ We now describe the full prover for $\rel_{F,\finpred}$.\\
 \underline{$\prv(\inpF,\witF)$:}
 \begin{enumerate}
  \item Let
-$\inpF =(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n)$. Recall that $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$. 
+$\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall that $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$. 
 % \item For $i\in [n]$, let 
 
-\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\wit,\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$. 
+\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\wit),\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly\footnote{According to \cm one may  choose only a subset of \wit's indices randomly, and set the rest to zero such that $\cm(\wit)$ is random.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$. 
 
 
 \item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$. 
