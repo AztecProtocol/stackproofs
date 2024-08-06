@@ -663,7 +663,7 @@ we assume an \emph{object generator} \obgen that is run with input $\lambda$ bef
 \item $\G$ is a group of size $r$.
 \item $g$ is a uniformly chosen generator of \G.
 \end{itemize}
-We usually let the $\lambda$ parameter be implicit, i.e.\ write \F instead of $\F(\lambda)$.
+We usually let the $\lambda$ parameter be implicit, e.g. write \F instead of $\F(\lambda)$.
 We write \G additively.
 % We use the notations $\enc1{x}\defeq x\cdot g_1$ and $\enc2{x}\defeq x\cdot g_2$.
 
@@ -727,11 +727,11 @@ We say $\ops$ is \emph{has output \recset} if:
 
 
 \subsection{The plonkish relation}
-Now we introduce a relation describing the individual function executions tailored to make it convenient in the next section to discuss an execution of a  sequence functions calling each other.
+Now we introduce a relation describing the individual function executions tailored to make it convenient to later discuss an execution of a  sequence functions calling each other.
 Some choices of constants - like \args being of size four, are arbitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
-We fix a polynomial $G:\F^8\to \F$ that is an implicit parameter in the following definition of the relation \relapp.
+We fix a polynomial $G:\F^8\to \F$, and integers $N,k$ that are implicit parameters in the following definition of the relation \relapp.
 
 \relapp consists of all pairs $(\instapp, \witapp)$ having the form 
 \begin{itemize}
