@@ -581,7 +581,7 @@ Incrementally Verifiable Computation (IVC) \cite{ivc} and its generalization to 
 In IVC and PCD we always have an acyclic computation.
 However code written in almost any programming language \emph{is} cyclic in the sense of often relying on internal calls - 
 we start from a function $A$, execute some commands, go into a function $B$, execute its commands, and go back to $A$.
-When making a SNARK proof of such an execution, we typically linearize or ``flatten'' the cycle stemming from  the internal call, in one of the following two ways
+When making a SNARK proof of such an execution, we typically linearize or ``flatten'' the cycle stemming from  the internal call, in one of the following two ways.
 \begin{enumerate}
  \item The monolithic circuit approach - we ``inline'' all internal calls (as well as loops) into one long program without jumps.
  \item The VM approach - assume the code of $A,B$ is written in some prespecified instruction set. The program is executed by initially writing the code of $A,B$ into memory, and loading from memory and executing at each step the appropriate instruction according to a program counter. For example, the call to $B$ is made by changing the counter to that of the  first instruction of $B$. To prove correctness of the execution, all we need is a SNARK for proving correctness of a certain number of steps of a machine with this instruction set, and some initial memory state.
@@ -624,9 +624,9 @@ However, this doesn't yet deal with the notes. During native execution, note ope
 We can think of these operations as having timestamps incremented by one with each operation.
 We need to check, for example, that if a note was read in a certain timestamp, it was indeed created
 in an earlier timestamp.
-We can have the note operations - \set{add, read, delete} - performed by a function be included in the public inputs of its circuit.
+We can have the note operations - \set{\add, \read, \del} - performed by a function be included in the public inputs of its circuit.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
-Checking the existence of an $add$ operation with smaller timestamp requires a constraint between the inputs of both circuits; and for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
+Checking the existence of an $\add$ operation with smaller timestamp requires a constraint between the inputs of both circuits; and for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
 
 This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
@@ -838,14 +838,11 @@ $F(Z,W,Z^*,S)=\acc$ if and only if
 \end{enumerate}
 
 
-
-
-
+Denote by \empty the empty stack.
 We define the function \finpred on input $(z_n,s_1,\ldots,s_n,\recset)$ to output \acc if and only if  $z_n.g=\empty$,
 each $s_i$ is a well-formed set of record operations, and when defining \ops as the multi-set union of $s_1,\ldots,s_n$ it  has output \recset.
 
 
-In the lemma below, we denote by \empty the empty stack.
 
 
 \begin{lemma}\label{lem:execasRCG}
@@ -864,7 +861,7 @@ DFS order.
 Define a sequence of stacks $g_0,\ldots,g_n$ according to the sequence of labels.
 
 Namely, $g_0$ is the stack containing only $(\instapp_1.\f,\instapp_1.\args)$. And for each $i\in [n]$, $g_i$ is
-the stack obtained by popping $g[0]$ and adding $(\instapp_i.\f_j,\args_j)$ for $j\in [\instapp_i.\callnum]$.
+the stack obtained by popping $g[0]$ and adding $(\instapp_i.\f_j,\instapp_i.\args_j)$ for $j\in [\instapp_i.\callnum]$.
 
 Now, define $z_0=(g_0,\root,\true)$ and for each $i\in [n]$, $z_i=(g_i,\root,\false)$.
 
@@ -1259,7 +1256,7 @@ $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \item$\insttbase$ - previous accumulator instance
 \item$\instFprime_0$ - instance (of $F'$) to be accumulated.
 \item$w$ - private input for $F$
-\item$\prf$ - proof for protogalaxy verifier
+\item$\prf$ - proof for \protogal verifier
 \end{itemize}
 
 % Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
@@ -1292,6 +1289,7 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
  \newcommand{\prvpg}{\ensuremath{\prv^{\mathrm{PG}}_{\cm,n,f}}\xspace}
  \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
  \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
+ \newcommand{\prffin}{\ensuremath{\pi_{\mathsf{fin}}}\xspace}
 
  Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.
  \subsection{The relation \relfin}
@@ -1305,14 +1303,18 @@ such that
  \item $(\acc,\witacc)\in\relrand$.
 \item $\verpg(\acc_0,\inst,\prf,\acc)=\accept$.
 \item $\inst.z=\zfin$.
+\item $\inst.\cnt\leq C$.
 \end{enumerate}
 
+\noindent
 Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
 
 
-\subsection{The final construction}
-We now describe the full prover for $\rel_{F,\finpred}$.\\
 
+\subsection{The final construction}
+We now describe the full prover and verifier for a given trivial RCG relation $\rel_{F,\finpred}$
+Later we review how to use this to get a zk-SNARK for the relation \relexec of valid executions, given the reductions of previous sections.\\ \\
+\noindent
 \underline{$\prv(\inpF,\witF)$:}
 \begin{enumerate}
  \item Let
@@ -1322,7 +1324,7 @@ $\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall t
 \item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\wit),\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly\footnote{According to \cm one may  choose only a subset of \wit's indices randomly, and set the rest to zero such that $\cm(\wit)$ is random.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$. 
 
 
-\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $w_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$.
+\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $\omega_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$.
 
 \item For each $2\leq i\leq n$, compute
 \begin{enumerate}
@@ -1332,18 +1334,30 @@ $\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall t
 \end{enumerate}
 \item
 $(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\wit_{n})$.
-\item Let $\prf = \prvsnark(\instfin,\witfin)$ where
+\item Let $\prffin = \prvsnark(\instfin,\witfin)$ where
 \begin{itemize}
  \item $\instfin = (\acc,\recset,C,\zfin)$
  \item $\witfin = (\witacc,\acc_n,\inst_n,\prf^*)$
 \end{itemize}
-\item Output $\acc,\prf$.
+\item Output $\prf=(\acc,\prffin)$.\\
 \end{enumerate}
 
+\noindent
+\underline{$\ver(\inpF,\prf)$:}
+\begin{enumerate}
+ \item Parse \inpF as $(\zfin,C,\recset)$, $\prf$ as $(\acc,\prffin)$. 
+ \item If $\finpred(\zfin,\recset)=\rej$ output \rej.
+ \item Let $\instfin\defeq (\acc,\zfin,C,\recset)$.
+ \item Return $\versnark(\instfin,\prffin)$.
+\end{enumerate}
 
-$V(G,z_{final}, (X,W,x,w))$:
-1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
-2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
+\begin{thm}\label{thm:main}
+ $(\prv,\ver)$ is a zk-SNARK for $\rel_{F,\finpred}$
+\end{thm}
+\begin{proof}
+ 
+\end{proof}
+
 
 % ### The RC scheme (WIP)
 % Let $P_{PG}(X,W,x,w)\rightarrow (X',W',\pi)$ be the protogalaxy prover for $F'$. We think of $P_{PG}$ as returning a tuple $(X',W',\pi)$ - respectively,
