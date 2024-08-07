@@ -48,7 +48,10 @@
 \usepackage{booktabs}
 \usepackage{makecell}
 \usepackage{adjustbox}
-
+% \usepackage{pzccal}
+% \DeclareFontFamily{OT1}{pzc}{}
+% \DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
+% \DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
 \usepackage{pgfplots}
 
 \renewcommand\theadalign{bc}
@@ -158,9 +161,9 @@
 \newcommand{\pairs}[1]{$#1$-pairs\xspace}
 \newcommand{\chalpoint}{\ensuremath{\mathfrak{z}}\xspace}
 
-\newcommand{\pairone}[1]{\G1-$#1$-pair\xspace}
-\newcommand{\pairtwo}[1]{\G2-$#1$-pair\xspace}
-\newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
+% \newcommand{\pairone}[1]{\G1-$#1$-pair\xspace}
+% \newcommand{\pairtwo}[1]{\G2-$#1$-pair\xspace}
+% \newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
 \newcommand{\vecc}[2]{\ensuremath{\left(#1\right)_{#2}}\xspace}
 \newcommand{\players}{\ensuremath{[n]}\xspace}
 \newcommand{\adv}{\ensuremath{\mathcal A}\xspace}
@@ -203,8 +206,8 @@
 \newcommand{\acc}{\ensuremath{\mathsf{accept}}\xspace}
 \newcommand{\accept}{\ensuremath{\mathsf{accept}}\xspace}
 \newcommand{\res}{\ensuremath{\mathsf{res}}\xspace}
-\newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
- \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
+% \newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
+%  \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
  \newcommand{\comm}[1]{\ensuremath{\enc1{#1(x)}}\xspace}
  \newcommand{\defeq}{:=}
 
@@ -220,13 +223,13 @@
  \num\newcommand{\ex1}[1]{\ensuremath{ #1\cdot g_1}\xspace}
  \num\newcommand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
  \newcommand{\pr}{\mathrm{Pr}}
- \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
- \newcommand{\partition}{\ensuremath{{\mathcal T}}\xspace}
- \newcommand{\partof}[1]{\ensuremath{{\partition_{#1}}}\xspace}
-\num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
-\num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
- \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
- \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
+%  \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
+%  \newcommand{\partition}{\ensuremath{{\mathcal T}}\xspace}
+%  \newcommand{\partof}[1]{\ensuremath{{\partition_{#1}}}\xspace}
+% \num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
+% \num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
+%  \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
+%  \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
 \newcommand{\protver}{protocol verifier\xspace} 
 \newcommand{\hash}{\ensuremath{\mathcal{H}}\xspace} 
 \newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
@@ -565,9 +568,11 @@
 \newcommand{\node}{\ensuremath{\mathsf{n}}\xspace}
 \newcommand{\incsum}{\ensuremath{\text{\calligra{s}}}\xspace}
 \newcommand{\inchash}{\ensuremath{\mathscr{h}}\xspace}
-\newcommand{\finpred}{\ensuremath{\mathsf{f}}\xspace}
+\newcommand{\shlomomath}[1]{\ensuremath{\text{\usefont{U}{BOONDOX-cal}{m}{n}#1}}\xspace}
+\newcommand{\finpred}{\shlomomath{f}}
 \newcommand{\zksnark}{zk-SNARK\;}
 \newcommand{\accprev}{\ensuremath{}\xspace}
+\newcommand{\n}{\shlomomath{n}}
 \begin{document}
     \maketitle
 \begin{abstract}
@@ -731,7 +736,7 @@ Now we introduce a relation describing the individual function executions tailor
 Some choices of constants - like \args being of size four, are arbitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
-We fix a polynomial $G:\F^8\to \F$, and integers $N,k$ that are implicit parameters in the following definition of the relation \relapp.
+We fix a polynomial $G:\F^8\to \F$, and integers $N,\n$ that are implicit parameters in the following definition of the relation \relapp.
 
 \relapp consists of all pairs $(\instapp, \witapp)$ having the form 
 \begin{itemize}
@@ -742,14 +747,14 @@ where $\f,\f_1,\f_2 \in \G,\args\in \F^4,\callnum\in \set{0,1,2}$;
 where 
 \begin{itemize}
  \item 
-$\witf=(\perm_1,\ldots,\perm_4,\sel_1,\ldots,\sel_4)$,where $\perm_j \in [|\instapp|+N]^n,\sel_j \in \F^n$ for each $j\in [4]$
+$\witf=(\perm_1,\ldots,\perm_4,\sel_1,\ldots,\sel_4)$,where $\perm_j \in [|\instapp|+N]^{\n},\sel_j \in \F^\n$ for each $j\in [4]$
 \item $\wit\in \F^N$
 \end{itemize}
 \end{itemize}
 such that
 \begin{enumerate}
                                                                                 
-\item  Setting $x=(\instapp,\wit)$, for all $i\in [n]$
+\item  Setting $x=(\instapp,\wit)$, for all $i\in [\n]$
 \[G(\sel_{1,i},\ldots,\sel_{4,i},x_{\perm_{1,i}},\ldots,x_{\perm_{4,i}})=0.\]
 \item $\f=\cm(\witf)$.
 \end{enumerate}
@@ -914,8 +919,8 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
 
 
 
-We reduce the relation $\rel_{F,f}$ from the last section to 
-$\rel_{F^*,f^*}$:
+We reduce the relation $\rel_{F,\finpred}$ from the last section to 
+$\rel_{F^*,\finpred^*}$:
 
 
 Let $F$ denote the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as from Section \ref{sec:exec->RFC}.
@@ -1009,11 +1014,11 @@ Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have
 
 
 \section{Non-interactive folding schemes}
-We fix a vector space $K$ over \F, and an $\F$-linear function $\cm:\F^M\to K$, that will be an implicit parameter in the following definition.
-% We'll say a relation \accrel is an \emph{extension} of a relation $\rel\subset D_1\times D_2$, if the domain of its witnesses is also $D_2$
-% while the domain of its instances is an extension of $D_1$. 
+We fix a vector space $K$ over \F, and an $\F$-linear function $\cm:\F^M\to K$ that will be an implicit parameter in Definition \ref{dfn:accschme}.
+We say a relation \rel is \emph{\cm-compatible} if every element of \rel has the form $(\cm(\wit),\wit)$.
+We say \rel is \emph{\cm-extendable} if every element of \rel has the form $((\cm(\wit),\tau),\wit)$ for some $\wit,\tau$.
 \begin{dfn}\label{dfn:accschme}
-Fix relations \rel and \accrel. An \emph{\accscheme{\rel}{\accrel}} is a pair of algorithms $(\prv, \ver)$
+Fix relations \rel and \accrel that are respectively \cm-compatible and \cm-extendable. An \emph{\accscheme{\rel}{\accrel}} is a pair of algorithms $(\prv, \ver)$
 such that
 
 \begin{enumerate}
@@ -1022,7 +1027,7 @@ such that
 %  \item \ver receives as $\inst,\inst'$ as inputs and outputs \acc or \rej at then end.
 \begin{enumerate}
  \item \textbf{Completeness:} If $(\insttbase,\wit)\in \accrel, (\inst',\wit')\in \rel$, and $\prv(\insttbase,\inst';\wit,\wit')=(\prf,\instt,\witstar)$ then with probability $1-\negl$, $(\instt,\witstar)\in \accrel$ and $\ver(\insttbase,\inst',\instt,\prf)=\acc$.
-\item \textbf{Knowledge soundness in the Algebraic Group Model:}
+\item \textbf{Knowledge soundness  given extractable commitments:}
 
 For any efficient \adv the probability of the following event is \negl:
 \adv outputs $(\inst,\tau),\inst',(\inststar,\tau^*),\wit,\wit',\witstar,\prf$
@@ -1037,6 +1042,13 @@ such that
 \end{enumerate}
 \end{enumerate}
 \end{dfn}
+\begin{remark}\label{rem:agm->ext commitments}
+ The justification for requiring only knowledge soundness given extractable commitments is as follows.
+ We assume the Algebraic Group Model \cite{agm} and use a commitment scheme based on linear combination of group elements like \cite{kate}.
+ In this model with such a commitment scheme an adversary \adv must output \wit, with $\cm(\wit)=\inst$ whenever it outputs some $\inst\in K$.
+ For more details see \cite{agm} or Section 2.2 of \cite{plonk}.
+\end{remark}
+
 \subsection{Relations for folding schemes}
 We define a more general satisfiability relation than in \cite{protogal}.
 We have as parameters, integers $n,M,d$ and an $\F$-vector space $K$.
@@ -1061,7 +1073,9 @@ $(\inst,\wit)$ such that
   As in \cite{protogal}, we define the ``randomized relaxed'' version of $\rel, \relrand$. First, some required notation.
  Let $t\defeq \log n$. For $i\in [n]$, let $S\subset \set{0,\ldots,t-1}$ be the set such that $i-1=\sumj{S}2^j$. We define the $t$-variate polynomial $\pow_i$ as
  \[\pow_i(X_0,\ldots,X_{t-1}) \defeq \prod_{\ell\in S} X_\ell.\]
- Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$.
+ Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$. 
+%  This implies the $n$ \emph{univariate} polynomials 
+%  $\pow_i(X,X^2,\ldots,X^{2^{t-1}})$ are linearly independent.
   
   Given the above notation, $\relrand$ consists of the pairs $( \insttbase,\wit)$ with $\insttbase=(\inst,\betaa,e)$ such that
  \begin{enumerate}
@@ -1071,7 +1085,7 @@ $(\inst,\wit)$ such that
  \end{enumerate}
 (Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
 \subsection{The \protogal scheme}
-Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, for the special case of folding $k=1$ instances.
+Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, and for the special case of folding $k=1$ instances.
 We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping arbitrary strings to elements of \Fstar. \\ \\ \noindent
 \underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}
 \begin{enumerate}
@@ -1106,8 +1120,9 @@ $\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \item and the proof $\prf\defeq (a,b)$.\\
 \end{itemize}
 \noindent
-\underline{$\ver_{PG}(\insttbase,\inst_1, \instt,\pi=(a,b)):$}\noindent
+\underline{$\verpg(\insttbase,\inst_1, \instt,\pi=(a,b)):$}\noindent
 \begin{enumerate}
+\item Check that $\predinst(\inst_1)=\acc$. Output \rej otherwise.
  \item Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
 
 \item Check that $\instt$ is computed as in the prover algorithm. Output \acc iff this is the case. 
@@ -1140,7 +1155,7 @@ Assume that \cm is collision resistant and the ZTA holds for $(\ztafuncs,\hash, 
 Then \protogal is a \accscheme{\rel}{\relrand}.
 \end{thm}
 \begin{proof}
-The main thing to prove is knowledge soundness in the Algebraic Group Model.
+The main thing to prove is knowledge soundness given extractable commitments.
  Fix any efficient \adv. Let $E$ be the event that \adv outputs
 $\insttbase=(\inst,\betaa,e),\inst_1,\instt=(\inststar,\betaa^*,e^*),$ $\wit,\wit_1,\witstar,\prf$ such that 
 \begin{enumerate}
@@ -1237,11 +1252,11 @@ until reaching one where no element corresponds to $a\in \G$.
 
 
 \section{The main construction}\label{sec:FtoFprime}
-We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable in $F$ is not used, and accordingly \finpred depends only on $(\zfin,\recset)$.
+We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable is not used in $F$, and accordingly \finpred depends only on $(\zfin,\recset)$.
 We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,\finpred^*)$ from Section \ref{sec:Fstar}.
 
 \subsection{The extended function $F'$}
-As in \cite{nova,othernova}, we first describe an extended function $F'$ that includes the folding verifier. Loosely speaking, this is what enables bootstrapping a folding scheme into an IVC. We describe the function arguments first.\\
+As in \cite{nova,othernova}, we first describe an extended function $F'$ that executes the folding verifier in addition to an iteration of $F$. Loosely speaking, extending $F$ into $F'$ is what enables bootstrapping a folding scheme into an IVC or RCG. We describe the function arguments first.\\
 
 \noindent
 $\instFprime=(z,\cnt,\acchash)$
@@ -1259,25 +1274,24 @@ $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \item$\prf$ - proof for \protogal verifier
 \end{itemize}
 
-% Set $X:=(z,G,count,h)$, $W:=(acc,acc_{prev}, inst, w, \pi)$
 
 \noindent
 $F'(\instFprime,\witFprime)=\acc$ if and only if:
 \begin{enumerate}
- \item  $\hash(\instt)=\acchash$.
-\item $V_{PG}(\insttbase, \instFprime_0, \prf, \instt )= \acc$.
-\item $\instFprime_0.\acchash=\hash(\insttbase)$.
-\item If $\cnt>0$:
+    \item $F(\instFprime_0.z, w,z)=\acc$
+\item If $\cnt>1$:
 \begin{enumerate}
+ \item  $\hash(\instt)=\acchash$.
+\item $\instFprime_0.\acchash=\hash(\insttbase)$.
     \item $\instFprime_0.\cnt=\cnt-1$.
-    \item $F(\false,\instFprime_0.z, w,z)=\acc$
+\item $\verpg(\insttbase, \instFprime_0, \prf, \instt )= \acc$.
     \end{enumerate}
     
-\item If $\cnt=0$:
-\begin{enumerate}
-    \item $F(\true, \instFprime_0.z, w,z)=\acc$
+\item If $\cnt=1$:
+\begin{itemize}
+    \item $\instFprime_0.z.\init=\true$
 
-    \end{enumerate}
+    \end{itemize}
 \end{enumerate}
  \renewcommand{\acc}{\insttbase}
  \newcommand{\witacc}{\ensuremath{\mathsf{w}}\xspace}
@@ -1318,18 +1332,19 @@ Later we review how to use this to get a zk-SNARK for the relation \relexec of v
 \underline{$\prv(\inpF,\witF)$:}
 \begin{enumerate}
  \item Let
-$\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall that $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$. 
+$\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall that  $(\inpF,\witF)\in \rel_{F,\finpred}$ implies $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$, $z_0.\init =\true, z_n=\zfin$ and $\finpred(\zfin,\recset) = \true$.
 % \item For $i\in [n]$, let 
 
-\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\wit),\betaa,e)$ where $\wit$ and $\betaa$ are chosen randomly\footnote{According to \cm one may  choose only a subset of \wit's indices randomly, and set the rest to zero such that $\cm(\wit)$ is random.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\wit)$. 
 
+\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Choose $\acc_0$ arbitrarily.
+Let $\inst_1=(z_1,1,\acchash_1)$, $\omega_1=(\acc_0,\acc_0, \inst_0, w_1, \prf_0)$ for arbitrary values $\acchash_1,\acc_0,\prf_0$. (We can choose some values arbitrarily as they aren't constrainted in $F'$  when $\cnt=1$.)
 
-\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Let $\inst_1=(z_1,0,\hash(\emptyacc))$, $\omega_1=(\emptyacc,\emptyacc, \inst_0, \wit_0, \prf)$.
+\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\witacc_1),\betaa,e)$ where $\witacc_1$ and $\betaa$ are chosen randomly\footnote{According to \cm one may  choose only a subset of $\witacc_1$'s indices randomly, and set the rest to zero such that $\cm(\witacc_1)$ is random.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\witacc_1)$. 
 
 \item For each $2\leq i\leq n$, compute
 \begin{enumerate}
  \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\inst_{i-1},\wit_{i-1})$
-\item $\inst_i = (z_i,i-1,\hash(\acc_i))$,
+\item $\inst_i = (z_i,i,\hash(\acc_i))$,
 \item $\wit_i=(\acc_i,\acc_{i-1},\inst_{i-1},w_{i},\prf_i)$
 \end{enumerate}
 \item
