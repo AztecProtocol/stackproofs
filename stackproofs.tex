@@ -575,6 +575,8 @@
 \newcommand{\finpred}{\shlomomath{f}}
 \newcommand{\zksnark}{zk-SNARK\;}
 \newcommand{\n}{\shlomomath{n}}
+\newcommand{\dimK}{\calligmath{k}}
+\newcommand{\M}{\calligmath{M}}
 \begin{document}
     \maketitle
 \begin{abstract}
@@ -584,7 +586,7 @@ we define a related notion of \emph{Repeated Computation with Global state} (RCG
 We show how RCG is useful for designing a proof system for a private smart contract system like Aztec.
 \end{abstract}
 \section{Introduction}
-Incrementally Verifiable Computation (IVC) \cite{ivc} and its generalization to Proof Carrying Data (PCD) \cite{pcd} are useful tools for constructing space-efficient SNARK provers.
+Incrementally Verifiable Computation (IVC) \cite{ivc} and its generalization to Proof Carrying Data (PCD) \cite{pcd} are useful tools for constructing space-efficient SNARK provers\cite{BCCT}.
 In IVC and PCD we always have an acyclic computation.
 However code written in almost any programming language \emph{is} cyclic in the sense of often relying on internal calls - 
 we start from a function $A$, execute some commands, go into a function $B$, execute its commands, and go back to $A$.
@@ -625,13 +627,13 @@ Assume all functions in this system return \acc or \rej. (We can always move the
 Here's a natural way to prove the mentioned execution: Put the arguments to $B$ in the public inputs of both the circuits of $A$ and $B$.
 Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
 
-This however, doesn't deal with the notes. During execution, note operations happened in a certain order.
-We can think of these operations as having counters incremented by one with each operation.
-We need to check, for example, that if a note was read with a certain counter, it was indeed added
+This however, doesn't yet deal with the notes. During execution, note operations happened in a certain order.
+We can thus assign a \emph{counter} equal to one to the first operation, and increment the counter with each operation.
+We then need to check, for example, that if a note was read with a certain counter, it was indeed added
 with a smaller counter.
-We can include a description of the note operations peformed by a function  in the public inputs of its circuit.
+We can include a description of the note operations peformed by a function  in the inputs of its circuit. This description will contain the operation type - \set{\add,\read,\del}, the note value, and the counter.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
-Checking the existence of an $\add$ operation with smaller counter requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
+Checking the existence of an $\add$ operation with smaller counter requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree. 
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
 
 This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
@@ -649,7 +651,9 @@ The point is that in our use case the final predicate is applied to small parts 
 Roughly, we'll require space sufficient for storing the inputs to the final predicate, in addition to the space required to prove a single transition.
 
 \subsection{Related work}
-mangrove, nexus, Jens's talk.
+Recent work  \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} uses folding schemes\cite{nova} to break up proving statements about large computation into smaller statements.
+The objective being reducing prover memory and/or improving prover parallelism.
+These works, as far as we know, have not formally defined a notion like RCG, and rather use the IVC terminology. However we believe they implicitly use RCG, because of the need to check global constraints between the different chunks.
 
 
 
@@ -1045,17 +1049,17 @@ such that
  The justification for requiring only knowledge soundness given extractable commitments is as follows.
  We assume the Algebraic Group Model \cite{agm} and use a commitment scheme based on linear combination of group elements like \cite{kate}.
  In this model with such a commitment scheme an adversary \adv must output \wit, with $\cm(\wit)=\inst$ whenever it outputs some $\inst\in K$.
- For more details see \cite{agm} or Section 2.2 of \cite{plonk}.
+ For more details see \cite{agm} or Section 2.2 of \cite{plonk}, as well as Section \ref{sec:recursive} of this paper.
 \end{remark}
 
 \subsection{Relations for folding schemes}
 We define a more general satisfiability relation than in \cite{protogal}.
-We have as parameters, integers $n,M,d$ and an $\F$-vector space $K$.
+We have as parameters, integers $n,\M,d$ and an $\F$-vector space $K$.
 We have a
 \begin{itemize}
- \item \emph{Constraint function} $f:\F^M\to \F^n$ which is a vector of $n$ degree $d$ polynomials,
+ \item \emph{Constraint function} $f:\F^\M\to \F^n$ which is a vector of $n$ $\M$-variate polynomials of degree $\leq d$,
 \item \emph{Instance predicate} $\predinst:K \to \set{\acc,\rej}$,
-\item \emph{Commitment function} $\cm:\F^M \to K$ which is $\F$-linear and assumed
+\item \emph{Commitment function} $\cm:\F^\M \to K$ which is $\F$-linear and assumed
 to be collision resistant.
 \end{itemize}
 
@@ -1240,14 +1244,35 @@ Setting $\ztafuncs=\set{D_1,D_2,D_3,D_4}$ we have proven knowledge soundness und
 % commitment function will output two representations of $\cm(w)$ - in \G and in \F and 
 % 
 % or PI will include \F representation. which will then be part of $w$. \V will check representations match.
-\section{The Algebraic Group Model with recursive extraction}
-As in \cite{agm}, we assume when \adv outputs $a\in \G$ it outputs a vector $c\in \F^n$ 
-with $<c,\srs>=a$. We fix some mapping $G:\F^4\to \G\cup \set{*}$. $*$ means the input doesn't correspond to \G element. We assume that this is the representation \adv uses for elements of \G.
+\section{Adversaries supporting recursive extraction}\label{sec:recursive}
+Following \cite{novarecursive}, we define a model of ``recursive extraction'' for our analysis in Section \ref{sec:FtoFprime}. We assume our commitment function $\cm:\F^\M\to K$ is surjective.
+We assume the existence of an efficiently computable injective representation function $R:K\to \F^{\dimK}$. Whenever an adversary \adv outputs $a\in K$ we assume it is represented as $R(a)$.
+When analyzing knowledge soundness of our zk-SNARK in the next section, we put the following limitation on \adv. Say \adv outputs a vector 
+$v$ over \F. If there is an index $i$ such that $(v_i,\ldots,v_{i+\dimK-1})=R(a)$ for some $a\in K$, then \adv must also output $\omega\in \F^\M$ such that $\cm(\omega)=a$.
 
-For our security proof, we require a notion of ``recursive extraction'' used by \cite{novarecursive}:
-Specifically, we assume that if $c$ output by \A along with $a$, thought of as $c\in(\F^4)^{n/4}$, contains an element $c_i$ with $G(c_i)=a\in \G$, then \A outputs 
-$c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue outputting representations
-until reaching one where no element corresponds to $a\in \G$.
+
+This assumption is motivated by a ``recursive'' interpretation of the Algebraic Group Model\cite{agm} as done in \cite{novarecursive}.
+For illustration, consider first the case where $\cm:\F^\n\to\G$ is defined as $\cm(\wit)=<\wit,V>$ for a fixed vector $V\in \G^\n$ derived in a setup procedure. I.e. \cm is a Pedersen commitment in this case.
+In this case, the AGM forces \adv when outputting $a\in \G$ to also output $\wit$ such that $<\wit,V>=\cm(\wit)=a$. \cite{novarecursive} now raise the idea that if a prespecified subset of indices of \wit is a valid representation of $b\in \G$, it is reasonable to demand of an algebraic \adv to also output $\wit_2$ with $<\wit_2,V>=b$.\\
+
+
+Our concrete choice for \cm when using \protogal, is of the following form.\footnote{\cm is of this form because it is derived from an interactive protocol where the prover messages are in committed form, but verifier challenges are in the clear. See \cite{protostar,protogalaxy} for more details.} We have a setup procedure outputting a vector of group elements $V\in \G^\n$ is output. 
+We have some fixed partition of our input $\wit \in \F^\M$ into continuous segments of size either one or \n. To get $\cm(\wit)$ we operate segment-wise.
+If the segment $\wit_i$ is of size one we simply append $\wit_i$ to the output. If a segment $s=(\wit_i,\ldots,\wit_{i+\n-1})$ is of size \n we append $<s,V>$ to the output.
+In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and accordingly the space $K$ is a direct sum of spaces $\mathbb{V}_i\in \set{\F,\G}$. It follows that an algebraic adversary outputting $c\in K$ must output \wit with $\cm(\wit)=c$ as the AGM forces it to send an opening $s\in \F^\n$ to each $a\in \G$. 
+
+
+
+
+% elements $a\in K$ are always represented as a vector $v\in \F^{\dimK}$.
+% We assume a commitment 
+% As in \cite{agm}, we assume when \adv outputs $a\in \G$ it outputs a vector $c\in \F^n$ 
+% with $<c,\srs>=a$. We fix some mapping $G:\F^4\to \G\cup \set{*}$. $*$ means the input doesn't correspond to \G element. We assume that this is the representation \adv uses for elements of \G.
+% 
+% For our security proof, we require a notion of ``recursive extraction'' used by \cite{novarecursive}:
+% Specifically, we assume that if $c$ output by \A along with $a$, thought of as $c\in(\F^4)^{n/4}$, contains an element $c_i$ with $G(c_i)=a\in \G$, then \A outputs 
+% $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue outputting representations
+% until reaching one where no element corresponds to $a\in \G$.
 
 \newcommand{\instrcg}{\ensuremath{\mathscr{x}}\xspace}
 \newcommand{\witrcg}{\ensuremath{\mathscr{w}}\xspace}
@@ -1378,8 +1403,8 @@ $(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\witinst_{n})$.
 \end{enumerate}
 
 \begin{thm}\label{thm:main}
-Let $\F$
- $(\prv,\ver)$ is a zk-SNARK for $\rel_{F,\finpred}$
+Let \relrcg be a trivial RCG relation. Then
+ $(\prv,\ver)$ is a zk-SNARK for $\rel_{F,\finpred}$.
 \end{thm}
 \begin{proof}
  The main thing to prove is knowledge soundness. Let \adv be an algebraic adversary.
@@ -1387,20 +1412,23 @@ Let $\F$
 We define the following extractor algorithm:
 \begin{enumerate}
  \item Given $(\instrcg,\prf)$ - use the SNARK extractor to output $\witF=(\witacc,\acc,\inst,\prf^*)$.
- \item Let $n=\inst.\cnt$. Define $\acc_n\defeq \acc, \inst_n \defeq \inst.$
- \item Now for $i=n,\ldots ,1$:
+ \item Let $n\defeq \inst.\cnt$. Define $\acc_n\defeq \acc, \inst_n \defeq \inst.$
+ \item Now, for $i=n,\ldots ,1$:
  \begin{enumerate}
-  \item If $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$. Let $\inst_i=(z_i,\cnt_i,\hashacc_i)$,$\witinst_i=(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$
+  \item If $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
+  \item Parse $\inst_i$  as $(z_i,\cnt_i,\acchash_i)$. Parse $\witinst_i$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$.
  \end{enumerate}
-\item Output $\witrcg\defeq ( n,(z_1,\ldots,z_n),(w_1,\ldots,w_n))$.
+ \item Define $z_0\defeq \inst_0.z$.
+\item Output $\witrcg\defeq ( n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$.
 \end{enumerate}
-Look at following bad events:
+Look at following $n$ bad events.
+For some $i\in [n]$:
 \begin{enumerate}
- \item For some $i\in [n]$, $\acc'_i\neq \acc_i$.
- \item For some $i\in [n]$, $(\inst_i,\witinst_i)\notin \rel$.
- 
+\item  $\acc_i\notin K$, or $\inst_i\notin K$.
+ \item  $\acc'_i\neq \acc_i$, or 
+ \item  $(\inst_i,\witinst_i)\notin \rel$.
 \end{enumerate}
-We argue that if these events didn't happen $(\instrcg,\witrcg)\in \relrcg$:
+We first argue that if all of the above $n$ events didn't happen $(\instrcg,\witrcg)\in \relrcg$:
 For each $i\in [n]$, $(\inst_i,\witinst_i)\in \rel$ implies $F(z_{i-1},w_i,z_i)=\acc$. Since $\inst_{i-1}= \witinst_i.\inst $, it also implies $\inst_{i-1}.\cnt = \inst_i.\cnt-1$. So we have $\inst_1.\cnt = 1$.
 So $(\inst_1,\witinst_1)\in \rel$ together with $\witinst_1.\inst = \inst_0$ implies $\inst_0.z.\init =\true$.
 
