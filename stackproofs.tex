@@ -104,6 +104,7 @@
 \newcommand{\tablegroup}{\ensuremath{\mathbb{H}}\xspace}
 \newcommand{\V}{\ensuremath{\mathbf{V} }\xspace}
 \newcommand{\relbase}{\ensuremath{\rel_0}\xspace}
+\mathchardef\mhyphen="2D 
 
 \newcommand{\instbase}{\ensuremath{\inst_0}\xspace}
 \newcommand{\witbase}{\ensuremath{\wit_0}\xspace}
@@ -113,15 +114,16 @@
 %\newcommand{\authorname}}
 \newcommand{\company}{}
 \title{ \papertitle \\[0.72cm]}
-\author{}
-% \author{ Liam Eagen \\ \tt{Blockstream Research}\\ \tt{Zeta Function Technologies}   \and Ariel Gabizon \\ \tt{Zeta Function Technologies} } 
-% \author[1]{Liam Eagen}
-% \author[1]{Ariel Gabizon}
-% \author{2}{Patrick Towa}
-% \author{2}{Zac Williamson}
-% \affil[1]{Zeta Function Technologies}
-% \affil[1]{Zeta Function Technologies}
-% \affil[2]{Aztec Labs}
+% \author{}
+% \author{ Liam Eagen \\ \tt{Alpen Labs}   \and Ariel Gabizon \\ \tt{Zeta Function Technologies} } 
+\author[1]{Liam Eagen}
+\author[2]{Ariel Gabizon}
+\author[3]{Marek Sefranek}
+\author[2]{Patrick Towa}
+\author[2]{Zachary J. Williamson}
+\affil[1]{Alpen Labs}
+\affil[2]{Aztec Labs}
+\affil[3]{TU Wien}
 % 
 % 	\large{\authorname} \\[0.5cm] \large{\company}
 % 	\\ {DRAFT}
@@ -569,9 +571,9 @@
 \newcommand{\incsum}{\ensuremath{\text{\calligra{s}}}\xspace}
 \newcommand{\inchash}{\ensuremath{\mathscr{h}}\xspace}
 \newcommand{\shlomomath}[1]{\ensuremath{\text{\usefont{U}{BOONDOX-cal}{m}{n}#1}}\xspace}
+\newcommand{\calligmath}[1]{\ensuremath{\text{\calligra{#1}}}\xspace}
 \newcommand{\finpred}{\shlomomath{f}}
 \newcommand{\zksnark}{zk-SNARK\;}
-\newcommand{\accprev}{\ensuremath{}\xspace}
 \newcommand{\n}{\shlomomath{n}}
 \begin{document}
     \maketitle
@@ -602,7 +604,7 @@ This is what happens in the Aztec system.
  Similar to Ethereum - we have contracts; and the contracts have functions.
 A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions,
 we can't predict specifically what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
-But ``authorize'' is not tied to one specific verification key - as different token holders are allowed to set their own ``authorize'' function.
+But the call to ``authorize'' need not be tied to a specific implementation, and consequently verification key - as different token holders are allowed to set their own ``authorize'' function.
 
 
 The goal of the Aztec system is to enable constructing zero-knowledge proofs of such contract function executions.
@@ -615,23 +617,21 @@ contract address with a Merkle root of a tree whose leaves are the verification 
 \end{enumerate}
 
 \paragraph{Dealing with Global state}
-While running, a contract can read, add or delete notes belonging to it.
+Each contract has a set of notes - which are simply  values in a field \F. 
+While running, a function can read, add or delete notes belonging to its contract.
 We can thus think of the notes as global variables shared between the different functions.
 
-
-
-
-Let us think of all functions in this system as having multiple arguments, and returning \acc or \rej. (We can always move the output into the arguments if a function is not of this form.)
+Assume all functions in this system return \acc or \rej. (We can always move the output into the arguments if a function is not of this form.)
 Here's a natural way to prove the mentioned execution: Put the arguments to $B$ in the public inputs of both the circuits of $A$ and $B$.
 Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
 
-However, this doesn't yet deal with the notes. During native execution, note operations happened at a certain order.
+This however, doesn't deal with the notes. During execution, note operations happened in a certain order.
 We can think of these operations as having timestamps incremented by one with each operation.
 We need to check, for example, that if a note was read in a certain timestamp, it was indeed created
 in an earlier timestamp.
-We can have the note operations - \set{\add, \read, \del} - performed by a function be included in the public inputs of its circuit.
+We can include a description of the note operations peformed by a function  in the public inputs of its circuit.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
-Checking the existence of an $\add$ operation with smaller timestamp requires a constraint between the inputs of both circuits; and for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
+Checking the existence of an $\add$ operation with smaller timestamp requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
 
 This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
@@ -641,10 +641,10 @@ This brings us to the notion of \emph{Repeated Computation with Global state} (R
 In RCG we are not interested in ``incremental'' proofs of one step, only in proofs for a whole
 sequence of transitions ending in a desired final state.
 
-\item In RCG we allow a \emph{final predicate} checking a joint consistency condition between witnesses from all iterations.
+\item In RCG we also have a \emph{final predicate} checking a joint consistency condition between witnesses from all iterations.
 
 \end{itemize}
- One could ask, why not \emph{only} have a final predicate that includes the transition checks? 
+ One could ask, why not \emph{only} have a final predicate that includes the transition checks? In other words, a monolithic circuit for the whole computation.
 The point is that in our use case the final predicate is applied to small parts of each iteration's witness - namely the note operations. As a result, the decomposition into a transition and final predicate can facilitate obtaining better prover efficiency, especially in terms of prover space.
 Roughly, we'll require space sufficient for storing the inputs to the final predicate, in addition to the space required to prove a single transition.
 
@@ -655,20 +655,19 @@ mangrove, nexus, Jens's talk.
 
 \section{Preliminaries}
 \subsection{Terminology and Conventions}\label{sec:terminology}
-We assume our field \F is of prime order.
-We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than d. 
 We assume all algorithms described receive as an implicit parameter the security parameter $\lambda$.
-Similarly, we assume all integer parameters in the paper are implicitly functions of $\lambda$.
+Similarly, all integer parameters in the paper are implicitly functions of $\lambda$, and of size at most \poly unless explicitly stated otherwise.
 
 Whenever we use the term \emph{efficient}, we mean an algorithm running in time \poly. Furthermore,
 we assume an \emph{object generator} \obgen that is run with input $\lambda$ before all protocols, and returns all fields and groups used. Specifically, in our protocol $\obgen(\lambda) = (\F, \G,g)$ where
 \begin{itemize}
-\item \F is a prime field of super-polynomial size $r = \lambda^{\omega(1)}$
+\item \F is a field of \textbf{prime} size $r = \lambda^{\omega(1)}$
 .
 \item $\G$ is a group of size $r$.
 \item $g$ is a uniformly chosen generator of \G.
 \end{itemize}
 We usually let the $\lambda$ parameter be implicit, e.g. write \F instead of $\F(\lambda)$.
+We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than $d$. 
 We write \G additively.
 % We use the notations $\enc1{x}\defeq x\cdot g_1$ and $\enc2{x}\defeq x\cdot g_2$.
 
@@ -698,7 +697,7 @@ When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ w
 We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
 For this, we first introduce record operations which is our specific notion of operating on a global state. 
 \subsection{Record operations}
-\emph{Records} are pairs $(\v,\c)$ - where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is the \emph{counter}.
+\emph{Records} are pairs $(\v,\c)$ - where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is a \emph{counter}.
 A \emph{record operation} has one of the following forms:
 \begin{itemize}
  \item $(\add,\v,\c)$,
@@ -761,7 +760,7 @@ such that
 
 \subsection{Valid execution trees}\label{sec:validexec}
 
-By an \emph{exeuction tree of length $n$} we mean a binary tree \tree with $n$ vertices, whose nodes are
+By an \emph{execution tree of length $n$} we mean a binary tree \tree with $n$ vertices, whose nodes are
 labeled by pairs $(\instapp,\witapp)$.
 Let \funcs be a set of elements of \G.
 Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
@@ -1013,7 +1012,7 @@ Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have
 
 
 
-\section{Non-interactive folding schemes}
+\section{Non-interactive folding schemes}\label{sec:folding}
 We fix a vector space $K$ over \F, and an $\F$-linear function $\cm:\F^M\to K$ that will be an implicit parameter in Definition \ref{dfn:accschme}.
 We say a relation \rel is \emph{\cm-compatible} if every element of \rel has the form $(\cm(\wit),\wit)$.
 We say \rel is \emph{\cm-extendable} if every element of \rel has the form $((\cm(\wit),\tau),\wit)$ for some $\wit,\tau$.
@@ -1232,15 +1231,15 @@ Setting $\ztafuncs=\set{D_1,D_2,D_3,D_4}$ we have proven knowledge soundness und
 
 
 
-\section{On protogalaxy}
-\subsection{Introspective constraints}
-Constraints $f_i$ on \wit, simply low degree polynomials, but have the ability to refer to
-components of $\cm(m_j)$
-Function $F$ should have ``introspection'' ability to look at commitments.
-
-commitment function will output two representations of $\cm(w)$ - in \G and in \F and 
-
-or PI will include \F representation. which will then be part of $w$. \V will check representations match.
+% \section{On protogalaxy}
+% \subsection{Introspective constraints}
+% Constraints $f_i$ on \wit, simply low degree polynomials, but have the ability to refer to
+% components of $\cm(m_j)$
+% Function $F$ should have ``introspection'' ability to look at commitments.
+% 
+% commitment function will output two representations of $\cm(w)$ - in \G and in \F and 
+% 
+% or PI will include \F representation. which will then be part of $w$. \V will check representations match.
 \section{The Algebraic Group Model with recursive extraction}
 As in \cite{agm}, we assume when \adv outputs $a\in \G$ it outputs a vector $c\in \F^n$ 
 with $<c,\srs>=a$. We fix some mapping $G:\F^4\to \G\cup \set{*}$. $*$ means the input doesn't correspond to \G element. We assume that this is the representation \adv uses for elements of \G.
@@ -1251,6 +1250,22 @@ $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue 
 until reaching one where no element corresponds to $a\in \G$.
 
 
+ \renewcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+ \newcommand{\accprev}{\ensuremath{\mathsf{acc}_{0}}\xspace}%\calligmath{prev}}}\xspace}
+ \renewcommand{\inst}{\ensuremath{\mathsf{inst}}\xspace}
+ \newcommand{\witacc}{\ensuremath{\mathbf{w\mhyphen}\mathsf{ acc}}\xspace}
+ \newcommand{\witinst}{\ensuremath{\boldsymbol{w}\mhyphen \mathsf{inst}}\xspace}
+ \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
+ \newcommand{\instfin}{\ensuremath{\shlomomath{x}}}%_{\mathsf{fin}}}\xspace}
+ \newcommand{\witfin}{\ensuremath{\shlomomath{w}}}%_{\mathsf{fin}}}\xspace}
+ \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
+%  \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
+ \newcommand{\prvpg}{\ensuremath{\prv^{\mathrm{PG}}_{\cm,n,f}}\xspace}
+ \newcommand{\prvsnark}{\ensuremath{\prv_{\mathsf{fin}}}\xspace} %{\calligra{fin}}}}\xspace}
+ \newcommand{\versnark}{\ensuremath{\ver_{\mathsf{fin}}}\xspace}%text{\calligra{fin}}}}\xspace}
+%  \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
+%  \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
+ \newcommand{\prffin}{  \ensuremath{\pi_{\mathsf{fin}}}\xspace}
 \section{The main construction}\label{sec:FtoFprime}
 We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable is not used in $F$, and accordingly \finpred depends only on $(\zfin,\recset)$.
 We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,\finpred^*)$ from Section \ref{sec:Fstar}.
@@ -1263,7 +1278,7 @@ $\instFprime=(z,\cnt,\acchash)$
 \begin{itemize}
  \item $z$ - output for $F$
 \item $\cnt$ - counter of IVC step
-\item $\acchash$  - supposed hash of accumulator
+\item $\acchash$  - hash of accumulator
 \end{itemize}
 $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \begin{itemize}
@@ -1276,15 +1291,15 @@ $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 
 
 \noindent
-$F'(\instFprime,\witFprime)=\acc$ if and only if:
+$F'(\instFprime,\witFprime)=\accept$ if and only if:
 \begin{enumerate}
-    \item $F(\instFprime_0.z, w,z)=\acc$
+    \item $F(\instFprime_0.z, w,z)=\accept$
 \item If $\cnt>1$:
 \begin{enumerate}
  \item  $\hash(\instt)=\acchash$.
 \item $\instFprime_0.\acchash=\hash(\insttbase)$.
     \item $\instFprime_0.\cnt=\cnt-1$.
-\item $\verpg(\insttbase, \instFprime_0, \prf, \instt )= \acc$.
+\item $\verpg(\insttbase, \instFprime_0, \prf, \instt )= \accept$.
     \end{enumerate}
     
 \item If $\cnt=1$:
@@ -1293,29 +1308,22 @@ $F'(\instFprime,\witFprime)=\acc$ if and only if:
 
     \end{itemize}
 \end{enumerate}
- \renewcommand{\acc}{\insttbase}
- \newcommand{\witacc}{\ensuremath{\mathsf{w}}\xspace}
- \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
- \newcommand{\instfin}{\ensuremath{\inst_{\mathsf{fin}}}\xspace}
- \newcommand{\witfin}{\ensuremath{\wit_{\mathsf{fin}}}\xspace}
- \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
-%  \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
- \newcommand{\prvpg}{\ensuremath{\prv^{\mathrm{PG}}_{\cm,n,f}}\xspace}
- \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
- \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
- \newcommand{\prffin}{\ensuremath{\pi_{\mathsf{fin}}}\xspace}
 
- Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.
+ Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.\footnote{In an updated version of the paper we will give more details on how to efficiently implement $F'$ as a \protogal relation.}\\
+ 
+ 
+For readability, from now on we modify notational conventions and denote an accumulator by \acc, accumulator witness by \witacc, instance by \inst, and instance witness by \witinst. 
  \subsection{The relation \relfin}
-We define the relation \relfin of pairs $\instfin,\witfin$ such that
+We define the relation \relfin of pairs $(\instfin,\witfin)$ such that
 \begin{itemize}
  \item $\instfin = (\acc,\recset,C,\zfin)$
- \item $\witfin = (\witacc,\acc_0,\inst,\prf)$
+ \item $\witfin = (\witacc,\accprev,\inst,\prf)$
 \end{itemize}
 such that
 \begin{enumerate}
  \item $(\acc,\witacc)\in\relrand$.
-\item $\verpg(\acc_0,\inst,\prf,\acc)=\accept$.
+\item $\verpg(\accprev,\inst,\prf,\acc)=\accept$.
+\item $\hash(\accprev) = \inst.\acchash$.
 \item $\inst.z=\zfin$.
 \item $\inst.\cnt\leq C$.
 \end{enumerate}
@@ -1327,7 +1335,7 @@ Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
 
 \subsection{The final construction}
 We now describe the full prover and verifier for a given trivial RCG relation $\rel_{F,\finpred}$
-Later we review how to use this to get a zk-SNARK for the relation \relexec of valid executions, given the reductions of previous sections.\\ \\
+Later we review how to use this to get a zk-SNARK for the relation \relexec of valid executions, given the reductions of previous sections. \\ \\
 \noindent
 \underline{$\prv(\inpF,\witF)$:}
 \begin{enumerate}
@@ -1337,18 +1345,18 @@ $\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall t
 
 
 \item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Choose $\acc_0$ arbitrarily.
-Let $\inst_1=(z_1,1,\acchash_1)$, $\omega_1=(\acc_0,\acc_0, \inst_0, w_1, \prf_0)$ for arbitrary values $\acchash_1,\acc_0,\prf_0$. (We can choose some values arbitrarily as they aren't constrainted in $F'$  when $\cnt=1$.)
+Let $\inst_1=(z_1,1,\acchash_1)$, $\witinst_1=(\acc_0,\acc_0, \inst_0, w_1, \prf_0)$ for arbitrary values $\acchash_1,\acc_0,\prf_0$. (We can choose some values arbitrarily as they aren't constrained in $F'$  when $\cnt=1$.)
 
-\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\witacc_1),\betaa,e)$ where $\witacc_1$ and $\betaa$ are chosen randomly\footnote{According to \cm one may  choose only a subset of $\witacc_1$'s indices randomly, and set the rest to zero such that $\cm(\witacc_1)$ is random.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\witacc_1)$. 
+\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\witacc_1),\betaa,e)$ where $\witacc_1$ and $\betaa$ are chosen randomly\footnote{We only need $\cm(\witacc_1)$ to be uniformly distributed over the image of \cm. According to \cm's structure, it may suffice to  choose only a small subset of $\witacc_1$'s coordinates randomly, and set the rest to zero.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\witacc_1)$. 
 
 \item For each $2\leq i\leq n$, compute
 \begin{enumerate}
- \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\inst_{i-1},\wit_{i-1})$
+ \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\inst_{i-1},\witinst_{i-1})$
 \item $\inst_i = (z_i,i,\hash(\acc_i))$,
-\item $\wit_i=(\acc_i,\acc_{i-1},\inst_{i-1},w_{i},\prf_i)$
+\item $\witinst_i=(\acc_i,\acc_{i-1},\inst_{i-1},w_{i},\prf_i)$
 \end{enumerate}
 \item
-$(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\wit_{n})$.
+$(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\witinst_{n})$.
 \item Let $\prffin = \prvsnark(\instfin,\witfin)$ where
 \begin{itemize}
  \item $\instfin = (\acc,\recset,C,\zfin)$
