@@ -626,12 +626,12 @@ Here's a natural way to prove the mentioned execution: Put the arguments to $B$ 
 Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
 
 This however, doesn't deal with the notes. During execution, note operations happened in a certain order.
-We can think of these operations as having timestamps incremented by one with each operation.
-We need to check, for example, that if a note was read in a certain timestamp, it was indeed created
-in an earlier timestamp.
+We can think of these operations as having counters incremented by one with each operation.
+We need to check, for example, that if a note was read with a certain counter, it was indeed added
+with a smaller counter.
 We can include a description of the note operations peformed by a function  in the public inputs of its circuit.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
-Checking the existence of an $\add$ operation with smaller timestamp requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
+Checking the existence of an $\add$ operation with smaller counter requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
 
 This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
@@ -1249,6 +1249,8 @@ Specifically, we assume that if $c$ output by \A along with $a$, thought of as $
 $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue outputting representations
 until reaching one where no element corresponds to $a\in \G$.
 
+\newcommand{\instrcg}{\ensuremath{\mathscr{x}}\xspace}
+\newcommand{\witrcg}{\ensuremath{\mathscr{w}}\xspace}
 
  \renewcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
  \newcommand{\accprev}{\ensuremath{\mathsf{acc}_{0}}\xspace}%\calligmath{prev}}}\xspace}
@@ -1256,6 +1258,7 @@ until reaching one where no element corresponds to $a\in \G$.
  \newcommand{\witacc}{\ensuremath{\mathbf{w\mhyphen}\mathsf{ acc}}\xspace}
  \newcommand{\witinst}{\ensuremath{\boldsymbol{w}\mhyphen \mathsf{inst}}\xspace}
  \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
+ \newcommand{\relrcg}{\ensuremath{\rel_{F,\finpred}}\xspace}
  \newcommand{\instfin}{\ensuremath{\shlomomath{x}}}%_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\shlomomath{w}}}%_{\mathsf{fin}}}\xspace}
  \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
@@ -1375,10 +1378,34 @@ $(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\witinst_{n})$.
 \end{enumerate}
 
 \begin{thm}\label{thm:main}
+Let $\F$
  $(\prv,\ver)$ is a zk-SNARK for $\rel_{F,\finpred}$
 \end{thm}
 \begin{proof}
+ The main thing to prove is knowledge soundness. Let \adv be an algebraic adversary.
  
+We define the following extractor algorithm:
+\begin{enumerate}
+ \item Given $(\instrcg,\prf)$ - use the SNARK extractor to output $\witF=(\witacc,\acc,\inst,\prf^*)$.
+ \item Let $n=\inst.\cnt$. Define $\acc_n\defeq \acc, \inst_n \defeq \inst.$
+ \item Now for $i=n,\ldots ,1$:
+ \begin{enumerate}
+  \item If $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$. Let $\inst_i=(z_i,\cnt_i,\hashacc_i)$,$\witinst_i=(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$
+ \end{enumerate}
+\item Output $\witrcg\defeq ( n,(z_1,\ldots,z_n),(w_1,\ldots,w_n))$.
+\end{enumerate}
+Look at following bad events:
+\begin{enumerate}
+ \item For some $i\in [n]$, $\acc'_i\neq \acc_i$.
+ \item For some $i\in [n]$, $(\inst_i,\witinst_i)\notin \rel$.
+ 
+\end{enumerate}
+We argue that if these events didn't happen $(\instrcg,\witrcg)\in \relrcg$:
+For each $i\in [n]$, $(\inst_i,\witinst_i)\in \rel$ implies $F(z_{i-1},w_i,z_i)=\acc$. Since $\inst_{i-1}= \witinst_i.\inst $, it also implies $\inst_{i-1}.\cnt = \inst_i.\cnt-1$. So we have $\inst_1.\cnt = 1$.
+So $(\inst_1,\witinst_1)\in \rel$ together with $\witinst_1.\inst = \inst_0$ implies $\inst_0.z.\init =\true$.
+
+
+
 \end{proof}
 
 
