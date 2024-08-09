@@ -293,7 +293,6 @@
 \newcommand{\rel}{\ensuremath{\mathcal{R}}\xspace}
 \newcommand{\relrand}{\ensuremath{\mathcal{R^{\mathsf{rand}}}}\xspace}
 \newcommand{\lang}{\ensuremath{\mathcal{L}}\xspace}
-\newcommand{\ext}{\ensuremath{E}\xspace}
 \newcommand{\params}{\ensuremath{\mathsf{params}_{\inst}}\xspace}
 \newcommand{\protparams}{\ensuremath{\mathsf{params}_{\inst}^\advv}\xspace}
 \num\newcommand{\p1}{\ensuremath{P_1}\xspace}
@@ -572,6 +571,7 @@
 \newcommand{\inchash}{\ensuremath{\mathscr{h}}\xspace}
 \newcommand{\shlomomath}[1]{\ensuremath{\text{\usefont{U}{BOONDOX-cal}{m}{n}#1}}\xspace}
 \newcommand{\calligmath}[1]{\ensuremath{\text{\calligra{#1}}}\xspace}
+\newcommand{\ext}{\ensuremath{\mathbf{E}}\xspace}
 \newcommand{\finpred}{\shlomomath{f}}
 \newcommand{\zksnark}{zk-SNARK\;}
 \newcommand{\n}{\shlomomath{n}}
@@ -1249,6 +1249,7 @@ Following \cite{novarecursive}, we define a model of ``recursive extraction'' fo
 We assume the existence of an efficiently computable injective representation function $R:K\to \F^{\dimK}$. Whenever an adversary \adv outputs $a\in K$ we assume it is represented as $R(a)$.
 When analyzing knowledge soundness of our zk-SNARK in the next section, we put the following limitation on \adv. Say \adv outputs a vector 
 $v$ over \F. If there is an index $i$ such that $(v_i,\ldots,v_{i+\dimK-1})=R(a)$ for some $a\in K$, then \adv must also output $\omega\in \F^\M$ such that $\cm(\omega)=a$.
+We call such \adv a \emph{recursive algebraic adversary.}
 
 
 This assumption is motivated by a ``recursive'' interpretation of the Algebraic Group Model\cite{agm} as done in \cite{novarecursive}.
@@ -1263,19 +1264,9 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
 
 
 
-
-% elements $a\in K$ are always represented as a vector $v\in \F^{\dimK}$.
-% We assume a commitment 
-% As in \cite{agm}, we assume when \adv outputs $a\in \G$ it outputs a vector $c\in \F^n$ 
-% with $<c,\srs>=a$. We fix some mapping $G:\F^4\to \G\cup \set{*}$. $*$ means the input doesn't correspond to \G element. We assume that this is the representation \adv uses for elements of \G.
-% 
-% For our security proof, we require a notion of ``recursive extraction'' used by \cite{novarecursive}:
-% Specifically, we assume that if $c$ output by \A along with $a$, thought of as $c\in(\F^4)^{n/4}$, contains an element $c_i$ with $G(c_i)=a\in \G$, then \A outputs 
-% $c'\in \F^n$ with $<c',\srs>=c$. The same holds for $c'$. Thus \A must continue outputting representations
-% until reaching one where no element corresponds to $a\in \G$.
-
 \newcommand{\instrcg}{\ensuremath{\mathscr{x}}\xspace}
 \newcommand{\witrcg}{\ensuremath{\mathscr{w}}\xspace}
+\newcommand{\empt}{\calligmath{empty}}
 
  \renewcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
  \newcommand{\accprev}{\ensuremath{\mathsf{acc}_{0}}\xspace}%\calligmath{prev}}}\xspace}
@@ -1295,8 +1286,8 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
 %  \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
  \newcommand{\prffin}{  \ensuremath{\pi_{\mathsf{fin}}}\xspace}
 \section{The main construction}\label{sec:FtoFprime}
-We say  a pair of functions $(F,\finpred)$ used to define an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable is not used in $F$, and accordingly \finpred depends only on $(\zfin,\recset)$.
-We assume in this section $(F,\finpred)$ is trivial, thinking of it as equal to $(F^*,\finpred^*)$ from Section \ref{sec:Fstar}.
+We say  an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable is not used in $F$, and accordingly \finpred depends only on $(\zfin,\recset)$.
+We assume in this section $R_{F,\finpred}$ is trivial, thinking of it as  $\rel_{F^*,\finpred^*}$ from Section \ref{sec:Fstar}.
 
 \subsection{The extended function $F'$}
 As in \cite{nova,othernova}, we first describe an extended function $F'$ that executes the folding verifier in addition to an iteration of $F$. Loosely speaking, extending $F$ into $F'$ is what enables bootstrapping a folding scheme into an IVC or RCG. We describe the function arguments first.\\
@@ -1403,35 +1394,44 @@ $(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\witinst_{n})$.
 \end{enumerate}
 
 \begin{thm}\label{thm:main}
-Let \relrcg be a trivial RCG relation. Then
- $(\prv,\ver)$ is a zk-SNARK for $\rel_{F,\finpred}$.
+Let \relrcg be a trivial RCG relation. Assume that \hash is collision resistant, and that the assumptions in Theorem \ref{thm:pgsoundness} hold. Then
+ $(\prv,\ver)$ is a zk-SNARK for $\rel_{F,\finpred}$. 
 \end{thm}
 \begin{proof}
- The main thing to prove is knowledge soundness. Let \adv be an algebraic adversary.
+ The main thing to prove is knowledge soundness. Let \adv be a recursive algebraic adversary.
  
-We define the following extractor algorithm:
+We define the following extractor algorithm \ext:
 \begin{enumerate}
- \item Given $(\instrcg,\prf)$ - use the SNARK extractor to output $\witF=(\witacc,\acc,\inst,\prf^*)$.
- \item Let $n\defeq \inst.\cnt$. Define $\acc_n\defeq \acc, \inst_n \defeq \inst.$
+ \item Given $(\instrcg,\prf)$ - use the SNARK extractor to output $\witF=(\witacc,\acc',\inst',\prf^*)$. 
+ \item Let $n\defeq \inst'.\cnt$. Denote $\acc_n\defeq \acc', \inst_n \defeq \inst'$. 
  \item Now, for $i=n,\ldots ,1$:
  \begin{enumerate}
-  \item If $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
-  \item Parse $\inst_i$  as $(z_i,\cnt_i,\acchash_i)$. Parse $\witinst_i$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$.
+  \item If $(\inst_i,\wit_i)\notin \rel$, output \empt and abort. Othewise, as $(\inst_i,\wit_i)\in \rel$ implies  $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
+  \item Parse $\inst_i$  as $(z_i,\cnt_i,\acchash_i)$. Parse $\witinst_i$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$. 
  \end{enumerate}
  \item Define $z_0\defeq \inst_0.z$.
 \item Output $\witrcg\defeq ( n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$.
 \end{enumerate}
-Look at following $n$ bad events.
-For some $i\in [n]$:
-\begin{enumerate}
-\item  $\acc_i\notin K$, or $\inst_i\notin K$.
- \item  $\acc'_i\neq \acc_i$, or 
- \item  $(\inst_i,\witinst_i)\notin \rel$.
-\end{enumerate}
-We first argue that if all of the above $n$ events didn't happen $(\instrcg,\witrcg)\in \relrcg$:
-For each $i\in [n]$, $(\inst_i,\witinst_i)\in \rel$ implies $F(z_{i-1},w_i,z_i)=\acc$. Since $\inst_{i-1}= \witinst_i.\inst $, it also implies $\inst_{i-1}.\cnt = \inst_i.\cnt-1$. So we have $\inst_1.\cnt = 1$.
-So $(\inst_1,\witinst_1)\in \rel$ together with $\witinst_1.\inst = \inst_0$ implies $\inst_0.z.\init =\true$.
+Let $E_0$ be the event  $(\instfin,\witfin)\notin \relfin$.
+For $i\in [n]$, let $E_i$ be the event $(\inst_i,\witinst_i)\notin \rel$.
+%  \item  $D_i:\acc'_i\neq \acc_i$.
 
+We first argue that if $E_0,\ldots, E_n$  \emph{don't} occur, $(\instrcg,\witrcg)\in \relrcg$.
+Denote $\instrcg = (\zfin,C,\recset)$ and $\instfin=(\acc,\instrcg)$.
+Examinning the definition of $\relrcg$, the statement $(\instrcg,\witrcg)\in \relrcg$ is equivalent to the following conditions.
+\begin{enumerate}
+\item $\finpred(\zfin,\recset)=\true$:\ver checks this directly so we know it holds.
+\item $\inst_n.z = \zfin$ and $n \leq C$: Follows from $( \instfin ,\witfin)\in \relfin$.
+\item For all $i\in [n]$ $F(z_{i-1},w_i,z_i)=\accept$: Follows directly from $(\inst_i,\witinst_i)\in \rel$ for each $i\in [n]$. 
+ \item $z_0.\init = \true$:
+For this we first prove by backwards  induction on $i=n,n-1\ldots,1$ that $\inst_i.\cnt =i$.
+By our definition of $\inst_n$ this holds for $i=n$. For the induction step, assume it holds for $i$.
+Since $(\inst_i,\witinst_i)\in \rel$ we have $\inst_{i-1}.\cnt = \witinst_{i-1}.\inst.\cnt = \inst_i.\cnt -1 =i-1$.
+
+In particular, $\inst_1.\cnt=1$ which implies when $(\inst_1,\witinst_1)\in \rel$ that $z_0.\init = \inst_0.z.\init=\true$.
+\end{enumerate}
+
+It is left to
 
 
 \end{proof}
