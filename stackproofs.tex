@@ -1465,9 +1465,34 @@ that $\finpred(S_1,\ldots,S_n)=\accept$.
 For this purpose, instead of the $F^*$ in section \ref{sec:Fstar} we add protogalaxy constraints to obtain a commitment of the concatenation of the previous
 one with the $S_i$ of this iteration.
 
-Estimate of added prover complexity for concatenation constraints, using linearity.
+\subsection{Efficient Proofs of Concatenation with ProtoGalaxy}
+% WIP
+% TODO not sure if variable names conflict, check
+Given a stack consisting of vectors of field elements of length $k$ and a total bound on the size of the stack $B$, we can define a system of linear protogalaxy constraints that a concatenation was correctly carried out.
+We encode a vector $S_i$ of length $k i$ as a sequence of elements padded with zeros out to the total maximum vector length $k B$.
+Then, to append a new vector of $k$ elements $\vec{a}$ to construct $S_{i+1} = \vec{a} \| S_i$ it is sufficient to check for all indices $j \in [k B]$ that
+\begin{equation*} 
+f_j(S_i, \vec{a}, S_{i+1}) = \begin{cases}
+    a'_j - b_j & i \leq k \\
+    a'_j - a_{j - k} & j > k
+\end{cases}.
+\end{equation*}
+
+These constraints clearly encode the concatenation relation, and are well defined so long as $S_{i+1}$ does not contain $B$ elements.
+If the stack is folded in order, then even in the new randomized instance, the zero padding is preserved.
+That is, higher order elements above $i k$ are still zero after folding.
+So prover only needs to perform one field multiplication per stack element to compute the folded witness.
+These constraints are also linear so they do not contribute to any of the error terms in the $G(X)$ polynomial.
+
+For all $j > k (i+1)$ notice that $f_j(S_i, \vec{b}, S_{i+1}) = 0$ identically, so they do not even contribute to the cost of computing the $F(X)$ polynomial.
+Assuming all of these constraints are organized adjacently in the highest order indices of the overall protogalaxy constraint system, there is a straightforward modification of the $F(X)$ computation which incurs no cost for constraints that are identically zero.
+In brief, if an entire subtree consists of leaves that are zero, then the prover can avoid any computation for that subtree.
+Therefore, the total prover computation depends only on the size of the vector $S_{i+1}$.
 
 
+% TODO is it outside the scope of the section to discuss how commitments to the vectors work?
+% like the vector a should be the a' of the previous folding and we should copy the commitments
+% then checking depends only on the instance.
 
 \section*{Acknowledgements}
 \bibliographystyle{alpha}
