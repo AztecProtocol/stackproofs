@@ -313,7 +313,7 @@
 \newcommand{\attackparams}{\ensuremath{\mathsf{params^{pin}}}\xspace}
 \newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
 \newcommand{\attackdist}[2]{\ensuremath{AD_{#1}}\xspace}
-\renewcommand{\neg}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+% \renewcommand{\neg}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
 \newcommand{\ro}{\ensuremath{{\mathscr R}}\xspace}
 \newcommand{\elements}[1]{\ensuremath{\mathsf{elements}_{#1}}\xspace}
  \num\newcommand{\elmpowers1}[1]{\ensuremath{\mathrm{\mathsf{e}}^1_{#1}}\xspace}
@@ -1227,16 +1227,6 @@ have that $(D_4,x,\tau_4)$ is a degree $\log n$ relation that \advprime can outp
 Setting $\ztafuncs=\set{D_1,D_2,D_3,D_4}$ we have proven knowledge soundness under the theorem assumptions.
 \end{proof}
 
-
-
-
-
-
-
-
-
-
-
 % \section{On protogalaxy}
 % \subsection{Introspective constraints}
 % Constraints $f_i$ on \wit, simply low degree polynomials, but have the ability to refer to
@@ -1404,18 +1394,25 @@ Let \relrcg be a trivial RCG relation. Assume that \hash is collision resistant,
  
 We define the following extractor algorithm \ext:
 \begin{enumerate}
- \item Given $(\instrcg,\prf)$ - use the SNARK extractor to output $\witF=(\witacc,\acc',\inst',\prf^*)$. 
- \item Let $n\defeq \inst'.\cnt$. Denote $\acc_n\defeq \acc', \inst_n \defeq \inst'$. 
- \item Now, for $i=n,\ldots ,1$:
+ \item Given $(\instfin,\prf)$ - use the SNARK extractor to output $\witfin=(\witacc,\acc^*,\inst^*,\prf^*)$. 
+ \item Let $n\defeq \inst^*.\cnt$. Denote $\acc_n\defeq \acc^*, \inst_n \defeq \inst^*$. 
+ \item If $(\instfin,\witfin)\notin \relfin$ output \empt and abort. Otherwise $\acc_n,\inst_n\in K$ and let $\witacc_n,\witinst_n$ be the elements output by \adv such that $\cm(\witacc_n)=\acc_n$ and $\cm(\witinst_n)=\inst_n$.
+ \item  For $i=n-1,\ldots ,1$:
  \begin{enumerate}
-  \item If $(\inst_i,\wit_i)\notin \rel$, output \empt and abort. Othewise, as $(\inst_i,\wit_i)\in \rel$ implies  $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
+  \item If $(\inst_{i+1},\witinst_{i+1})\notin \rel$, output \empt and abort. Othewise, as $(\inst_{i+1},\witinst_{i+1})\in \rel$ implies  $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
   \item Parse $\inst_i$  as $(z_i,\cnt_i,\acchash_i)$. Parse $\witinst_i$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$. 
  \end{enumerate}
  \item Define $z_0\defeq \inst_0.z$.
 \item Output $\witrcg\defeq ( n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$.
 \end{enumerate}
+
+Let $D$ be the event that \adv outputs $(\instrcg,\prf)$ such that $\ver(\instrcg,\prf)=\accept$.
+If $D$ has probability \negl we are done. We assume from now this isn't the case, and look at the probability space conditioned on $D$.
+
+
+
 Let $E_0$ be the event  $(\instfin,\witfin)\notin \relfin$.
-For $i\in [n]$, let $E_i$ be the event $(\inst_i,\witinst_i)\notin \rel$.
+For $i\in [n]$, let $E_i$ be the event $(\inst_i,\witinst_i)\notin \rel$ or $(\acc_i,\witacc_i) \notin \rel$ or $\hash(\acc_i)= \inst_i.\hash$.
 %  \item  $D_i:\acc'_i\neq \acc_i$.
 
 We first argue that if $E_0,\ldots, E_n$  \emph{don't} occur, $(\instrcg,\witrcg)\in \relrcg$.
@@ -1433,77 +1430,32 @@ Since $(\inst_i,\witinst_i)\in \rel$ we have $\inst_{i-1}.\cnt = \witinst_{i-1}.
 In particular, $\inst_1.\cnt=1$ which implies when $(\inst_1,\witinst_1)\in \rel$ that $z_0.\init = \inst_0.z.\init=\true$.
 \end{enumerate}
 
-It is left to
+It is left to show that the probability of $E_0\cup E_1 \ldots \cup E_n$ is \negl.
 
+For this purpose, we prove by backwards induction on $i$, for each $i\in [n]$, that
+the probability that $E_i$ occurs given $E_0,E_{i+1},\ldots,E_n$ \emph{didn't} is \negl.
+
+the probability that $(\inst_i,\witinst_i)\notin \rel$ \emph{or} $(\acc_i,\witacc_i)\notin \relrand$ is \negl.
+
+For $i=n$, assume $E_0$ didn't occur hence $(\instfin,\witfin)\notin \relfin$.
+% from the knowledge soudness of $(\prvsnark,\versnark)$ e.w.p. \negl  $(\instfin,\witfin)\in \relfin$.
+In this case $(\acc,\witacc)\in \relrand$ and $\verpg(\inst_n,\acc_n,\prf^*,\acc)=\accept$.
+Define $\adv_n$ to be the algorithm that executes \ext and outputs $\acc_n,\inst_n,\acc,\witacc_n,\witinst_n,\witacc,\prf^*$.
+From the knowledge soundness of \protogal applied to $\adv_n$ we have that the probability conditioned on $\neg E_0$ that
+$E_n$ occured is \negl.
+
+Now assume the induction hypothesis for some $i>1$. We have by the hypothesis that the event $D_i\defeq \neg(E_0\cup E_{i}\ldots\cup E_n)$ has probability $1-\negl$. Assume that we are in $D_i$.
+From $(\inst_{i},\witinst_{i})\in \rel$ we have that $\inst_{i}.\hash = \hash(\acc'_{i})=\hash(\acc_i)$.
+If the probability that $\acc_i\neq \acc'_i$ is not \negl, we can construct an adversary $\adv'_i$ outputting $\acc_i,\acc'_i$ for the collision resistance of \hash.
+Thus, this probability is \negl.
+If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$  that $\ver(\acc_{i-1},\inst_{i-1},\prf_i,\acc_i) =\accept$.
+Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i-1},\witacc_{i-1},\witinst_{i-1},\witacc_i,\prf_i$.
+From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\in \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl.
+In other words, the probability of $E_{i-1}$ given $D_i$ is \negl, which is the inductive statement.
 
 \end{proof}
 
 
-% ### The RC scheme (WIP)
-% Let $P_{PG}(X,W,x,w)\rightarrow (X',W',\pi)$ be the protogalaxy prover for $F'$. We think of $P_{PG}$ as returning a tuple $(X',W',\pi)$ - respectively,
-% the new accumulator instance, new accumulator witness, and a proof that the new accumulator is correct given the previous one and instance.
-% $P$:
-% Given $G, z_{final},F,n,z_0,\ldots,z_{n-1},\omega_0,\ldots,\omega_{n-1}$
-%
-% 1. Let $X_1$ be a randomly chosen satisfiable accumulator. Namley, $X_1=(\omega,\mathbf{\beta},e)$ where $\omega$ and $\beta$ are chosen randomly And $e$ is set to $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$.
-% 2. Let $x_1=(z_1,G,0,hash(acc_{empty}))$, $w_1=(acc_{empty},acc_{empty}, inst_0, \omega_0, \pi)$. Here $inst_0$ satisfied $inst_0.z=z_0$, and doesn't need to be a satifiable instance.
-%
-% 2. For each $i=2..n$, compute
-% $(X_i,W_i,\pi_i) = P_{PG}(X_{i-1},W_{i-1},x_{i-1},w_{i-1})$
-% $x_i = (z_i,G,i-1,hash(X_i)), w_i=(X_i,X_{i-1},x_{i-1},\omega_{i-1},\pi_i)$
-%
-% 3. Output $(X_n,W_n,x_n,w_n)$.
-%
-% $V(G,z_{final}, (X,W,x,w))$:
-% 1. Check that $(X,W)\in R_{rand}$, $(x,w)\in R$.
-% 2. Check that $x.z=z_{final},x.acc =X,x.G=G,x.count\leq C$.
-% ### Making the RC-scheme zero-knowledge
-%
-% We look at the relation $R_{final}$ (depending on $F$)
-% defined as pairs $(x,w)$ where
-%
-% - $x=(z_{final},G,C,\phi^*)$
-% - $w=(w^*,\phi,\phi_0,\pi)$
-%
-%
-% such that
-% - $\phi$ is an instance of $R_{acc}$, $\phi_0$ is an instance of $R$
-% - $\phi_0.n\leq C$
-% - $\pi$ is an accepting proof that $(\phi,\phi_0)$ fold into $\phi^*$
-% - $(\phi^*, w^*)\in R_{acc}$.
-% - $\phi_0.h=hash(\phi)$
-% - $\phi.z=z_{final}$
-%
-%
-%
-% *The zk-prover:*
-%
-% 1. After running the [prover described above](#The-RC-scheme-WIP) for the RC-scheme, let $(X_n,W_n,x_n,w_n)$ be the final output of that prover.
-% 2. Run the PG folding prover one more time to obtain $(\phi^*,w^*,\pi) = P_{PG}(X_{n},W_{n},x_{n},w_{n})$
-% 3. Set $\phi=X_n, \phi_0=x_n$.
-% 4. Create a zk-SNARK proof $\pi_{final}$ for $R_{final}$ with $x=(z_{final},G,C,\phi^*),w=(w^*,\phi,\phi_0,\pi)$.
-% 5. Output $(x,\pi_{final})$.
-%
-%
-% *It might be convenient to have $\pi_{final}$ consist of two zk-snark proofs sharing $\phi^*$ as a public input where one proof shows the existence of $w^*$ such that $(\phi^*,w^*)\in R_{acc}$ and the second proof the conditions in $R_{final}$ between $x$ and $w\setminus w^*$.*
-%
-%
-% *Sketch of zk simulator:*
-% $z_{final},G,C$ are part of the original input given to the simulator.
-% Since $X_1$ was uniform, and $\phi^*=(cm,\beta,e)$ is the result of combining instances independent of $X_1$ into $X_1$,
-% $cm$ is the commitment of a uniformly distributed $\omega$
-% and $\beta\in F^t$ is uniformly distributed. Thus to simulate $\phi^*$ we can choose $\omega,\beta$ uniformly,
-% and compute the resultant $e=\sum_{i\in [n]}pow_i(\beta)f_i(\omega)$.
-% Then we can simulate $\pi_{final}$ using the zk-snark simulator.
-%
-% *Sketch of knowledge soundness:*
-% Given $(x,\pi_{final})$ the snark extractor gives us
-% the witness $w=(w^*,\phi,\phi_0,\pi)$
-% so that $(x,w)\in R_{final}$
-% Now, given  $w$ and $\phi^*$
-% the folding extractor gives us the witnesses $w,w_0$ for $\phi,\phi_0$. $w_0$ will contain a previous accumulator $acc_{prev}$ and instance $inst$ such that $inst.count=\phi_0.count -1$, along with a proof $\pi$ that $acc_{prev}, inst$ fold into $\phi$. Using the folding extractor again we can obtain witnesses to $acc_{prev},inst$.
-% $inst$'s witness will contain an instance with $count=\phi_0.count-2$ that folds into $acc_{prev}$. Continuing like this we can extract a full witness for the RC claim $(z_{final},G,C)$.
-%
 \section{General Final predicate}
 
 Sketch:
