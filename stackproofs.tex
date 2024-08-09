@@ -1406,7 +1406,7 @@ For $i\in [n]$, let $E_i$ be the union of the following events:
 \begin{enumerate}
  \item $(\inst_i,\witinst_i)\notin \rel$.
 \item $(\acc_i,\witacc_i) \notin \rel$.
-\item  $\hash(\acc_i)= \inst_i.\hash$.
+\item  $\hash(\acc_i)\neq \inst_i.\hash$.
 \end{enumerate}
 %  \item  $D_i:\acc'_i\neq \acc_i$.
 
@@ -1414,7 +1414,7 @@ We first argue that if $E_0,\ldots, E_n$  \emph{don't} occur, $(\instrcg,\witrcg
 Denote $\instrcg = (\zfin,C,\recset)$ and $\instfin=(\acc,\instrcg)$.
 Examinning the definition of $\relrcg$, the statement $(\instrcg,\witrcg)\in \relrcg$ is equivalent to the following conditions.
 \begin{enumerate}
-\item $\finpred(\zfin,\recset)=\true$:\ver checks this directly so we know it holds.
+\item $\finpred(\zfin,\recset)=\true$: \ver checks this directly so we know it holds.
 \item $\inst_n.z = \zfin$ and $n \leq C$: Follows from $( \instfin ,\witfin)\in \relfin$.
 \item For all $i\in [n]$ $F(z_{i-1},w_i,z_i)=\accept$: Follows directly from $(\inst_i,\witinst_i)\in \rel$ for each $i\in [n]$. 
  \item $z_0.\init = \true$:
@@ -1425,13 +1425,14 @@ Since $(\inst_i,\witinst_i)\in \rel$ we have $\inst_{i-1}.\cnt = \witinst_{i-1}.
 In particular, $\inst_1.\cnt=1$ which implies when $(\inst_1,\witinst_1)\in \rel$ that $z_0.\init = \inst_0.z.\init=\true$.
 \end{enumerate}
 
-It is left to show that the probability of $E_0\cup E_1 \ldots \cup E_n$ is \negl.
+It is left to show that the probability of $E_0\cup E_1 \ldots \cup E_n$ is \negl. From the knowledge-soundness of the zk-SNARK for \relfin
+we have $\prob(E_0)=\negl$. (Recall we are in the event $D$ and assuming its probability is non-negligible.)
 
 For this purpose, we prove by backwards induction on $i$, for each $i\in [n]$, that
 the probability that $E_i$ occurs given $E_0,E_{i+1},\ldots,E_n$ \emph{didn't} is \negl.
 
 
-For $i=n$, assume $E_0$ didn't occur hence $(\instfin,\witfin)\notin \relfin$.
+For $i=n$, assume $E_0$ didn't occur hence $(\instfin,\witfin)\in \relfin$.
 % from the knowledge soudness of $(\prvsnark,\versnark)$ e.w.p. \negl  $(\instfin,\witfin)\in \relfin$.
 In this case $(\acc,\witacc)\in \relrand$ and $\verpg(\inst_n,\acc_n,\prf^*,\acc)=\accept$.
 Define $\adv_n$ to be the algorithm that executes \ext and outputs $\acc_n,\inst_n,\acc,\witacc_n,\witinst_n,\witacc,\prf^*$.
@@ -1478,7 +1479,7 @@ $\instrcg=( (\zfin,\inchash,\alpha,\beta,\eps),C,\recset)$.
 We sketch how to deal with a \emph{general} final predicate \finpred, rather than the one described so far for checking record operations. A more detailed explanation will appear in an updated version of the paper.
 
 The basic idea is that a general final predicate reduces to the concatenation predicate.
-Namely, suppose we can prove an element $\s$ is the concatenation of the \set{s_i} from all $n$ iterations.
+Namely, suppose we can prove an element $\s$ is the commitment to the concatenation of the \set{s_i} from all $n$ iterations.
 Then we can modify the final zk-SNARK in Section \ref{sec:FtoFprime} to also check that $\finpred(\zfin, s_1,\ldots,s_n,\recset)=\accept$.
 
 For this purpose, instead of the function $F^*$ in section \ref{sec:Fstar} we add \protogal constraints to the transition function $F$ to obtain at iteration $i$ a vector $S_i$ that is the concatenation of $S_{i-1}$ with $s_i$.
