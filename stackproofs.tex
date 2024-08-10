@@ -680,17 +680,6 @@ We often denote by $[n]$ the integers \set{1,\ldots,n}.
 % the output of $\obgen(\lambda)$.
 We use the acronym e.w.p. for ``except with probability''; i.e. e.w.p. $\gamma$ means with probability \emph{at least} $1-\gamma$.
 
-% \paragraph{universal SRS-based public-coin protocols}
-% We describe public-coin (meaning the verifier messages are uniformly chosen) interactive protocols between a prover and verifier; when deriving results for non-interactive protocols, we implicitly assume we can get a proof length equal to the total communication of the prover, using the Fiat-Shamir transform/a random oracle. Using this reduction between interactive and non-interactive protocols, we can refer to the ``proof length'' of an interactive protocol. 
-% 
-% We allow our protocols to have access to a structured reference string (SRS) that can be derived in deterministic \poly-time from an ``SRS of monomials'' of the form
-% \sett{\enc1{x^i}}{a\leq i \leq b}, \sett{\enc2{x^i}}{c\leq i \leq d}, for uniform $x\in \F$,
-% and some integers $a,b,c,d$ with absolute value bounded by \poly.
-% It then follows from Bowe et al. \cite{SecondMPC} that the required SRS can be derived in a universal and updatable setup requiring only one honest participant; in the sense that an adversary controlling all but one of the participants in the setup does not gain more than a \negl advantage in its probability of producing a proof of any statement.
-% 
-% For notational simplicity, we sometimes use the SRS \srs as an implicit parameter in protocols, and do not explicitly write it.
-% 
-% 
 
 \paragraph{Representing \G}
 Assume an injective function $R:\G \to \F^2$.
@@ -1407,12 +1396,16 @@ We define the following extractor algorithm \ext:
 \end{enumerate}
 
 Let $D$ be the event that \adv outputs $(\instrcg,\prf)$ such that $\ver(\instrcg,\prf)=\accept$.
-If $D$ has probability \negl we are done. We assume from now this isn't the case, and look at the probability space conditioned on $D$.
-
-
-
+If $D$ has probability \negl we are done. Otherwise, in order to prove knowledge soundness, we need to show that 
+\[\prob\left( (\instrcg,\witrcg)\notin \relrcg|D\right)=\negl.\]
+Asssume from now we are in the space conditioned on $D$.
 Let $E_0$ be the event  $(\instfin,\witfin)\notin \relfin$.
-For $i\in [n]$, let $E_i$ be the event $(\inst_i,\witinst_i)\notin \rel$ or $(\acc_i,\witacc_i) \notin \rel$ or $\hash(\acc_i)= \inst_i.\hash$.
+For $i\in [n]$, let $E_i$ be the union of the following events:
+\begin{enumerate}
+ \item $(\inst_i,\witinst_i)\notin \rel$.
+\item $(\acc_i,\witacc_i) \notin \rel$.
+\item  $\hash(\acc_i)= \inst_i.\hash$.
+\end{enumerate}
 %  \item  $D_i:\acc'_i\neq \acc_i$.
 
 We first argue that if $E_0,\ldots, E_n$  \emph{don't} occur, $(\instrcg,\witrcg)\in \relrcg$.
@@ -1435,7 +1428,6 @@ It is left to show that the probability of $E_0\cup E_1 \ldots \cup E_n$ is \neg
 For this purpose, we prove by backwards induction on $i$, for each $i\in [n]$, that
 the probability that $E_i$ occurs given $E_0,E_{i+1},\ldots,E_n$ \emph{didn't} is \negl.
 
-the probability that $(\inst_i,\witinst_i)\notin \rel$ \emph{or} $(\acc_i,\witacc_i)\notin \relrand$ is \negl.
 
 For $i=n$, assume $E_0$ didn't occur hence $(\instfin,\witfin)\notin \relfin$.
 % from the knowledge soudness of $(\prvsnark,\versnark)$ e.w.p. \negl  $(\instfin,\witfin)\in \relfin$.
@@ -1444,14 +1436,12 @@ Define $\adv_n$ to be the algorithm that executes \ext and outputs $\acc_n,\inst
 From the knowledge soundness of \protogal applied to $\adv_n$ we have that the probability conditioned on $\neg E_0$ that
 $E_n$ occured is \negl.
 
-Now assume the induction hypothesis for some $i>1$. We have by the hypothesis that the event $D_i\defeq \neg(E_0\cup E_{i}\ldots\cup E_n)$ has probability $1-\negl$. Assume that we are in $D_i$.
-From $(\inst_{i},\witinst_{i})\in \rel$ we have that $\inst_{i}.\hash = \hash(\acc'_{i})=\hash(\acc_i)$.
-If the probability that $\acc_i\neq \acc'_i$ is not \negl, we can construct an adversary $\adv'_i$ outputting $\acc_i,\acc'_i$ for the collision resistance of \hash.
-Thus, this probability is \negl.
+Now assume the induction hypothesis for some $i>1$. We have by the hypothesis that the event $D_i\defeq \neg(E_0\cup E_{i}\ldots\cup E_n)$ has probability $1-\negl$. Assume that we are in $D_i$. 
+From $(\inst_{i},\witinst_{i})\in \rel$ we have that $\inst_{i}.\acchash = \hash(\acc'_{i})=\hash(\acc_i)$.
+From the collision resistance of \hash, we thus have that the probability that $\acc_i\neq \acc_i$ is \negl.
 If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$  that $\ver(\acc_{i-1},\inst_{i-1},\prf_i,\acc_i) =\accept$.
-Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i-1},\witacc_{i-1},\witinst_{i-1},\witacc_i,\prf_i$.
-From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\in \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl.
-In other words, the probability of $E_{i-1}$ given $D_i$ is \negl, which is the inductive statement.
+Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i-1},\witacc_{i-1},$ $\witinst_{i-1},\witacc_i,\prf_i$.
+From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$,  $\prob\left(E_{i-1} |D_i\right)=\negl$; which is the desired inductive statement.
 
 \end{proof}
 
@@ -1465,9 +1455,34 @@ that $\finpred(S_1,\ldots,S_n)=\accept$.
 For this purpose, instead of the $F^*$ in section \ref{sec:Fstar} we add protogalaxy constraints to obtain a commitment of the concatenation of the previous
 one with the $S_i$ of this iteration.
 
-Estimate of added prover complexity for concatenation constraints, using linearity.
+\subsection{Efficient Proofs of Concatenation with ProtoGalaxy}
+% WIP
+% TODO not sure if variable names conflict, check
+Given a stack consisting of vectors of field elements of length $k$ and a total bound on the size of the stack $B$, we can define a system of linear protogalaxy constraints that a concatenation was correctly carried out.
+We encode a vector $S_i$ of length $k i$ as a sequence of elements padded with zeros out to the total maximum vector length $k B$.
+Then, to append a new vector of $k$ elements $\vec{a}$ to construct $S_{i+1} = \vec{a} \| S_i$ it is sufficient to check for all indices $j \in [k B]$ that
+\begin{equation*} 
+f_j(S_i, \vec{a}, S_{i+1}) = \begin{cases}
+    a'_j - b_j & i \leq k \\
+    a'_j - a_{j - k} & j > k
+\end{cases}.
+\end{equation*}
+
+These constraints clearly encode the concatenation relation, and are well defined so long as $S_{i+1}$ does not contain $B$ elements.
+If the stack is folded in order, then even in the new randomized instance, the zero padding is preserved.
+That is, higher order elements above $i k$ are still zero after folding.
+So prover only needs to perform one field multiplication per stack element to compute the folded witness.
+These constraints are also linear so they do not contribute to any of the error terms in the $G(X)$ polynomial.
+
+For all $j > k (i+1)$ notice that $f_j(S_i, \vec{b}, S_{i+1}) = 0$ identically, so they do not even contribute to the cost of computing the $F(X)$ polynomial.
+Assuming all of these constraints are organized adjacently in the highest order indices of the overall protogalaxy constraint system, there is a straightforward modification of the $F(X)$ computation which incurs no cost for constraints that are identically zero.
+In brief, if an entire subtree consists of leaves that are zero, then the prover can avoid any computation for that subtree.
+Therefore, the total prover computation depends only on the size of the vector $S_{i+1}$.
 
 
+% TODO is it outside the scope of the section to discuss how commitments to the vectors work?
+% like the vector a should be the a' of the previous folding and we should copy the commitments
+% then checking depends only on the instance.
 
 \section*{Acknowledgements}
 \bibliographystyle{alpha}
