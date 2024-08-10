@@ -985,7 +985,7 @@ Otherwise, there is a non-zero polynomial $C_i\in\F_{\leq d}[X_1,\ldots,X_{t-1}]
 Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have a univariate non-zero polynomial $C_j'\in\F_{\leq d}[X_1]$ with $C_j'(z_1)=0$. In this base case, \advprime can output the degree-$d$ relation $(D_1,x,\tau_1)$, where $D_1$ is the function that computes $f_1(X)\defeq C_j'(X)$ given $x$ and $\tau_1\defeq(\tau,1)$, finishing the proof.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{lem:FtoFstar}
 There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Fix some $\alpha,\beta,\eps\in \F$ and set of records \recset.
@@ -1333,7 +1333,7 @@ Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
 
 
 
-\subsection{The final construction}
+\subsection{Main construction}\label{subsec:main}
 We now describe the full prover and verifier for a given trivial RCG relation $\rel_{F,\finpred}$
 Later we review how to use this to get a zk-SNARK for the relation \relexec of valid executions, given the reductions of previous sections. \\ \\
 \noindent
@@ -1444,6 +1444,30 @@ Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\
 From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$,  $\prob\left(E_{i-1} |D_i\right)=\negl$; which is the desired inductive statement.
 
 \end{proof}
+\subsection{Constructing proofs for \relexec}
+\noindent
+\underline{$\prv(\instexec,\witexec)$:}
+\begin{enumerate}
+ \item Let $\instexec=(\root,C,\recset),\zfin=(\empty,\root,\false)$ and $\instrcg=(\zfin,C,\recset)$.
+Let $\varphi$ be the map in Lemma \ref{lem:execasRCG}, and compute $\witrcg=\varphi(\witexec)$. 
+\item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is when $s_{i,j}$ is an \add operation, and zero otherwise.
+appears in $s_i$. 
+\item Compute $h_n=\cm'(s,m)$, where $\cm'$ is as in Lemma \ref{lem:FtoFstar}. Compute
+$(\alpha,\beta,\eps) = (\hash(\inchash,\recset,1),\hash(\inchash,\recset,2),\hash(\inchash,\recset,3)$.
+\item Define $\zfin^*=(\zfin,h_n,\alpha,\beta,\eps),  \instrcg^*=(\zfin^*,C,\recset)$. Let $\witrcg^*=\varphi^*(\witrcg)$ where
+$\varphi^*$ is the mapping from Lemma \ref{lem:FtoFstar}.
+\item Compute the proof $\pi^*$ for $(\instrcg^*,\witrcg^*)\in \rel_{F^*,\finpred^*}$ according to \prv in Section \ref{subsec:main}.
+\item Output $\pi=( (h_n,\alpha,\beta,\eps),\pi)$.
+\end{enumerate}
+
+\noindent
+\underline{$\ver(\instexec,\pi)$:}
+\begin{enumerate}
+\item Parse  $\pi$ as $(\inchash,\alpha,\beta,\eps,\pi^*)$. Parse $\instexec$ as $(\zfin,C,\recset)$. Define
+$\instrcg=( (\zfin,\inchash,\alpha,\beta,\eps),C,\recset)$.
+ \item Let $\ver'$ be \ver from Section \ref{subsec:main}. Return $\ver'(\instrcg,\pi^*)$.
+\end{enumerate}
+
 
 
 \section{General Final predicate}
