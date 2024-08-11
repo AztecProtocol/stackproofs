@@ -1473,34 +1473,49 @@ $\instrcg=( (\zfin,\inchash,\alpha,\beta,\eps),C,\recset)$.
 
 
 \section{General Final predicate}
+\renewcommand{\s}{\incsum}
+We sketch how to deal with a \emph{general} final predicate \finpred, rather than the one described so far for checking record operations. A more detailed explanation will appear in an updated version of the paper.
 
-Sketch:
-If we can end the IVC with a commitment $S$ to the concatenation of the \set{S_i} from all iterations. Then we can modify the final zk-SNARK in the last section to also check
-that $\finpred(S_1,\ldots,S_n)=\accept$.
+The basic idea is that a general final predicate reduces to the concatenation predicate.
+Namely, suppose we can prove an element $\s$ is the concatenation of the \set{s_i} from all $n$ iterations.
+Then we can modify the final zk-SNARK in Section \ref{sec:FtoFprime} to also check that $\finpred(\zfin, s_1,\ldots,s_n,\recset)=\accept$.
 
-For this purpose, instead of the $F^*$ in section \ref{sec:Fstar} we add protogalaxy constraints to obtain a commitment of the concatenation of the previous
-one with the $S_i$ of this iteration.
+For this purpose, instead of the function $F^*$ in section \ref{sec:Fstar} we add \protogal constraints to the transition function $F$ to obtain at iteration $i$ a vector $S_i$ that is the concatenation of $S_{i-1}$ with $s_i$.
 
-\subsection{Efficient Proofs of Concatenation with ProtoGalaxy}
+\subsection{Efficient Proofs of Concatenation with \protogal}
 % WIP
 % TODO not sure if variable names conflict, check
-Given a stack consisting of vectors of field elements of length $k$ and a total bound on the size of the stack $B$, we can define a system of linear protogalaxy constraints that a concatenation was correctly carried out.
-We encode a vector $S_i$ of length $k i$ as a sequence of elements padded with zeros out to the total maximum vector length $k B$.
-Then, to append a new vector of $k$ elements $\vec{a}$ to construct $S_{i+1} = \vec{a} \| S_i$ it is sufficient to check for all indices $j \in [k B]$ that
+Given a sequence consisting of vectors \sett{s_i}{i\in [n]} of field elements of length $k$ and a bound $C$ on $n$, we can define a system of linear protogalaxy constraints that a concatenation was correctly carried out.
+We highlight that it is important the constraint system does not depend on the current iteration $i$, or actual sequence length $n$, only on the bound $C$.
+The idea is that if we append the new elements \emph{at the beginning} of the vector, the concatenation constraints can be written as linear constraints that indeed only depend on $k,C$ but not $i$ or $n$.
+
+Fix vector $b\in \F^k$ and vectors $a,a'\in F^{kC}$.
+For each $j\in [kC]$ we define the constraint $f_j(a,b,a')$ as follows.
 \begin{equation*} 
-f_j(S_i, \vec{a}, S_{i+1}) = \begin{cases}
+f_j(a, b, a') \defeq \begin{cases}
     a'_j - b_j & i \leq k \\
     a'_j - a_{j - k} & j > k
 \end{cases}.
 \end{equation*}
+In words, the constraints \set{f_j} enforce that $a'$ consists of the $k$ elements of $b$ followed by the first $(C-1)k$ elements
+of $a$.
+Additionally, we will constrain (using the \init variable) that $S_0$ is the zero vector of length $kC$.
+In the $i$'th iteration, our transition function $F$ will checks for each $j\in [kC]$ the constraint $f_j(S_i,s_i,S_{i+1})=0$.
 
-These constraints clearly encode the concatenation relation, and are well defined so long as $S_{i+1}$ does not contain $B$ elements.
+One can now show inductively that when starting from the zero vector, under the assumptions that $n\leq C$ and $|s_i|\leq k$ for each $i\in [n]$, that we end up with $S_n=(s_1\|\ldots\| s_n)$ possibly padded with zeroes.
+
+% Now we wish to append $b\in \F^k$ to $S_i$; that is, to construct $S_{i+1} = b \| S_i$.
+% 
+% it is sufficient to check for all $j \in [k C]$ that $f_j(S_i,b,S_{i+1})=0$ where 
+% 
+% These constraints clearly encode the concatenation relation.
+\paragraph{Prover efficiency}
 If the stack is folded in order, then even in the new randomized instance, the zero padding is preserved.
-That is, higher order elements above $i k$ are still zero after folding.
+That is, higher order elements above $ ki$ are still zero after folding.
 So prover only needs to perform one field multiplication per stack element to compute the folded witness.
 These constraints are also linear so they do not contribute to any of the error terms in the $G(X)$ polynomial.
 
-For all $j > k (i+1)$ notice that $f_j(S_i, \vec{b}, S_{i+1}) = 0$ identically, so they do not even contribute to the cost of computing the $F(X)$ polynomial.
+For all $j > k (i+1)$ notice that $f_j(S_i, s_i, S_{i+1}) = 0$ identically, so they do not even contribute to the cost of computing the $F(X)$ polynomial.
 Assuming all of these constraints are organized adjacently in the highest order indices of the overall protogalaxy constraint system, there is a straightforward modification of the $F(X)$ computation which incurs no cost for constraints that are identically zero.
 In brief, if an entire subtree consists of leaves that are zero, then the prover can avoid any computation for that subtree.
 Therefore, the total prover computation depends only on the size of the vector $S_{i+1}$.
