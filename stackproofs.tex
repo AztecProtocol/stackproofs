@@ -922,14 +922,14 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 \paragraph{Rational Identities:}
 Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identites.
 \begin{claim}\label{clm:reducetologder}
-Assume $\F$ has characteristic larger than $n+1$.
-Let \recset be a set of records and $\ops=\sett{(\op_i,\v_i,\vc_i,\c_i)}{i\in [n]}$ be a set of record operations (defining $\vc_i=0$ when $\op_i=\add$) with $\vc_i<\c_i$ for all $i\in [n]$.
+Assume $\F$ has characteristic larger than $M+1$.
+Let \recset be a set of records and $\ops=\sett{(\op_i,\v_i,\vc_i,\c_i)}{i\in \countrange}$ be a set of record operations (defining $\vc_i=0$ when $\op_i=\add$) with $\vc_i<\c_i$ for all $i\in \countrange$.
 Then \ops has output \recset if and only if the following rational function identities hold:
 \begin{enumerate}
- \item \[\sum_{(\v,\c)\in \recset}\frac{1}{X+\v Y+\c}=\sum_{i\in [n],\op_i=\add}\frac{1}{X+\v_i Y+\c_i}-\sum_{i\in [n], \op_i=\del}\frac{1}{X+\v_i Y+\vc_i}.\]
- \item For some $m\in \F^n$,
+ \item \[\sum_{(\v,\c)\in \recset}\frac{1}{X+\v Y+\c}=\sum_{i\in \countrange,\op_i=\add}\frac{1}{X+\v_i Y+\c_i}-\sum_{i\in \countrange, \op_i=\del}\frac{1}{X+\v_i Y+\vc_i}.\]
+ \item For some $m\in \F^M$,
  we have
- \[\sum_{i\in [n],\op_i=\add}\frac{m_i}{X+\v_i Y+\c_i}=\sum_{i\in [n], \op_i=\read}\frac{1}{X+\v_i Y+\vc_i}.\]
+ \[\sum_{i\in \countrange,\op_i=\add}\frac{m_i}{X+\v_i Y+\c_i}=\sum_{i\in \countrange, \op_i=\read}\frac{1}{X+\v_i Y+\vc_i}.\]
  \item \[\sumi{n}\frac{1}{X+\c_i}=\sumi{n}\frac{1}{X+i}.\]
 \end{enumerate}
 \end{claim}
@@ -940,11 +940,11 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
  Thus, $\sum_{v,c} a_{v,c} R_{v,c} = \sum b_{v,c} R_{v,c}$ implies $a_{v,c}=b_{v,c}$ for each $(v,c)\in \F^2$.
  The event of \ops not having output \recset means one of the following occurs.
  \begin{enumerate}
-  \item  The multi-set of counters $\sett{\c_i}{i\in [n]}$ doesn't equal \set{1,\ldots,n}. In this case, the LHS of the third identity will not have all one coefficients for the elements \sett{R_{0,\c_i}}{i\in [n]} and so cannot equal the RHS.
+  \item  The multi-set of counters $\sett{\c_i}{i\in \countrange}$ doesn't equal \set{1,\ldots,M}. In this case, the LHS of the third identity will not have all one coefficients for the elements \sett{R_{0,\c_i}}{i\in \countrange} and so cannot equal the RHS.
   
   Note that when we are not in this case the counters in \ops are all distinct, which we assume for the next cases.
- \item For some $\v,\vc,\c$, $(\del,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$; or for some $\v,\vc,\c_1\neq \c_2$, $(\del,\v,\vc,\c_1),(\del,\v,\vc,\c_2)\in \ops$: In the first identity RHS, we will have $R_{\v,\vc}$ with coefficient in the range  $\set{-1,\ldots,-n}$, while in the LHS it has coefficient one or zero.
- \item For some $\v,\vc,\c$, $(\read,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$: In the second identity RHS $R_{\v,\vc}$ will have a coefficient in the range $\set{1,\ldots,n}$ while in the LHS it has coefficient zero.
+ \item For some $\v,\vc,\c$, $(\del,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$; or for some $\v,\vc,\c_1\neq \c_2$, $(\del,\v,\vc,\c_1),(\del,\v,\vc,\c_2)\in \ops$: In the first identity RHS, we will have $R_{\v,\vc}$ with coefficient in the range  $\set{-1,\ldots,-M}$, while in the LHS it has coefficient one or zero.
+ \item For some $\v,\vc,\c$, $(\read,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$: In the second identity RHS $R_{\v,\vc}$ will have a coefficient in the range $\set{1,\ldots,M}$ while in the LHS it has coefficient zero.
  \item \recset is \emph{not} equal to the set $\recset'$ of $(\v,\c)$ for which $(\add,\v,0,\c)\in \ops$ but $(\del,\v,\c,\c')\notin \ops$. We look at the first identity. $\recset'$ is precisely the set of $(\v,\c)$ with coefficient one on the RHS, while \recset is the set of $(\v,\c)$ with coefficient one on the LHS. Hence the first identity cannot hold in this case.
  \end{enumerate}
 \end{proof}
@@ -958,8 +958,9 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
 We reduce the relation $\rel_{F,\finpred}$ from the last section to 
 $\rel_{F^*,\finpred^*}$:
 
+Let $F$ denote the function $F(Z_F,W_F,Z_F^*,S_F)\to \set{\acc,\rej}$ as from Section \ref{sec:exec->RFC}.
 
-Let $F$ denote the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as from Section \ref{sec:exec->RFC}.
+Let $k\defeq |S_F|$, $\cm:\F^{5k} \to \G$, and set $M\defeq kn$.
 
 Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
 \begin{itemize}
