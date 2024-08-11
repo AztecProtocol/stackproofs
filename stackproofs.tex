@@ -631,7 +631,7 @@ This however, doesn't yet deal with the notes. During execution, note operations
 We can thus assign a \emph{counter} equal to one to the first operation, and increment the counter with each operation.
 We then need to check, for example, that if a note was read with a certain counter, it was indeed added
 with a smaller counter.
-We can include a description of the note operations performed by a function in the inputs of its circuit. This description will contain the operation type - \set{\add,\read,\del}, the note value, and the counter.
+We can include a description of the note operations performed by a function in the inputs of its circuit. This description will contain the operation type - \set{\add,\del,\read}, the note value, and the counter.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
 Checking the existence of an $\add$ operation with smaller counter requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree. 
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
@@ -651,9 +651,11 @@ The point is that in our use case the final predicate is applied to small parts 
 Roughly, we'll require space sufficient for storing the inputs to the final predicate, in addition to the space required to prove a single transition.
 
 \subsection{Related work}
-Recent work  \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} uses folding schemes\cite{nova} to break up proving statements about large computation into smaller statements.
+Recent work  \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} uses folding schemes \cite{othernova,nova} to break up proving statements about large computation into smaller statements.
 The objective being reducing prover memory and/or improving prover parallelism.
-These works, as far as we know, have not formally defined a notion like RCG, and rather use the IVC terminology. However we believe they implicitly use RCG, because of the need to check global constraints between the different chunks.
+These works have not formally defined a notion like RCG, and rather use the IVC terminology. We believe the RCG framework may be better suited for capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over part of the witness to generate a random challenge. As eluded to earlier,
+one distinction is that these works start with a computation that is already linear, while here we start with  cyclic computation and must ``compile'' it into a ``linear'' statement.
+
 
 
 
@@ -1094,7 +1096,7 @@ $(\inst,\wit)$ such that
  \end{enumerate}
 (Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
 \subsection{The \protogal scheme}
-Deviating from \cite{protogal}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, and for the special case of folding $k=1$ instances.
+Deviating from \cite{protogalaxy}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, and for the special case of folding $k=1$ instances.
 We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping arbitrary strings to elements of \Fstar. \\ \\ \noindent
 \underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}
 \begin{enumerate}
@@ -1527,7 +1529,7 @@ Therefore, the total prover computation depends only on the size of the vector $
 % like the vector a should be the a' of the previous folding and we should copy the commitments
 % then checking depends only on the instance.
 
-\section*{Acknowledgements}
+% \section*{Acknowledgements}
 \bibliographystyle{alpha}
 \bibliography{references}
 \end{document}
