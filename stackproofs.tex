@@ -929,10 +929,9 @@ Let \recset be a set of records and $\ops=\sett{(\op_i,\v_i,\vc_i,\c_i)}{i\in \c
 Then \ops has output \recset if and only if the following rational function identities hold:
 \begin{enumerate}
  \item \[\sum_{(\v,\c)\in \recset}\frac{1}{X+\v Y+\c}=\sum_{i\in \countrange,\op_i=\add}\frac{1}{X+\v_i Y+\c_i}-\sum_{i\in \countrange, \op_i=\del}\frac{1}{X+\v_i Y+\vc_i}.\]
- \item For some $m\in \F^M$,
- we have
+ \item For some $m\in \F^M$, we have
  \[\sum_{i\in \countrange,\op_i=\add}\frac{m_i}{X+\v_i Y+\c_i}=\sum_{i\in \countrange, \op_i=\read}\frac{1}{X+\v_i Y+\vc_i}.\]
- \item \[\sumi{n}\frac{1}{X+\c_i}=\sumi{n}\frac{1}{X+i}.\]
+ \item \[\sum_{i\in \countrange}\frac{1}{X+\c_i}=\sum_{i\in \countrange}\frac{1}{X+i}.\]
 \end{enumerate}
 \end{claim}
 \begin{proof}
