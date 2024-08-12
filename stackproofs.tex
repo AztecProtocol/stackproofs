@@ -1381,7 +1381,7 @@ $(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\witinst_{n})$.
 
 \begin{thm}\label{thm:main}
 Let \relrcg be a trivial RCG relation. Assume that \hash is collision resistant, and that the assumptions in Theorem \ref{thm:pgsoundness} hold. Then
- $(\prv,\ver)$ is a zk-SNARK for $\rel_{F,\finpred}$. 
+ $(\prv,\ver)$ is a space-efficient zk-SNARK for $\rel_{F,\finpred}$. 
 \end{thm}
 \begin{proof}
  The main thing to prove is knowledge soundness. Let \adv be a recursive algebraic adversary.
@@ -1460,7 +1460,7 @@ Let $\varphi$ be the map in Lemma \ref{lem:execasRCG}, and compute $\witrcg=\var
 \item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is when $s_{i,j}$ is an \add operation, and zero otherwise.
 appears in $s_i$. 
 \item Compute $h_n=\cm'(s,m)$, where $\cm'$ is as in Lemma \ref{lem:FtoFstar}. Compute
-$(\alpha,\beta,\eps) = (\hash(\inchash,\recset,1),\hash(\inchash,\recset,2),\hash(\inchash,\recset,3)$.
+$(\alpha,\beta,\eps) = (\hash(\inchash,\recset,1),\hash(\inchash,\recset,2),\hash(\inchash,\recset,3))$.
 \item Define $\zfin^*=(\zfin,h_n,\alpha,\beta,\eps),  \instrcg^*=(\zfin^*,C,\recset)$. Let $\witrcg^*=\varphi^*(\witrcg)$ where
 $\varphi^*$ is the mapping from Lemma \ref{lem:FtoFstar}.
 \item Compute the proof $\pi^*$ for $(\instrcg^*,\witrcg^*)\in \rel_{F^*,\finpred^*}$ according to \prv in Section \ref{subsec:main}.
