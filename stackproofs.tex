@@ -17,8 +17,8 @@
     %%% examples of article customizations
     % these packages are optional, depending whether you want the features they provide.
     % see the latex companion or other references for full information.
-    
-    
+
+
     %%% page dimensions
 \usepackage{geometry} % to change the page dimensions
 \geometry{a4paper} % or letterpaper (us) or a5paper or....
@@ -26,7 +26,7 @@
     % \geometry{landscape} % set up the page for landscape
     %   read geometry.pdf for detailed page layout information
  \usepackage{numdef}
-   
+
 \usepackage{graphicx} % support the \includegraphics command and options
     % some of the article customisations are relevant for this class
 \usepackage{amsmath,amsthm,calligra}
@@ -34,9 +34,9 @@
 \usepackage{amssymb} % \therefore
 % \usepackage{bickham}
 \usepackage{cryptocode}
-\usepackage{framed} 
+\usepackage{framed}
     % \usepackage[parfill]{parskip} % activate to begin paragraphs with an empty line rather than an indent
-    
+
     %%% packages
 \usepackage{booktabs} % for much better looking tables
 \usepackage{array} % for better arrays (eg matrices) in maths
@@ -57,20 +57,20 @@
 \renewcommand\theadalign{bc}
 \renewcommand\theadfont{\bfseries}
 \renewcommand\theadgape{\Gape[4pt]}
-  
+
     %%% headers & footers
 \usepackage{fancyhdr} % this should be set after setting up the page geometry
 \pagestyle{fancy} % options: empty , plain , fancy
 \renewcommand{\headrulewidth}{0pt} % customise the layout...
 \lhead{}\chead{}\rhead{}
 \lfoot{}\cfoot{\thepage}\rfoot{}
-    
-    
+
+
     %%% section title appearance
 \usepackage{sectsty}
 \allsectionsfont{\sffamily\mdseries\upshape} % (see the fntguide.pdf for font help)
     % (this matches context defaults)
-    
+
     %%% toc (table of contents) appearance
 \usepackage[nottoc,notlof,notlot]{tocbibind} % put the bibliography in the toc
 \usepackage[titles,subfigure]{tocloft} % alter the style of the table of contents
@@ -80,7 +80,7 @@
 %             cal=esstix]   % slightly sloped
            {mathalpha}
  %%% end article customizations
- 
+
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % macros
  \newcommand{\code}[1]{\texttt{#1}}
@@ -104,7 +104,7 @@
 \newcommand{\tablegroup}{\ensuremath{\mathbb{H}}\xspace}
 \newcommand{\V}{\ensuremath{\mathbf{V} }\xspace}
 \newcommand{\relbase}{\ensuremath{\rel_0}\xspace}
-\mathchardef\mhyphen="2D 
+\mathchardef\mhyphen="2D
 
 \newcommand{\instbase}{\ensuremath{\inst_0}\xspace}
 \newcommand{\witbase}{\ensuremath{\wit_0}\xspace}
@@ -115,7 +115,7 @@
 \newcommand{\company}{}
 \title{ \papertitle \\[0.72cm]}
 % \author{}
-% \author{ Liam Eagen \\ \tt{Alpen Labs}   \and Ariel Gabizon \\ \tt{Zeta Function Technologies} } 
+% \author{ Liam Eagen \\ \tt{Alpen Labs}   \and Ariel Gabizon \\ \tt{Zeta Function Technologies} }
 \author[1]{Liam Eagen}
 \author[2]{Ariel Gabizon}
 \author[3]{Marek Sefranek}
@@ -124,14 +124,14 @@
 \affil[1]{Alpen Labs}
 \affil[2]{Aztec Labs}
 \affil[3]{TU Wien}
-% 
-% 	\large{\authorname} \\[0.5cm] \large{\company}
-% 	\\ {DRAFT}
+%
+% \large{\authorname} \\[0.5cm] \large{\company}
+% \\ {DRAFT}
 %}
 %\date{} % activate to display a given date or no date (if empty),
 
-% otherwise the current date is printed 
-\DeclareMathAlphabet{\mathpgoth}{OT1}{pgoth}{m}{n}	
+% otherwise the current date is printed
+\DeclareMathAlphabet{\mathpgoth}{OT1}{pgoth}{m}{n}
 \ProvidesPackage{numdef}
 
 
@@ -232,10 +232,10 @@
 % \num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
 %  \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
 %  \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
-\newcommand{\protver}{protocol verifier\xspace} 
-\newcommand{\hash}{\ensuremath{\mathcal{H}}\xspace} 
+\newcommand{\protver}{protocol verifier\xspace}
+\newcommand{\hash}{\ensuremath{\mathcal{H}}\xspace}
 \newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
-\newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace} 
+\newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace}
 \newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
 \newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
 \newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
@@ -345,7 +345,7 @@
 \newcommand{\PC}{\ensuremath{\mathscr{P}}\xspace}
 \newcommand{\permscheme}{\ensuremath{\sigma_\mathscr{P}}\xspace}
 
-	
+
 \newcommand{\selleft}{\ensuremath{\mathbf{q_L}}\xspace}
 \newcommand{\selright}{\ensuremath{\mathbf{q_R}}\xspace}
 \newcommand{\selout}{\ensuremath{\mathbf{q_O}}\xspace}
@@ -366,6 +366,7 @@
 \newcommand{\sumpoly}[1]{\sum_{i=0}^{#1-1}}
 \newcommand{\summ}[1]{\sum_{i\in[#1]}}
 \newcommand{\sumj}[1]{\sum_{j\in[#1]}}
+\newcommand{\innerprod}[2]{\langle#1,#2\rangle}
 \newcommand{\ZeroH}{\ensuremath{Z_H} \xspace}
 \newcommand{\lpoly}{\ensuremath{\mathsf{a}}\xspace}
 \newcommand{\rpoly}{\ensuremath{\mathsf{b}}\xspace}
@@ -389,7 +390,7 @@
 \newcommand{\selmultcomm}{\ensuremath{[q_\mathsf{M}]_1}\xspace}
 
 \newcommand{\multlinecomment}[1]{\directlua{-- #1}}
-    
+
 
 \newtheorem{lemma}{Lemma}[section]
 \newtheorem{thm}[lemma]{Theorem}
@@ -430,7 +431,6 @@
 \newcommand{\Vperm}{\Verify{\perm}}
 % \newcommand{\zw}[1]{{\textcolor{magenta}{Zac:#1}}}
 \newcommand{\ag}[1]{{\textcolor{blue}{\emph{Ariel:#1}}}}
-\newcommand{\prob}{\ensuremath{\mathrm{Pr}}\xspace}
 \newcommand{\extprot}{\ensuremath{E_{\prot}}\xspace}
 \newcommand{\transcript}{\ensuremath{\mathsf{transcript}}\xspace}
 \newcommand{\extpc}{\ensuremath{E_{\PCscheme}}\xspace}
@@ -588,12 +588,12 @@ We show how RCG is useful for designing a proof system for a private smart contr
 \section{Introduction}
 Incrementally Verifiable Computation (IVC) \cite{ivc} and its generalization to Proof Carrying Data (PCD) \cite{pcd} are useful tools for constructing space-efficient SNARK provers\cite{BCCT}.
 In IVC and PCD we always have an acyclic computation.
-However code written in almost any programming language \emph{is} cyclic in the sense of often relying on internal calls - 
+However code written in almost any programming language \emph{is} cyclic in the sense of often relying on internal calls --
 we start from a function $A$, execute some commands, go into a function $B$, execute its commands, and go back to $A$.
-When making a SNARK proof of such an execution, we typically linearize or ``flatten'' the cycle stemming from  the internal call, in one of the following two ways.
+When making a SNARK proof of such an execution, we typically linearize or ``flatten'' the cycle stemming from the internal call, in one of the following two ways.
 \begin{enumerate}
- \item The monolithic circuit approach - we ``inline'' all internal calls (as well as loops) into one long program without jumps.
- \item The VM approach - assume the code of $A,B$ is written in some prespecified instruction set. The program is executed by initially writing the code of $A,B$ into memory, and loading from memory and executing at each step the appropriate instruction according to a program counter. For example, the call to $B$ is made by changing the counter to that of the  first instruction of $B$. To prove correctness of the execution, all we need is a SNARK for proving correctness of a certain number of steps of a machine with this instruction set, and some initial memory state.
+ \item The monolithic circuit approach: We ``inline'' all internal calls (as well as loops) into one long program without jumps.
+ \item The VM approach: Assume the code of $A,B$ is written in some prespecified instruction set. The program is executed by initially writing the code of $A,B$ into memory, and loading from memory and executing at each step the appropriate instruction according to a program counter. For example, the call to $B$ is made by changing the counter to that of the first instruction of $B$. To prove correctness of the execution, all we need is a SNARK for proving correctness of a certain number of steps of a machine with this instruction set, and some initial memory state.
 \end{enumerate}
 
 The second approach is more generic, while the first offers more room for optimization, so we'd want to use it in resource-constrained settings, e.g. client-side proving.
@@ -603,23 +603,23 @@ However, what if we're in a situation where $A$ and $B$ have already been ``SNAR
 Namely, there is a verification key attached to each one, and we are expected to use these keys specifically.
 This is what happens in the Aztec system.
 \paragraph{The Aztec private contract system:}
- Similar to Ethereum - we have contracts; and the contracts have functions.
+ Similar to Ethereum we have contracts, and the contracts have functions.
 A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions,
 we can't predict specifically what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
-But the call to ``authorize'' need not be tied to a specific implementation, and consequently verification key - as different token holders are allowed to set their own ``authorize'' function.
+But the call to ``authorize'' need not be tied to a specific implementation, and consequently verification key -- as different token holders are allowed to set their own ``authorize'' function.
 
 
 The goal of the Aztec system is to enable constructing zero-knowledge proofs of such contract function executions.
-For this purpose, a contract is deployed by 
+For this purpose, a contract is deployed by
 \begin{enumerate}
-\item  Computing a verification key for each function of the contract.
+\item Computing a verification key for each function of the contract.
 \item Adding a commitment to the verification keys of the contract in a global ``function tree''. More accurately, a leaf of this tree is a hash of the
 contract address with a Merkle root of a tree whose leaves are the verification keys of that contract's functions.
 
 \end{enumerate}
 
 \paragraph{Dealing with Global state}
-Each contract has a set of notes - which are simply  values in a field \F. 
+Each contract has a set of notes, which are simply values in a field \F.
 While running, a function can read, add or delete notes belonging to its contract.
 We can thus think of the notes as global variables shared between the different functions.
 
@@ -631,15 +631,15 @@ This however, doesn't yet deal with the notes. During execution, note operations
 We can thus assign a \emph{counter} equal to one to the first operation, and increment the counter with each operation.
 We then need to check, for example, that if a note was read with a certain counter, it was indeed added
 with a smaller counter.
-We can include a description of the note operations performed by a function in the inputs of its circuit. This description will contain the operation type - \set{\add,\del,\read}, the note value, and the counter.
+We can include a description of the note operations performed by a function in the inputs of its circuit. This description will contain the operation type (\add, \del, \read), the note value, and the counter.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
-Checking the existence of an $\add$ operation with smaller counter requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree. 
+Checking the existence of an $\add$ operation with smaller counter requires a constraint \emph{between} the inputs of both circuits. And for an execution consisting of more calls, this constraint can involve any two circuits in the call tree.
 % Describing the issue more generally, since we are forced to prove things in a different order than they were executed, we must enforce a global consistency between the witnesses of all iterations.
 
 This brings us to the notion of \emph{Repeated Computation with Global state} (RCG). In RCG we have a transition predicate taking us from one state to the next. We wish to prove we know a sequence of witnesses taking us from a legal initial state to a certain publicly known final state. This might remind the reader of the popular notion of \emph{incrementally verifiable computation} (IVC). There are two differences.
 
 \begin{itemize}
- \item 
+ \item
 In RCG we are not interested in ``incremental'' proofs of one step, only in proofs for a whole
 sequence of transitions ending in a desired final state.
 
@@ -647,14 +647,14 @@ sequence of transitions ending in a desired final state.
 
 \end{itemize}
  One could ask, why not \emph{only} have a final predicate that includes the transition checks? In other words, a monolithic circuit for the whole computation.
-The point is that in our use case the final predicate is applied to small parts of each iteration's witness - namely the note operations. As a result, the decomposition into a transition and final predicate can facilitate obtaining better prover efficiency, especially in terms of prover space.
+The point is that in our use case the final predicate is applied to small parts of each iteration's witness -- namely the note operations. As a result, the decomposition into a transition and final predicate can facilitate obtaining better prover efficiency, especially in terms of prover space.
 Roughly, we'll require space sufficient for storing the inputs to the final predicate, in addition to the space required to prove a single transition.
 
 \subsection{Related work}
-Recent work  \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} uses folding schemes \cite{othernova,nova} to break up proving statements about large computation into smaller statements.
+Recent work \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} uses folding schemes \cite{othernova,nova} to break up proving statements about large computation into smaller statements.
 The objective being reducing prover memory and/or improving prover parallelism.
 These works have not formally defined a notion like RCG, and rather use the IVC terminology. We believe the RCG framework may be better suited for capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over part of the witness to generate a random challenge. As eluded to earlier,
-one distinction is that these works start with a computation that is already linear, while here we start with  cyclic computation and must ``compile'' it into a ``linear'' statement.
+one distinction is that these works start with a computation that is already linear, while here we start with cyclic computation and must ``compile'' it into a ``linear'' statement.
 
 
 
@@ -673,7 +673,7 @@ we assume an \emph{object generator} \obgen that is run with input $\lambda$ bef
 \item $g$ is a uniformly chosen generator of \G.
 \end{itemize}
 We usually let the $\lambda$ parameter be implicit, e.g. write \F instead of $\F(\lambda)$.
-We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than $d$. 
+We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than $d$.
 We write \G additively.
 % We use the notations $\enc1{x}\defeq x\cdot g_1$ and $\enc2{x}\defeq x\cdot g_2$.
 
@@ -685,21 +685,21 @@ We use the acronym e.w.p. for ``except with probability''; i.e. e.w.p. $\gamma$ 
 
 \paragraph{Representing \G}
 Assume an injective function $R:\G \to \F^2$.
-Whenever we discuss $a\in \G$ we assume it is represented as  $R(a)$.
+Whenever we discuss $a\in \G$ we assume it is represented as $R(a)$.
 When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ with $R(a)=b$.
 
 \subsection{Zero-Testing Assumption}
 Throughout this paper, we'll make use of a variant of the \emph{Zero-Testing Assumption (ZTA)} from \cite{novarecursive} given in Definition \ref{dfn:ZTA} as well as its generalization, the \emph{$t$-variate Zero-Testing Assumption}, we introduce in Definition \ref{dfn:multiZTA}.
 
 \begin{dfn}\label{dfn:ZTA}
-Fix $\cm:\F^M\to K$, hash function $\hash:\B^*\to \F$, and integer $d$. Fix the family of functions \ztafuncs. 
+Fix $\cm:\F^M\to K$, hash function $\hash:\B^*\to \F$, and integer $d$. Fix the family of functions \ztafuncs.
 We say the tuple $(D,x,\tau)$ is a \emph{degree $d$-relation for $(\ztafuncs,\hash,\cm)$} if
 \begin{enumerate}
  \item $D\in \ztafuncs$.
  \item $f(X)\defeq D(x,\tau)$ is a non-zero element of \polysofdegeq{d}.
  \item Setting $z\defeq \hash(\cm(x),\tau)$, we have $f(z)=0$.
 \end{enumerate}
-The Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability that 
+The Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for any efficient \adv, the probability that
 \adv outputs a degree $d$-relation for $(\ztafuncs,\hash,\cm)$ is \negl.
 \end{dfn}
 
@@ -734,9 +734,9 @@ Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have
 
 \section{The execution model:}
 We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
-For this, we first introduce record operations which is our specific notion of operating on a global state. 
+For this, we first introduce record operations which is our specific notion of operating on a global state.
 \subsection{Record operations}
-\emph{Records} are pairs $(\v,\c)$ - where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is a \emph{counter}.
+\emph{Records} are pairs $(\v,\c)$, where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is a \emph{counter}.
 A \emph{record operation} has one of the following forms:
 \begin{itemize}
  \item $(\add,\v,\c)$,
@@ -745,8 +745,8 @@ A \emph{record operation} has one of the following forms:
 
 \end{itemize}
 Here $\v\in \F$ is a value and $\c,\vc \in \countrange$ are counters.
-$\c$ is interpreted as the counter of the current operation. $\vc$
-  is interpreted as the counter of the operation where
+$\c$ is interpreted as the counter of the current operation.
+$\vc$ is interpreted as the counter of the operation where
 the note was added in the case of a \read or \del operation.
 
 
@@ -770,29 +770,28 @@ We say $\ops$ is \emph{has output \recset} if:
 
 
 \subsection{The Plonkish relation}
-Now we introduce a relation describing the individual function executions tailored to make it convenient to later discuss an execution of a  sequence functions calling each other.
-Some choices of constants - like \args being of size four, are arbitrary.
+Now we introduce a relation describing the individual function executions tailored to make it convenient to later discuss an execution of a sequence functions calling each other.
+Some choices of constants -- like \args being of size four -- are arbitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
 
 We fix a polynomial $G:\F^8\to \F$, and integers $N,\n$ that are implicit parameters in the following definition of the relation \relapp.
 
-\relapp consists of all pairs $(\instapp, \witapp)$ having the form 
+\relapp consists of all pairs $(\instapp, \witapp)$ having the form
 \begin{itemize}
- \item 
+ \item
 $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$
-where $\f,\f_1,\f_2 \in \G,\args\in \F^4,\callnum\in \set{0,1,2}$; 
+where $\f,\f_1,\f_2 \in \G,\args\in \F^4,\callnum\in \set{0,1,2}$;
 \item $\witapp=(\witf,\wit)$
-where 
+where
 \begin{itemize}
- \item 
+ \item
 $\witf=(\perm_1,\ldots,\perm_4,\sel_1,\ldots,\sel_4)$,where $\perm_j \in [|\instapp|+N]^{\n},\sel_j \in \F^\n$ for each $j\in [4]$
 \item $\wit\in \F^N$
 \end{itemize}
 \end{itemize}
 such that
 \begin{enumerate}
-                                                                                
-\item  Setting $x=(\instapp,\wit)$, for all $i\in [\n]$
+\item Setting $x=(\instapp,\wit)$, for all $i\in [\n]$
 \[G(\sel_{1,i},\ldots,\sel_{4,i},x_{\perm_{1,i}},\ldots,x_{\perm_{4,i}})=0.\]
 \item $\f=\cm(\witf)$.
 \end{enumerate}
@@ -805,34 +804,33 @@ Let \funcs be a set of elements of \G.
 Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
 \begin{enumerate}
  \item For each $\node\in\tree$, its label $(\instapp,\witapp)$ is in \relapp.
-    \item For each $\node\in \tree$, let $(\instapp,\witapp)$ be its label. Let 
+    \item For each $\node\in \tree$, let $(\instapp,\witapp)$ be its label. Let
 $\instapp= (\f,\args,\callnum, \f_1,\args_1, \f_2,\args_2,\ops)$. Then
     \begin{itemize}
     \item $\f\in \funcs$.
      \item The number of its children is \callnum.
-     \item For $i\in [\callnum]$, let $(\f^i,\args^i,\callnum^i, \f^i_1,\args^i_1, \f^i_2,\args^i_2,\ops^i)$ denote the first component of $\node$'s $i$'th child's label. Then $\f_i=\f^i$ and  $\args_i=\args^i$.
+     \item For $i\in [\callnum]$, let $(\f^i,\args^i,\callnum^i, \f^i_1,\args^i_1, \f^i_2,\args^i_2,\ops^i)$ denote the first component of $\node$'s $i$'th child's label. Then $\f_i=\f^i$ and $\args_i=\args^i$.
      \item Let \ops be the multi-set union of $\instapp.\ops$ over all nodes' labels $(\instapp,\witapp)$. Then \ops has output \recset.
-     
     \end{itemize}
 
 \end{enumerate}
-Given a set of group elements \funcs say it has \emph{Merkle root \root} if \root is the root of a Merkle tree with the elements of  \funcs at the leaves using some pre-determined encoding.
+Given a set of group elements \funcs say it has \emph{Merkle root \root} if \root is the root of a Merkle tree with the elements of \funcs at the leaves using some pre-determined encoding.
 
 We define a relation \relexec capturing knowledge of an execution of bounded length with a certain output set of records.
 $\relexec$ consists of the pairs $(\instexec,\witexec)$
-of the form 
+of the form
 \begin{itemize}
  \item $\instexec=(\root,C,\recset)$,
  \item $\witexec=(n,\tree)$,
 \end{itemize}
-such that $n\leq C$, and  \tree is a valid execution tree of length $n$ with function set \funcs having Merkle root \root, and output set \recset. 
+such that $n\leq C$, and \tree is a valid execution tree of length $n$ with function set \funcs having Merkle root \root, and output set \recset.
 
 \section{Repeated Computation with Global state}
 An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
 \noindent
 We call $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ the \emph{transition predicate}.
 
-We informally think of 
+We informally think of
 \begin{itemize}
 \item $Z$ as the public input and $W$ as the private input of $F$.
 \item $Z^*$ as the output of $F$ (although the actual output is \set{\acc,\rej}).
@@ -876,15 +874,15 @@ $F(Z,W,Z^*,S)=\acc$ if and only if
  \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
  \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
  \item \path is a Merkle path from \f to \root.
- \item  $\root=\root^*$.
+ \item $\root=\root^*$.
  \item $g^*$ is the result of popping $(\f,\args)$ from $g$ and then pushing the $\instapp.\callnum$ elements
  $(\instapp.\f_i,\args_i)$ for $i\in [\instapp.\callnum]$.
 \end{enumerate}
 
 
 Denote by \empty the empty stack.
-We define the function \finpred on input $(z_n,s_1,\ldots,s_n,\recset)$ to output \acc if and only if  $z_n.g=\empty$,
-each $s_i$ is a well-formed set of record operations, and when defining \ops as the multi-set union of $s_1,\ldots,s_n$ it  has output \recset.
+We define the function \finpred on input $(z_n,s_1,\ldots,s_n,\recset)$ to output \acc if and only if $z_n.g=\empty$,
+each $s_i$ is a well-formed set of record operations, and when defining \ops as the multi-set union of $s_1,\ldots,s_n$ it has output \recset.
 
 
 
@@ -894,9 +892,9 @@ There is an efficiently computable and efficiently invertible map $\varphi$ such
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Define $\zfin=(\empty,\root,\false)$. Let \tree be an execution tree of length $n$.
 
-Then  $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset),\varphi(\tree))\in \rel_{F,\finpred}$.
+Then $( (\root,C,\recset),\tree)\in \relexec$ if and only if $((\zfin,C,\recset),\varphi(\tree))\in \rel_{F,\finpred}$.
 
- 
+
 \end{lemma}
 \begin{proof}
 We describe the operation of $\varphi$.
@@ -923,7 +921,7 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 \section{Removing the global state}\label{sec:Fstar}
 
 \paragraph{Rational Identities:}
-Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identites.
+Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identities.
 \begin{claim}\label{clm:reducetologder}
 Assume $\F$ has characteristic larger than $M+1$.
 Let \recset be a set of records and $\ops=\sett{(\op_i,\v_i,\vc_i,\c_i)}{i\in \countrange}$ be a set of record operations (defining $\vc_i=0$ when $\op_i=\add$) with $\vc_i<\c_i$ for all $i\in \countrange$.
@@ -942,10 +940,10 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
  Thus, $\sum_{v,c} a_{v,c} R_{v,c} = \sum b_{v,c} R_{v,c}$ implies $a_{v,c}=b_{v,c}$ for each $(v,c)\in \F^2$.
  The event of \ops not having output \recset means one of the following occurs.
  \begin{enumerate}
-  \item  The multi-set of counters $\sett{\c_i}{i\in \countrange}$ doesn't equal \set{1,\ldots,M}. In this case, the LHS of the third identity will not have all one coefficients for the elements \sett{R_{0,\c_i}}{i\in \countrange} and so cannot equal the RHS.
-  
+  \item The multi-set of counters $\sett{\c_i}{i\in \countrange}$ doesn't equal \set{1,\ldots,M}. In this case, the LHS of the third identity will not have all one coefficients for the elements \sett{R_{0,\c_i}}{i\in \countrange} and so cannot equal the RHS.
+
   Note that when we are not in this case the counters in \ops are all distinct, which we assume for the next cases.
- \item For some $\v,\vc,\c$, $(\del,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$; or for some $\v,\vc,\c_1\neq \c_2$, $(\del,\v,\vc,\c_1),(\del,\v,\vc,\c_2)\in \ops$: In the first identity RHS, we will have $R_{\v,\vc}$ with coefficient in the range  $\set{-1,\ldots,-M}$, while in the LHS it has coefficient one or zero.
+ \item For some $\v,\vc,\c$, $(\del,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$; or for some $\v,\vc,\c_1\neq \c_2$, $(\del,\v,\vc,\c_1),(\del,\v,\vc,\c_2)\in \ops$: In the first identity RHS, we will have $R_{\v,\vc}$ with coefficient in the range $\set{-1,\ldots,-M}$, while in the LHS it has coefficient one or zero.
  \item For some $\v,\vc,\c$, $(\read,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$: In the second identity RHS $R_{\v,\vc}$ will have a coefficient in the range $\set{1,\ldots,M}$ while in the LHS it has coefficient zero.
  \item \recset is \emph{not} equal to the set $\recset'$ of $(\v,\c)$ for which $(\add,\v,0,\c)\in \ops$ but $(\del,\v,\c,\c')\notin \ops$. We look at the first identity. $\recset'$ is precisely the set of $(\v,\c)$ with coefficient one on the RHS, while \recset is the set of $(\v,\c)$ with coefficient one on the LHS. Hence the first identity cannot hold in this case.
  \end{enumerate}
@@ -957,7 +955,7 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
 
 
 
-We reduce the relation $\rel_{F,\finpred}$ from the last section to 
+We reduce the relation $\rel_{F,\finpred}$ from the last section to
 $\rel_{F^*,\finpred^*}$:
 
 Let $F$ denote the function $F(Z_F,W_F,Z_F^*,S_F)\to \set{\acc,\rej}$ as from Section \ref{sec:exec->RFC}.
@@ -1005,7 +1003,7 @@ Then e.w.p. \negl, $((\zfin,C,\recset),\varphi(\wit))\in \rel_{F,\finpred}$.
 Given a witness $\wit=(n,z',w')$ with $z'=(z_0',\ldots,z_n'),w'=(w_1',\ldots,w_n')$ output by \adv, denote
 $z_i'=(z_i,\inchash_i,\incsum_i,\alpha_i,\beta_i,\eps_i), w_i'=(w_i,s_i,m_i)$.
 Define $\witF=\varphi(\wit)$ as $\witF\defeq (n,(z_0,\ldots,z_n),(w_1,\ldots,w_n),(s_1,\ldots,s_n))$.
-From $(\inst,\wit)\in \rel_{F^*,\finpred^*}$,  we know \witF satisfies the transition constraints, namely for $i\in [n]$,
+From $(\inst,\wit)\in \rel_{F^*,\finpred^*}$, we know \witF satisfies the transition constraints, namely for $i\in [n]$,
 $F(z_{i-1},w_i,z_i,s_i)=\acc$. We also know that $z_0.\init = \true$, $z_n=\zfin$, and $n\leq C$.
 It is left to show that e.w.p. \negl $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
 
@@ -1035,18 +1033,18 @@ such that
 \begin{enumerate}
  \item \prv on input $(\insttbase,\inst';\wit,\wit')$ produces a pair $(\instt,\wit^*)$ and proof \prf .
  \item \ver on input $(\insttbase,\inst',\instt,\prf)$ outputs \acc or \rej such that
-%  \item \ver receives as $\inst,\inst'$ as inputs and outputs \acc or \rej at the end.
+% \item \ver receives as $\inst,\inst'$ as inputs and outputs \acc or \rej at the end.
 \begin{enumerate}
  \item \textbf{Completeness:} If $(\insttbase,\wit)\in \accrel, (\inst',\wit')\in \rel$ and $\prv(\insttbase,\inst';\wit,\wit')=(\prf,\instt,\witstar)$, then with probability $1-\negl$, $(\instt,\witstar)\in \accrel$ and $\ver(\insttbase,\inst',\instt,\prf)=\acc$.
-\item \textbf{Knowledge soundness  given extractable commitments:}
+\item \textbf{Knowledge soundness given extractable commitments:}
 
 For any efficient \adv the probability of the following event is \negl:
 \adv outputs $(\inst,\tau),\inst',(\inststar,\tau^*),\wit,\wit',\witstar,\prf$
-such that 
+such that
 \begin{enumerate}
-\item $\cm(\wit)=\inst,\cm(\wit')=\inst',\cm(\witstar)=\inststar$, 
+\item $\cm(\wit)=\inst,\cm(\wit')=\inst',\cm(\witstar)=\inststar$,
 \item $\ver(\inst,\inst',\inststar,\prf)=\acc$,
-\item $((\inststar,\tau^*),\witstar)\in\accrel$, 
+\item $((\inststar,\tau^*),\witstar)\in\accrel$,
 \item $((\inst,\tau),\wit)\notin\accrel$ or $(\inst',\wit')\notin \rel$.
 \end{enumerate}
 
@@ -1061,7 +1059,7 @@ such that
 \end{remark}
 
 \subsection{Relations for folding schemes}
-We define a more general satisfiability relation than in \cite{protogal}.
+We define a more general satisfiability relation than in \cite{protogalaxy}.
 We have as parameters, integers $n,\M,d$ and an $\F$-vector space $K$.
 We have a
 \begin{itemize}
@@ -1081,42 +1079,42 @@ $(\inst,\wit)$ such that
 
 \paragraph{The relation $\relrand$:}
  For brevity, let $\rel=\rel_{f,\predinst,\cm}$.
-  As in \cite{protogal}, we define the ``randomized relaxed'' version of $\rel, \relrand$. First, some required notation.
+  As in \cite{protogalaxy}, we define the ``randomized relaxed'' version of $\rel, \relrand$. First, some required notation.
  Let $t\defeq \log n$. For $i\in [n]$, let $S\subset \set{0,\ldots,t-1}$ be the set such that $i-1=\sumj{S}2^j$. We define the $t$-variate polynomial $\pow_i$ as
  \[\pow_i(X_0,\ldots,X_{t-1}) \defeq \prod_{\ell\in S} X_\ell.\]
- Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$. 
-%  This implies the $n$ \emph{univariate} polynomials 
-%  $\pow_i(X,X^2,\ldots,X^{2^{t-1}})$ are linearly independent.
-  
+ Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$.
+% This implies the $n$ \emph{univariate} polynomials
+% $\pow_i(X,X^2,\ldots,X^{2^{t-1}})$ are linearly independent.
+
   Given the above notation, $\relrand$ consists of the pairs $( \insttbase,\wit)$ with $\insttbase=(\inst,\betaa,e)$ such that
  \begin{enumerate}
   \item $\inst=\cm(\wit)$.
-  \item $\betaa\in \F^t, e\in \F$ and we have 
+  \item $\betaa\in \F^t, e\in \F$ and we have
   \[\sumi{n}\pow_i(\betaa) f_i(\wit) = e.\]
  \end{enumerate}
-(Here, $f_i$ denotes the $i$'th output coordinate of $f$.) 
+(Here, $f_i$ denotes the $i$'th output coordinate of $f$.)
 \subsection{The \protogal scheme}
 Deviating from \cite{protogalaxy}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, and for the special case of folding $k=1$ instances.
 We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping arbitrary strings to elements of \Fstar. \\ \\ \noindent
 \underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}
 \begin{enumerate}
 % \item \ver checks for each $i\in [k]$ that $\inst_i$ is \hash-consistent, and outputs \rej otherwise.
-%  \item \ver sends a challenge $\delta \in \F$.
+% \item \ver sends a challenge $\delta \in \F$.
  \item Compute $\delta=\hash(\insttbase,\inst_1)$. Define $\deltaa\defeq (\delta,\delta^2,\ldots,\delta^{2^{t-1}})\in \F^t$.
- \item\label{step:computeF} Compute the polynomial 
+ \item\label{step:computeF} Compute the polynomial
  \[F(X)\defeq \sumi{n}\pow_i(\betaa+X\deltaa) f_i(\wit).\]
  (Note that $F(0)=\sumi{n} \pow_i(\betaa) f_i(\wit) = e$.)
 \item\label{step:sendFcoeffs} Denote the non-constant coefficients of $F$ by $a\defeq (F_1,\ldots,F_t)$.
 \item Compute $\alpha = \hash(\insttbase,\inst_1,a)$.
 % \item\label{step:computeFalpha} Note that $F(\alpha)= e+\sumi{t}F_i \alpha^i$.
 \item\label{step:computeBetastar} Compute $\betaa^*\in \F^t$ where $\betaa^*_i\defeq \betaa_i+\alpha\cdot \deltaa_i$.
-\item\label{step:computeG} Define the polynomial $G(X)$ as 
+\item\label{step:computeG} Define the polynomial $G(X)$ as
 \[G(X)\defeq \sumi{n}\pow_i(\betaa^*) f_i(X\cdot \wit + (1-X)\wit_1).\]
-\item Compute the polynomial $K(X)$ such that 
+\item Compute the polynomial $K(X)$ such that
 \[G(X)= F(\alpha) X + Z(X) K(X).\]
 \item\label{step:sendK} Let $b\defeq (K_0,\ldots,K_{d-2})$ be the coefficients of $K(X)$.
 \item Compute $\gamma=\hash(\insttbase,\inst_1,a,b)$.
-\item\label{step:compute-estar} Compute 
+\item\label{step:compute-estar} Compute
 \[e^* \defeq F(\alpha)\gamma + Z(\gamma)K(\gamma).\]
 \end{enumerate}
 Finally, output
@@ -1126,7 +1124,7 @@ $\instt=(\inststar,\betaa^*,e^*),$
 where \[\inst^*\defeq \gamma\cdot \inst + (1-\gamma) \inst_1,\]
 
 
-\item the witness 
+\item the witness
 $\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \item and the proof $\prf\defeq (a,b)$.\\
 \end{itemize}
@@ -1136,7 +1134,7 @@ $\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \item Check that $\predinst(\inst_1)=\acc$. Output \rej otherwise.
  \item Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
 
-\item Check that $\instt$ is computed as in the prover algorithm. Output \acc iff this is the case. 
+\item Check that $\instt$ is computed as in the prover algorithm. Output \acc iff this is the case.
 \end{enumerate}
 
 
@@ -1155,23 +1153,23 @@ Then \protogal is a \accscheme{\rel}{\relrand}.
 \begin{proof}
 The main thing to prove is knowledge soundness given extractable commitments.
  Fix any efficient \adv. Let $E$ be the event that \adv outputs
-$\insttbase=(\inst,\betaa,e),\inst_1,\instt=(\inststar,\betaa^*,e^*),$ $\wit,\wit_1,\witstar,\prf$ such that 
+$\insttbase=(\inst,\betaa,e),\inst_1,\instt=(\inststar,\betaa^*,e^*),$ $\wit,\wit_1,\witstar,\prf$ such that
 \begin{enumerate}
 \item $\cm(\wit)=\inst,\cm(\wit_1)=\inst_1,\cm(\witstar)=\inststar$,
 \item $\verpg(\insttbase,\inst_1,\instt,\prf)=\acc$,
 \item $(\instt,\witstar)\in\relrand$,
 \item $(\insttbase,\wit)\notin\relrand$ or $(\inst_1,\wit_1)\notin \rel$.
 \end{enumerate}
-According to Definition \ref{dfn:accschme}, knowledge soundness is equivalent to $E$ having 
+According to Definition \ref{dfn:accschme}, knowledge soundness is equivalent to $E$ having
 probability \negl for any such \adv.
-We construct an efficient \advprime that runs \adv, and when $E$ occurs outputs either a collision of 
+We construct an efficient \advprime that runs \adv, and when $E$ occurs outputs either a collision of
 \cm or a degree $d'$-relation for $(\hash,\cm)$. By the theorem assumption this implies $E$ is contained in two events of
 probability \negl, and must have probability \negl itself.
 
 Assume we are in event $E$.
 % Since $\ver_{PG}(\insttbase,\inst_1,\instt,\prf)=\acc$, we have $\inststar=\gamma \inst +(1-\gamma)\inst_1$.
 % And since $(\instt,\witstar)\in \relrand$ we have $\cm(\witstar)=\inststar$.
-Using linearity of \cm, when $E$ occurs we have 
+Using linearity of \cm, when $E$ occurs we have
 \[\cm( \gamma\wit+(1-\gamma)\wit_1)=\gamma \inst +(1-\gamma)\inst_1=\inststar=\cm(\witstar).\]
 Thus, if $\witstar \neq \gamma \wit + (1-\gamma)\wit_1$, \advprime can output $(\witstar,\gamma\wit+(1-\gamma)\wit_1)$
 as a collision of \cm.
@@ -1197,11 +1195,11 @@ where $D_1$ is the function that computes $G'(X)$ given $x,\tau_1$.
 
 Assume now that $G'\equiv 0$.
 
-If $(\inst_1,\wit_1)\notin \rel$, using $Z(0)=0$ we have 
+If $(\inst_1,\wit_1)\notin \rel$, using $Z(0)=0$ we have
 \[G'(0)= -\sum_{i\in [n]}\pow_i( \betaa^*) f_i(\wit_1)=0.\]
 Define the polynomial $A(X)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+X \delta,\betaa_2 +X \delta^2,\ldots,\betaa_t+X \delta^{2^{t-1}})$.
 We have $A(\alpha)=0$. Suppose first that $A(X)\not\equiv 0$. Then setting $D_2$ to be the function that computes $A(X)$ given $x$ and $\tau_2\defeq a$, \advprime can output the degree $n$ relation $(D_2,x,\tau_2)$. Now assume $A(X)\equiv 0$.
-Define the polynomial 
+Define the polynomial
 \[B(X,Y)\defeq \sumi{n}f_i(\wit_1)\pow_i(\betaa_1+XY,\betaa_2+XY^2,\ldots,\betaa_t+X Y^{2^{t-1}}).\]
 We have that $B(X,\delta)\equiv 0$.
 Write $B(X,Y)$ as a polynomial in $X$ over $\F[Y]$:
@@ -1210,7 +1208,7 @@ Because we're in the case $(\inst_1,\wit_1)\notin \rel$, $B$ is a combination of
 We can use this to let \advprime output the degree $n$ relation $(D_3,x,\tau_3)$, where $D_3$ is the function that computes $C_i$ given $x$ and $\tau_3\defeq\emptyset$.
 
 Now, assume that $(\insttbase,\wit)\notin \relrand$.
-As we're still assuming $G'\equiv 0$, we have 
+As we're still assuming $G'\equiv 0$, we have
 \[G'(1)=F_0(\alpha)-\sumi{n}\pow_i(\betaa^*) f_i(\wit)=0.\]
 But we also have $F'(\alpha)=G'(1)$ and so $F'(\alpha)=0$.
 On the other hand,
@@ -1225,27 +1223,27 @@ Setting $\ztafuncs=\set{D_1,D_2,D_3,D_4}$ we have proven knowledge soundness und
 % Constraints $f_i$ on \wit, simply low degree polynomials, but have the ability to refer to
 % components of $\cm(m_j)$
 % Function $F$ should have ``introspection'' ability to look at commitments.
-% 
-% commitment function will output two representations of $\cm(w)$ - in \G and in \F and 
-% 
+%
+% commitment function will output two representations of $\cm(w)$ - in \G and in \F and
+%
 % or PI will include \F representation. which will then be part of $w$. \V will check representations match.
 \section{Adversaries supporting recursive extraction}\label{sec:recursive}
 Following \cite{novarecursive}, we define a model of ``recursive extraction'' for our analysis in Section \ref{sec:FtoFprime}. We assume our commitment function $\cm:\F^\M\to K$ is surjective.
 We assume the existence of an efficiently computable injective representation function $R:K\to \F^{\dimK}$. Whenever an adversary \adv outputs $a\in K$ we assume it is represented as $R(a)$.
-When analyzing knowledge soundness of our zk-SNARK in the next section, we put the following limitation on \adv. Say \adv outputs a vector 
+When analyzing knowledge soundness of our zk-SNARK in the next section, we put the following limitation on \adv. Say \adv outputs a vector
 $v$ over \F. If there is an index $i$ such that $(v_i,\ldots,v_{i+\dimK-1})=R(a)$ for some $a\in K$, then \adv must also output $\omega\in \F^\M$ such that $\cm(\omega)=a$.
 We call such \adv a \emph{recursive algebraic adversary.}
 
 
 This assumption is motivated by a ``recursive'' interpretation of the Algebraic Group Model\cite{agm} as done in \cite{novarecursive}.
-For illustration, consider first the case where $\cm:\F^\n\to\G$ is defined as $\cm(\wit)=<\wit,V>$ for a fixed vector $V\in \G^\n$ derived in a setup procedure. I.e. \cm is a Pedersen commitment in this case.
-In this case, the AGM forces \adv when outputting $a\in \G$ to also output $\wit$ such that $<\wit,V>=\cm(\wit)=a$. \cite{novarecursive} now raise the idea that if a prespecified subset of indices of \wit is a valid representation of $b\in \G$, it is reasonable to demand of an algebraic \adv to also output $\wit_2$ with $<\wit_2,V>=b$.\\
+For illustration, consider first the case where $\cm:\F^\n\to\G$ is defined as $\cm(\wit)=\innerprod{\wit}{V}$ for a fixed vector $V\in \G^\n$ derived in a setup procedure. I.e. \cm is a Pedersen commitment in this case.
+In this case, the AGM forces \adv when outputting $a\in \G$ to also output $\wit$ such that $\innerprod{\wit}{V}=\cm(\wit)=a$. \cite{novarecursive} now raise the idea that if a prespecified subset of indices of \wit is a valid representation of $b\in \G$, it is reasonable to demand of an algebraic \adv to also output $\wit_2$ with $\innerprod{\wit_2}{V}=b$.\\
 
 
-Our concrete choice for \cm when using \protogal, is of the following form.\footnote{\cm is of this form because it is derived from an interactive protocol where the prover messages are in committed form, but verifier challenges are in the clear. See \cite{protostar,protogalaxy} for more details.} We have a setup procedure outputting a vector of group elements $V\in \G^\n$ is output. 
+Our concrete choice for \cm when using \protogal, is of the following form.\footnote{\cm is of this form because it is derived from an interactive protocol where the prover messages are in committed form, but verifier challenges are in the clear. See \cite{protostar,protogalaxy} for more details.} We have a setup procedure outputting a vector of group elements $V\in \G^\n$ as output.
 We have some fixed partition of our input $\wit \in \F^\M$ into continuous segments of size either one or \n. To get $\cm(\wit)$ we operate segment-wise.
-If the segment $\wit_i$ is of size one we simply append $\wit_i$ to the output. If a segment $s=(\wit_i,\ldots,\wit_{i+\n-1})$ is of size \n we append $<s,V>$ to the output.
-In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and accordingly the space $K$ is a direct sum of spaces $\mathbb{V}_i\in \set{\F,\G}$. It follows that an algebraic adversary outputting $c\in K$ must output \wit with $\cm(\wit)=c$ as the AGM forces it to send an opening $s\in \F^\n$ to each $a\in \G$. 
+If the segment $\wit_i$ is of size one we simply append $\wit_i$ to the output. If a segment $s=(\wit_i,\ldots,\wit_{i+\n-1})$ is of size \n we append $\innerprod{s}{V}$ to the output.
+In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and accordingly the space $K$ is a direct sum of spaces $\mathbb{V}_i\in \set{\F,\G}$. It follows that an algebraic adversary outputting $c\in K$ must output \wit with $\cm(\wit)=c$ as the AGM forces it to send an opening $s\in \F^\n$ to each $a\in \G$.
 
 
 
@@ -1263,16 +1261,16 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
  \newcommand{\instfin}{\ensuremath{\shlomomath{x}}}%_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\shlomomath{w}}}%_{\mathsf{fin}}}\xspace}
  \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
-%  \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
+% \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
  \newcommand{\prvpg}{\ensuremath{\prv^{\mathrm{PG}}_{\cm,n,f}}\xspace}
  \newcommand{\prvsnark}{\ensuremath{\prv_{\mathsf{fin}}}\xspace} %{\calligra{fin}}}}\xspace}
  \newcommand{\versnark}{\ensuremath{\ver_{\mathsf{fin}}}\xspace}%text{\calligra{fin}}}}\xspace}
-%  \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
-%  \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
+% \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
+% \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
  \newcommand{\prffin}{\ensuremath{\pi_{\mathsf{fin}}}\xspace}
 \section{The main construction}\label{sec:FtoFprime}
-We say  an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable is not used in $F$, and accordingly \finpred depends only on $(\zfin,\recset)$.
-We assume in this section $R_{F,\finpred}$ is trivial, thinking of it as  $\rel_{F^*,\finpred^*}$ from Section \ref{sec:Fstar}.
+We say an RCG relation $\rel_{F,\finpred}$ is \emph{trivial} if the $S$ variable is not used in $F$, and accordingly \finpred depends only on $(\zfin,\recset)$.
+We assume in this section $R_{F,\finpred}$ is trivial, thinking of it as $\rel_{F^*,\finpred^*}$ from Section \ref{sec:Fstar}.
 
 \subsection{The extended function $F'$}
 As in \cite{nova,othernova}, we first describe an extended function $F'$ that executes the folding verifier in addition to an iteration of $F$. Loosely speaking, extending $F$ into $F'$ is what enables bootstrapping a folding scheme into an IVC or RCG. We describe the function arguments first.\\
@@ -1280,17 +1278,17 @@ As in \cite{nova,othernova}, we first describe an extended function $F'$ that ex
 \noindent
 $\instFprime=(z,\cnt,\acchash)$
 \begin{itemize}
- \item $z$ - output for $F$
-\item $\cnt$ - counter of IVC step
-\item $\acchash$  - hash of accumulator
+ \item $z$ -- output for $F$
+\item $\cnt$ -- counter of IVC step
+\item $\acchash$ -- hash of accumulator
 \end{itemize}
 $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \begin{itemize}
-\item$\instt$ - current accumulator instance
-\item$\insttbase$ - previous accumulator instance
-\item$\instFprime_0$ - instance (of $F'$) to be accumulated.
-\item$w$ - private input for $F$
-\item$\prf$ - proof for \protogal verifier
+\item$\instt$ -- current accumulator instance
+\item$\insttbase$ -- previous accumulator instance
+\item$\instFprime_0$ -- instance (of $F'$) to be accumulated.
+\item$w$ -- private input for $F$
+\item$\prf$ -- proof for \protogal verifier
 \end{itemize}
 
 
@@ -1300,23 +1298,21 @@ $F'(\instFprime,\witFprime)=\accept$ if and only if:
     \item $F(\instFprime_0.z, w,z)=\accept$
 \item If $\cnt>1$:
 \begin{enumerate}
- \item  $\hash(\instt)=\acchash$.
+ \item $\hash(\instt)=\acchash$.
 \item $\instFprime_0.\acchash=\hash(\insttbase)$.
     \item $\instFprime_0.\cnt=\cnt-1$.
 \item $\verpg(\insttbase, \instFprime_0, \prf, \instt )= \accept$.
     \end{enumerate}
-    
 \item If $\cnt=1$:
 \begin{itemize}
     \item $\instFprime_0.z.\init=\true$
-
     \end{itemize}
 \end{enumerate}
 
  Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.\footnote{In an updated version of the paper we will give more details on how to efficiently implement $F'$ as a \protogal relation.}\\
- 
- 
-For readability, from now on we modify notational conventions and denote an accumulator by \acc, accumulator witness by \witacc, instance by \inst, and instance witness by \witinst. 
+
+
+For readability, from now on we modify notational conventions and denote an accumulator by \acc, accumulator witness by \witacc, instance by \inst, and instance witness by \witinst.
  \subsection{The relation \relfin}
 We define the relation \relfin of pairs $(\instfin,\witfin)$ such that
 \begin{itemize}
@@ -1338,20 +1334,20 @@ Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
 
 
 \subsection{Main construction}\label{subsec:main}
-We now describe the full prover and verifier for a given trivial RCG relation $\rel_{F,\finpred}$
+We now describe the full prover and verifier for a given trivial RCG relation $\rel_{F,\finpred}$.
 Later we review how to use this to get a zk-SNARK for the relation \relexec of valid executions, given the reductions of previous sections. \\ \\
 \noindent
 \underline{$\prv(\inpF,\witF)$:}
 \begin{enumerate}
  \item Let
-$\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall that  $(\inpF,\witF)\in \rel_{F,\finpred}$ implies $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$, $z_0.\init =\true, z_n=\zfin$ and $\finpred(\zfin,\recset) = \true$.
-% \item For $i\in [n]$, let 
+$\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall that $(\inpF,\witF)\in \rel_{F,\finpred}$ implies $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$, $z_0.\init =\true, z_n=\zfin$ and $\finpred(\zfin,\recset) = \true$.
+% \item For $i\in [n]$, let
 
 
-\item  Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Choose $\acc_0$ arbitrarily.
-Let $\inst_1=(z_1,1,\acchash_1)$, $\witinst_1=(\acc_0,\acc_0, \inst_0, w_1, \prf_0)$ for arbitrary values $\acchash_1,\acc_0,\prf_0$. (We can choose some values arbitrarily as they aren't constrained in $F'$  when $\cnt=1$.)
+\item Choose instance $\inst_0=(z_0,\cnt_0,\acchash_0)$ for arbitrary values $\cnt_0,\acchash_0$. Choose $\acc_0$ arbitrarily.
+Let $\inst_1=(z_1,1,\acchash_1)$, $\witinst_1=(\acc_0,\acc_0, \inst_0, w_1, \prf_0)$ for arbitrary values $\acchash_1,\acc_0,\prf_0$. (We can choose some values arbitrarily as they aren't constrained in $F'$ when $\cnt=1$.)
 
-\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namley, $\acc_1=(\cm(\witacc_1),\betaa,e)$ where $\witacc_1$ and $\betaa$ are chosen randomly\footnote{We only need $\cm(\witacc_1)$ to be uniformly distributed over the image of \cm. According to \cm's structure, it may suffice to  choose only a small subset of $\witacc_1$'s coordinates randomly, and set the rest to zero.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\witacc_1)$. 
+\item Let $\acc_1$ be a randomly chosen satisfiable accumulator. Namely, $\acc_1=(\cm(\witacc_1),\betaa,e)$ where $\witacc_1$ and $\betaa$ are chosen randomly\footnote{We only need $\cm(\witacc_1)$ to be uniformly distributed over the image of \cm. According to \cm's structure, it may suffice to choose only a small subset of $\witacc_1$'s coordinates randomly, and set the rest to zero.}, and $e$ is set to $e=\sum_{i\in [n]}\pow_i(\betaa)f_i(\witacc_1)$.
 
 \item For each $2\leq i\leq n$, compute
 \begin{enumerate}
@@ -1372,7 +1368,7 @@ $(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\witinst_{n})$.
 \noindent
 \underline{$\ver(\inpF,\prf)$:}
 \begin{enumerate}
- \item Parse \inpF as $(\zfin,C,\recset)$, $\prf$ as $(\acc,\prffin)$. 
+ \item Parse \inpF as $(\zfin,C,\recset)$, $\prf$ as $(\acc,\prffin)$.
  \item If $\finpred(\zfin,\recset)=\rej$ output \rej.
  \item Let $\instfin\defeq (\acc,\zfin,C,\recset)$.
  \item Return $\versnark(\instfin,\prffin)$.
@@ -1384,43 +1380,43 @@ Let \relrcg be a trivial RCG relation. Assume that \hash is collision resistant,
 \end{thm}
 \begin{proof}
  The main thing to prove is knowledge soundness. Let \adv be a recursive algebraic adversary.
- 
+
 We define the following extractor algorithm \ext:
 \begin{enumerate}
- \item Given $(\instfin,\prf)$ - use the SNARK extractor to output $\witfin=(\witacc,\acc^*,\inst^*,\prf^*)$. 
- \item Let $n\defeq \inst^*.\cnt$. Denote $\acc_n\defeq \acc^*, \inst_n \defeq \inst^*$. 
+ \item Given $(\instfin,\prf)$, use the SNARK extractor to output $\witfin=(\witacc,\acc^*,\inst^*,\prf^*)$.
+ \item Let $n\defeq \inst^*.\cnt$. Denote $\acc_n\defeq \acc^*, \inst_n \defeq \inst^*$.
  \item If $(\instfin,\witfin)\notin \relfin$ output \empt and abort. Otherwise $\acc_n,\inst_n\in K$ and let $\witacc_n,\witinst_n$ be the elements output by \adv such that $\cm(\witacc_n)=\acc_n$ and $\cm(\witinst_n)=\inst_n$.
- \item  For $i=n-1,\ldots ,1$:
+ \item For $i=n-1,\ldots ,1$:
  \begin{enumerate}
-  \item If $(\inst_{i+1},\witinst_{i+1})\notin \rel$, output \empt and abort. Othewise, as $(\inst_{i+1},\witinst_{i+1})\in \rel$ implies  $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
-  \item Parse $\inst_i$  as $(z_i,\cnt_i,\acchash_i)$. Parse $\witinst_i$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$. 
+  \item If $(\inst_{i+1},\witinst_{i+1})\notin \rel$, output \empt and abort. Otherwise, as $(\inst_{i+1},\witinst_{i+1})\in \rel$ implies $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
+  \item Parse $\inst_i$ as $(z_i,\cnt_i,\acchash_i)$. Parse $\witinst_i$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$.
  \end{enumerate}
  \item Define $z_0\defeq \inst_0.z$.
 \item Output $\witrcg\defeq ( n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$.
 \end{enumerate}
 
 Let $D$ be the event that \adv outputs $(\instrcg,\prf)$ such that $\ver(\instrcg,\prf)=\accept$.
-If $D$ has probability \negl we are done. Otherwise, in order to prove knowledge soundness, we need to show that 
-\[\prob\left( (\instrcg,\witrcg)\notin \relrcg|D\right)=\negl.\]
-Asssume from now we are in the space conditioned on $D$.
-Let $E_0$ be the event  $(\instfin,\witfin)\notin \relfin$.
+If $D$ has probability \negl we are done. Otherwise, in order to prove knowledge soundness, we need to show that
+\[\Pr[(\instrcg,\witrcg)\notin \relrcg \mid D]=\negl.\]
+Assume from now we are in the space conditioned on $D$.
+Let $E_0$ be the event $(\instfin,\witfin)\notin \relfin$.
 For $i\in [n]$, let $E_i$ be the union of the following events:
 \begin{enumerate}
  \item $(\inst_i,\witinst_i)\notin \rel$.
 \item $(\acc_i,\witacc_i) \notin \rel$.
-\item  $\hash(\acc_i)\neq \inst_i.\hash$.
+\item $\hash(\acc_i)\neq \inst_i.\hash$.
 \end{enumerate}
-%  \item  $D_i:\acc'_i\neq \acc_i$.
+% \item $D_i:\acc'_i\neq \acc_i$.
 
-We first argue that if $E_0,\ldots, E_n$  \emph{don't} occur, $(\instrcg,\witrcg)\in \relrcg$.
+We first argue that if $E_0,\ldots, E_n$ \emph{don't} occur, $(\instrcg,\witrcg)\in \relrcg$.
 Denote $\instrcg = (\zfin,C,\recset)$ and $\instfin=(\acc,\instrcg)$.
-Examinning the definition of $\relrcg$, the statement $(\instrcg,\witrcg)\in \relrcg$ is equivalent to the following conditions.
+Examining the definition of $\relrcg$, the statement $(\instrcg,\witrcg)\in \relrcg$ is equivalent to the following conditions.
 \begin{enumerate}
 \item $\finpred(\zfin,\recset)=\true$: \ver checks this directly so we know it holds.
 \item $\inst_n.z = \zfin$ and $n \leq C$: Follows from $( \instfin ,\witfin)\in \relfin$.
-\item For all $i\in [n]$ $F(z_{i-1},w_i,z_i)=\accept$: Follows directly from $(\inst_i,\witinst_i)\in \rel$ for each $i\in [n]$. 
+\item For all $i\in [n]$ $F(z_{i-1},w_i,z_i)=\accept$: Follows directly from $(\inst_i,\witinst_i)\in \rel$ for each $i\in [n]$.
  \item $z_0.\init = \true$:
-For this we first prove by backwards  induction on $i=n,n-1\ldots,1$ that $\inst_i.\cnt =i$.
+For this we first prove by backwards induction on $i=n,n-1\ldots,1$ that $\inst_i.\cnt =i$.
 By our definition of $\inst_n$ this holds for $i=n$. For the induction step, assume it holds for $i$.
 Since $(\inst_i,\witinst_i)\in \rel$ we have $\inst_{i-1}.\cnt = \witinst_{i-1}.\inst.\cnt = \inst_i.\cnt -1 =i-1$.
 
@@ -1428,25 +1424,25 @@ In particular, $\inst_1.\cnt=1$ which implies when $(\inst_1,\witinst_1)\in \rel
 \end{enumerate}
 
 It is left to show that the probability of $E_0\cup E_1 \ldots \cup E_n$ is \negl. From the knowledge-soundness of the zk-SNARK for \relfin
-we have $\prob(E_0)=\negl$. (Recall we are in the event $D$ and assuming its probability is non-negligible.)
+we have $\Pr[E_0]=\negl$. (Recall we are in the event $D$ and assuming its probability is non-negligible.)
 
 For this purpose, we prove by backwards induction on $i$, for each $i\in [n]$, that
 the probability that $E_i$ occurs given $E_0,E_{i+1},\ldots,E_n$ \emph{didn't} is \negl.
 
 
-For $i=n$, assume $E_0$ didn't occur hence $(\instfin,\witfin)\in \relfin$.
-% from the knowledge soudness of $(\prvsnark,\versnark)$ e.w.p. \negl  $(\instfin,\witfin)\in \relfin$.
+For $i=n$, assume $E_0$ didn't occur, hence $(\instfin,\witfin)\in \relfin$.
+% from the knowledge soudness of $(\prvsnark,\versnark)$ e.w.p. \negl $(\instfin,\witfin)\in \relfin$.
 In this case $(\acc,\witacc)\in \relrand$ and $\verpg(\inst_n,\acc_n,\prf^*,\acc)=\accept$.
 Define $\adv_n$ to be the algorithm that executes \ext and outputs $\acc_n,\inst_n,\acc,\witacc_n,\witinst_n,\witacc,\prf^*$.
 From the knowledge soundness of \protogal applied to $\adv_n$ we have that the probability conditioned on $\neg E_0$ that
-$E_n$ occured is \negl.
+$E_n$ occurred is \negl.
 
-Now assume the induction hypothesis for some $i>1$. We have by the hypothesis that the event $D_i\defeq \neg(E_0\cup E_{i}\ldots\cup E_n)$ has probability $1-\negl$. Assume that we are in $D_i$. 
+Now assume the induction hypothesis for some $i>1$. We have by the hypothesis that the event $D_i\defeq \neg(E_0\cup E_{i}\ldots\cup E_n)$ has probability $1-\negl$. Assume that we are in $D_i$.
 From $(\inst_{i},\witinst_{i})\in \rel$ we have that $\inst_{i}.\acchash = \hash(\acc'_{i})=\hash(\acc_i)$.
 From the collision resistance of \hash, we thus have that the probability that $\acc_i\neq \acc_i$ is \negl.
-If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$  that $\ver(\acc_{i-1},\inst_{i-1},\prf_i,\acc_i) =\accept$.
+If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$ that $\ver(\acc_{i-1},\inst_{i-1},\prf_i,\acc_i) =\accept$.
 Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i-1},\witacc_{i-1},$ $\witinst_{i-1},\witacc_i,\prf_i$.
-From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$,  $\prob\left(E_{i-1} |D_i\right)=\negl$; which is the desired inductive statement.
+From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$, $\Pr[E_{i-1} \mid D_i]=\negl$; which is the desired inductive statement.
 
 \end{proof}
 \subsection{Constructing proofs for \relexec}
@@ -1455,9 +1451,9 @@ Going through the reductions of previous sections, we get the following zk-SNARK
 \underline{$\prv(\instexec,\witexec)$:}
 \begin{enumerate}
  \item Let $\instexec=(\root,C,\recset),\zfin=(\empty,\root,\false)$ and $\instrcg=(\zfin,C,\recset)$.
-Let $\varphi$ be the map in Lemma \ref{lem:execasRCG}, and compute $\witrcg=\varphi(\witexec)$. 
+Let $\varphi$ be the map in Lemma \ref{lem:execasRCG}, and compute $\witrcg=\varphi(\witexec)$.
 \item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is when $s_{i,j}$ is an \add operation, and zero otherwise.
-appears in $s_i$. 
+appears in $s_i$.
 \item Compute $h_n=\cm'(s,m)$, where $\cm'$ is as in Lemma \ref{lem:FtoFstar}. Compute
 $(\alpha,\beta,\eps) = (\hash(\inchash,\recset,1),\hash(\inchash,\recset,2),\hash(\inchash,\recset,3))$.
 \item Define $\zfin^*=(\zfin,h_n,\alpha,\beta,\eps),  \instrcg^*=(\zfin^*,C,\recset)$. Let $\witrcg^*=\varphi^*(\witrcg)$ where
@@ -1469,8 +1465,8 @@ $\varphi^*$ is the mapping from Lemma \ref{lem:FtoFstar}.
 \noindent
 \underline{$\ver(\instexec,\pi)$:}
 \begin{enumerate}
-\item Parse  $\pi$ as $(\inchash,\alpha,\beta,\eps,\pi^*)$. Parse $\instexec$ as $(\zfin,C,\recset)$. Define
-$\instrcg=( (\zfin,\inchash,\alpha,\beta,\eps),C,\recset)$.
+\item Parse $\pi$ as $(\inchash,\alpha,\beta,\eps,\pi^*)$. Parse $\instexec$ as $(\zfin,C,\recset)$. Define
+$\instrcg=((\zfin,\inchash,\alpha,\beta,\eps),C,\recset)$.
  \item Let $\ver'$ be \ver from Section \ref{subsec:main}. Return $\ver'(\instrcg,\pi^*)$.
 \end{enumerate}
 
@@ -1495,7 +1491,7 @@ The idea is that if we append the new elements \emph{at the beginning} of the ve
 
 Fix vector $b\in \F^k$ and vectors $a,a'\in F^{kC}$.
 For each $j\in [kC]$ we define the constraint $f_j(a,b,a')$ as follows.
-\begin{equation*} 
+\begin{equation*}
 f_j(a, b, a') \defeq \begin{cases}
     a'_j - b_j & i \leq k \\
     a'_j - a_{j - k} & j > k
@@ -1504,19 +1500,19 @@ f_j(a, b, a') \defeq \begin{cases}
 In words, the constraints \set{f_j} enforce that $a'$ consists of the $k$ elements of $b$ followed by the first $(C-1)k$ elements
 of $a$.
 Additionally, we will constrain (using the \init variable) that $S_0$ is the zero vector of length $kC$.
-In the $i$'th iteration, our transition function $F$ will checks for each $j\in [kC]$ the constraint $f_j(S_i,s_i,S_{i+1})=0$.
+In the $i$'th iteration, our transition function $F$ will check for each $j\in [kC]$ the constraint $f_j(S_i,s_i,S_{i+1})=0$.
 
-One can now show inductively that when starting from the zero vector, under the assumptions that $n\leq C$ and $|s_i|\leq k$ for each $i\in [n]$, that we end up with $S_n=(s_1\|\ldots\| s_n)$ possibly padded with zeroes.
+One can now show inductively that when starting from the zero vector, under the assumptions that $n\leq C$ and $|s_i|\leq k$ for each $i\in [n]$, we end up with $S_n=(s_1\|\ldots\| s_n)$ possibly padded with zeroes.
 
 % Now we wish to append $b\in \F^k$ to $S_i$; that is, to construct $S_{i+1} = b \| S_i$.
-% 
-% it is sufficient to check for all $j \in [k C]$ that $f_j(S_i,b,S_{i+1})=0$ where 
-% 
+%
+% it is sufficient to check for all $j \in [k C]$ that $f_j(S_i,b,S_{i+1})=0$ where
+%
 % These constraints clearly encode the concatenation relation.
 \paragraph{Prover efficiency}
 If the stack is folded in order, then even in the new randomized instance, the zero padding is preserved.
 That is, higher order elements above $ ki$ are still zero after folding.
-So prover only needs to perform one field multiplication per stack element to compute the folded witness.
+So the prover only needs to perform one field multiplication per stack element to compute the folded witness.
 These constraints are also linear so they do not contribute to any of the error terms in the $G(X)$ polynomial.
 
 For all $j > k (i+1)$ notice that $f_j(S_i, s_i, S_{i+1}) = 0$ identically, so they do not even contribute to the cost of computing the $F(X)$ polynomial.
