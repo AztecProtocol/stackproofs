@@ -852,7 +852,7 @@ $\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\l
 
 
 We say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming access
-to $z$ and $w$ \prv requires space $O(|F|+|s|+\log n)$.
+to $z$ and $w$ \prv requires space $O(|F|+|s|+\lambda \log n)$.
 Here $|F|$ is defined as $\M+n'$ where $f:\F^\M\to {\F^{n'}}$ is the \protogal constraint function representing $F$ (see Section \ref{sec:folding}.).
 
 
@@ -1452,8 +1452,7 @@ Going through the reductions of previous sections, we get the following zk-SNARK
 \begin{enumerate}
  \item Let $\instexec=(\root,C,\recset),\zfin=(\empty,\root,\false)$ and $\instrcg=(\zfin,C,\recset)$.
 Let $\varphi$ be the map in Lemma \ref{lem:execasRCG}, and compute $\witrcg=\varphi(\witexec)$.
-\item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is when $s_{i,j}$ is an \add operation, and zero otherwise.
-appears in $s_i$.
+\item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is read when $s_{i,j}$ is an \add operation, and zero otherwise.
 \item Compute $h_n=\cm'(s,m)$, where $\cm'$ is as in Lemma \ref{lem:FtoFstar}. Compute
 $(\alpha,\beta,\eps) = (\hash(\inchash,\recset,1),\hash(\inchash,\recset,2),\hash(\inchash,\recset,3))$.
 \item Define $\zfin^*=(\zfin,h_n,\alpha,\beta,\eps),  \instrcg^*=(\zfin^*,C,\recset)$. Let $\witrcg^*=\varphi^*(\witrcg)$ where
