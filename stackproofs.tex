@@ -106,6 +106,8 @@
 \newcommand{\relbase}{\ensuremath{\rel_0}\xspace}
 \mathchardef\mhyphen="2D
 
+\newcommand{\Patrick}[1]{\textcolor{blue}{{\bf Patrick}: #1}}
+
 \newcommand{\instbase}{\ensuremath{\inst_0}\xspace}
 \newcommand{\witbase}{\ensuremath{\wit_0}\xspace}
 
@@ -606,7 +608,8 @@ This is what happens in the Aztec system.
  Similar to Ethereum we have contracts, and the contracts have functions.
 A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions,
 we can't predict specifically what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
-But the call to ``authorize'' need not be tied to a specific implementation, and consequently verification key -- as different token holders are allowed to set their own ``authorize'' function.
+But the call to ``authorize'' need not be tied to a specific implementation and consequently,  to averification key -- as different token holders are 
+allowed to set their own ``authorize'' function.
 
 
 The goal of the Aztec system is to enable constructing zero-knowledge proofs of such contract function executions.
@@ -620,7 +623,10 @@ contract address with a Merkle root of a tree whose leaves are the verification 
 
 \paragraph{Dealing with Global state}
 Each contract has a set of notes, which are simply values in a field \F.
+\Patrick{What does it mean for a contract to "have" a set of notes? Perhaps mention instead that there is a global state consisting of notes that can
+	be modified by any contract}
 While running, a function can read, add or delete notes belonging to its contract.
+\Patrick{Same remark for "belonging"}
 We can thus think of the notes as global variables shared between the different functions.
 
 Assume all functions in this system return \acc or \rej. (We can always move the output into the arguments if a function is not of this form.)
@@ -628,8 +634,9 @@ Here's a natural way to prove the mentioned execution: Put the arguments to $B$ 
 Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
 
 This however, doesn't yet deal with the notes. During execution, note operations happened in a certain order.
-We can thus assign a \emph{counter} equal to one to the first operation, and increment the counter with each operation.
-We then need to check, for example, that if a note was read with a certain counter, it was indeed added
+We can thus assign a \emph{counter} equal to one to the first operation \Patrick{equal to one for the first operation}, and increment the counter with
+each operation.
+We then need to check, for example, that if a note was read \Patrick{or deleted} with a certain counter, it was indeed added
 with a smaller counter.
 We can include a description of the note operations performed by a function in the inputs of its circuit. This description will contain the operation type (\add, \del, \read), the note value, and the counter.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
@@ -653,10 +660,10 @@ Roughly, we'll require space sufficient for storing the inputs to the final pred
 \subsection{Related work}
 Recent work \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} uses folding schemes \cite{othernova,nova} to break up proving statements about large computation into smaller statements.
 The objective being reducing prover memory and/or improving prover parallelism.
-These works have not formally defined a notion like RCG, and rather use the IVC terminology. We believe the RCG framework may be better suited for capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over part of the witness to generate a random challenge. As eluded to earlier,
+These works have not formally defined a notion like RCG, and rather use the IVC terminology. We believe the RCG framework may be better suited for
+capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over
+part of the witness to generate a random challenge. As eluded \Patrick{alluded?} to earlier,
 one distinction is that these works start with a computation that is already linear, while here we start with cyclic computation and must ``compile'' it into a ``linear'' statement.
-
-
 
 
 \section{Preliminaries}
@@ -733,9 +740,33 @@ Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have
 \end{proof}
 
 \section{The execution model:}
+\Patrick{Suggestion:This section introduces a structure on the operations on the global state that result from executing a contract function.
+	Recall that the global state consists of notes (which are simply field elements) that can be added, read or deleted by functions, and that a 
+	function can call other functions.
+	As the called functions modify themselves the global state (and for instance delete a note that was added during the execution), an ordering on 
+	the operations on the global state is necessary to guarantee their consistency (e.g.,\ guarantee that a note can only be deleted if it were 
+	first added).
+	To this end, Section \ref{sec:exec_model:record_ops} defines record operations which essentially keep track of the computation steps at which
+	notes were added, created and deleted, and then defines conditions on record operations that guarantee the consistency of the operations 
+	performed by the functions throughout the execution.
+}
+
+\Patrick{
+	Suggestion-second paragraph:
+	The goal is to eventually prove that a set of operations results from the execution of a function (that may call other functions).  
+	The proof should not reveal any information about which precise function, as long as it belongs to a pre-defined set of contract functions,
+	or about its arguments.
+	To do so, it is sufficient to prove knowledge of an execution tree with the initial function and its arguments (which include the new declared
+	global state as parts of its inputs) at the root, the functions it calls and their arguments at its children nodes and so forth. 
+	The execution of the initial function is valid if the function at each node accepts on its arguments.
+	Section \ref{sec:exec_model:relation} defines an NP relation which formally captures what it means for a function to accept on its arguments,
+	and Section \ref{sec:validexec} formally defines such execution trees.
+}
+
 We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
 For this, we first introduce record operations which is our specific notion of operating on a global state.
 \subsection{Record operations}
+\label{sec:exec_model:record_ops}
 \emph{Records} are pairs $(\v,\c)$, where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is a \emph{counter}.
 A \emph{record operation} has one of the following forms:
 \begin{itemize}
@@ -770,11 +801,13 @@ We say $\ops$ is \emph{has output \recset} if:
 
 
 \subsection{The Plonkish relation}
+\label{sec:exec_model:relation}
 Now we introduce a relation describing the individual function executions tailored to make it convenient to later discuss an execution of a sequence functions calling each other.
 Some choices of constants -- like \args being of size four -- are arbitrary.
 We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
+\Patrick{Suggestion: In particular, functions are represented by commitments which consist of a single group element.}
 
-We fix a polynomial $G:\F^8\to \F$, and integers $N,\n$ that are implicit parameters in the following definition of the relation \relapp.
+We fix a polynomial $G:\F^8\to \F$, and integers $N,\n$ that are implicit parameters in the following definition of relation \relapp.
 
 \relapp consists of all pairs $(\instapp, \witapp)$ having the form
 \begin{itemize}
@@ -801,6 +834,7 @@ such that
 By an \emph{execution tree of length $n$} we mean a binary tree \tree with $n$ vertices, whose nodes are
 labeled by pairs $(\instapp,\witapp)$.
 Let \funcs be a set of elements of \G.
+\Patrick{Suggestion: This set represent the set of all contract-function commitments.}
 Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
 \begin{enumerate}
  \item For each $\node\in\tree$, its label $(\instapp,\witapp)$ is in \relapp.
@@ -826,7 +860,18 @@ of the form
 such that $n\leq C$, and \tree is a valid execution tree of length $n$ with function set \funcs having Merkle root \root, and output set \recset.
 
 \section{Repeated Computation with Global state}
-An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
+
+\Patrick{Suggestion:
+	To enable efficient proofs that a new global state stems from the execution of a contract function, we introduce Repeated Computations with 
+	Global state (RCG).
+	They split an overall function execution into stepwise atomic executions of each of the functions called throughout the execution. 
+	A transition predicate attests to the validity of a global-state transition arising from an atomic execution.
+	A final predicate checks the consistency between parts of the witnesses used throughout the entire computation.
+	These parts are later interpreted as record operations performed by the functions called. 
+	An RCG scheme is then defined as a SNARK in which the prover need only keep in memory enough information to check each stepwise transition and
+	to check the final predicate.
+}
+\Patrick{Formally,} An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
 \noindent
 We call $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ the \emph{transition predicate}.
 
@@ -844,10 +889,13 @@ The relation $\rel=\rel_{F,\finpred}$ consists of pairs $(\inpF,\witF)$ such tha
 $\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
 \begin{itemize}
  \item $z_0.\init = \true$.
+	 \Patrick{You are here tacitly assuming (and requiring) structure on $z,$ namely that it is a tuple with one component that is a boolean 
+	 value.}
  \item $z_n=\zfin$.
  \item $n\leq C$.
  \item For each $i\in [n]$, $F(z_{i-1},w_i,z_i,s_i)=\acc$.
  \item $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
+	 \Patrick{the input space of $\finpred$ in the def above does not include values $z.$}
 \end{itemize}
 
 
@@ -857,6 +905,11 @@ Here $|F|$ is defined as $\M+n'$ where $f:\F^\M\to {\F^{n'}}$ is the \protogal c
 
 
 \subsection{Valid executions as RCGs}\label{sec:exec->RFC}
+\Patrick{We now define specific RCG transition and final relations, and then reduce proving knowledge of an execution tree with the new global state as
+	arguments at the root to proving the validity of an RCG computation which results in a pre-determined final state.
+	This final state that reveals no information beyond the fact that the new global state arising from the execution of a single contract
+	function.
+}
 We show how to represent checking valid executions as defined in Section \ref{sec:validexec} via RCGs.
 
 Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
@@ -872,6 +925,8 @@ $F(Z,W,Z^*,S)=\acc$ if and only if
 \begin{enumerate}
 \item If $\init=\true$, $g$ contains exactly one element.
  \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
+	 \Patrick{Does $\instnoops$ only have two components or more? To which set does it belong? Update: This is implicitly answered in the next 
+	 item. Swap the two}
  \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
  \item \path is a Merkle path from \f to \root.
  \item $\root=\root^*$.
@@ -903,7 +958,7 @@ DFS order.
 Define a sequence of stacks $g_0,\ldots,g_n$ according to the sequence of labels.
 
 Namely, $g_0$ is the stack containing only $(\instapp_1.\f,\instapp_1.\args)$. And for each $i\in [n]$, $g_i$ is
-the stack obtained by popping $g[0]$ and adding $(\instapp_i.\f_j,\instapp_i.\args_j)$ for $j\in [\instapp_i.\callnum]$.
+the stack obtained by popping $g[0]$ \Patrick{$g_{i-1}[0]$?} and adding $(\instapp_i.\f_j,\instapp_i.\args_j)$ for $j\in [\instapp_i.\callnum]$.
 
 Now, define $z_0=(g_0,\root,\true)$ and for each $i\in [n]$, $z_i=(g_i,\root,\false)$.
 
@@ -919,7 +974,14 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 \end{proof}
 
 \section{Removing the global state}\label{sec:Fstar}
-
+\Patrick{
+	We give rational identities which are equivalent to the consistency of record operations during a function execution, as formally defined 
+	in Section \ref{sec:exec_model:record_ops}.
+	They arise from ideas similar to those used in ``log-derivative lookups'' \cite{bplusplus,logup}.
+	We then define new RCG transition and final relations which allow to efficiently prove that the record operations are consistent. 
+	Proving the validity of a computation with the RCG relations defined in Section \ref{sec:exec->RFC} is then reduced to proving the validity of 
+	a computation with these new RCG relations.
+}
 \paragraph{Rational Identities:}
 Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identities.
 \begin{claim}\label{clm:reducetologder}
@@ -952,7 +1014,16 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
 
 
 
-
+\Patrick{
+	We now define new RCG relations $\rel_{F,\finpred}$ which permit efficient proofs that record operations are consistent. 
+	To that end, the previous rational identities are evaluated at random points and the transition predicate checks that each identity summand 
+	was added one term at a time.
+	For the random evaluation points to be generated in manner that is sound but also allow for an incremental computation of the rational identity 
+	summand by summand, the idea is to compute them via a hash chain.
+	This chain includes at each step the new set of record operations and the last hash output, which is in essence a commitment to all the record
+	operations at each step, is used to compute the evaluation points. 
+	This idea also appears in CITE MANGROVE, ongoing work by Jens Groth \cite{jenstalk} and CITE THE BLOG POST JENS MENTIONS IN HIS TALK.
+}
 
 
 We reduce the relation $\rel_{F,\finpred}$ from the last section to
@@ -992,7 +1063,7 @@ There is an efficiently computable and efficiently invertible map $\varphi$ such
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Fix some $\alpha,\beta,\eps\in \F$ and set of records \recset.
 Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and set $\inst\defeq (\zfin^*,C,\recset)$.
-Suppose efficient \adv outputs \wit such that $(\inst,\wit)\in \rel_{F^*,\finpred^*}$.
+Suppose an efficient adversary \adv outputs \wit such that $(\inst,\wit)\in \rel_{F^*,\finpred^*}$.
 
 Set $d\defeq 3M+|\recset|+1$. Define $\cm'((s_1,m_1),\ldots,(s_n,m_n))\defeq h_n$, where $h_0\defeq\emptyset$ and $h_i\defeq\hash(h_{i-1},\cm(s_i,m_i))$ for $i \in [n]$.
 Let \ztafuncs be a function family to be defined in the proof.
