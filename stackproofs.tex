@@ -606,9 +606,9 @@ Namely, there is a verification key attached to each one, and we are expected to
 This is what happens in the Aztec system.
 \paragraph{The Aztec private contract system:}
  Similar to Ethereum we have contracts, and the contracts have functions.
-A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions,
-we can't predict specifically what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
-But the call to ``authorize'' need not be tied to a specific implementation and consequently,  to averification key -- as different token holders are 
+A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions and compiling them to circuits,
+we can't predict what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
+But the call to ``authorize'' need not be tied to a specific implementation and consequently,  to a specific verification key -- as different token holders are 
 allowed to set their own ``authorize'' function.
 
 
@@ -622,11 +622,11 @@ contract address with a Merkle root of a tree whose leaves are the verification 
 \end{enumerate}
 
 \paragraph{Dealing with Global state}
-Each contract has a set of notes, which are simply values in a field \F.
-\Patrick{What does it mean for a contract to "have" a set of notes? Perhaps mention instead that there is a global state consisting of notes that can
-	be modified by any contract}
-While running, a function can read, add or delete notes belonging to its contract.
-\Patrick{Same remark for "belonging"}
+The global state of the Aztec system is described by a set of notes, which are simply values in a field \F.
+% \Patrick{What does it mean for a contract to "have" a set of notes? Perhaps mention instead that there is a global state consisting of notes that can
+% 	be modified by any contract}
+Each note belongs to a certain contract. While running, a function can read, add or delete notes belonging to its contract.
+% \Patrick{Same remark for "belonging"}
 We can thus think of the notes as global variables shared between the different functions.
 
 Assume all functions in this system return \acc or \rej. (We can always move the output into the arguments if a function is not of this form.)
@@ -634,9 +634,10 @@ Here's a natural way to prove the mentioned execution: Put the arguments to $B$ 
 Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
 
 This however, doesn't yet deal with the notes. During execution, note operations happened in a certain order.
-We can thus assign a \emph{counter} equal to one to the first operation \Patrick{equal to one for the first operation}, and increment the counter with
-each operation.
-We then need to check, for example, that if a note was read \Patrick{or deleted} with a certain counter, it was indeed added
+We can thus assign a \emph{counter} equal to one for the first operation
+% \Patrick{equal to one for the first operation}, 
+and increment the counter with each operation.
+We then need to check, for example, that if a note was read  with a certain counter, it was indeed added
 with a smaller counter.
 We can include a description of the note operations performed by a function in the inputs of its circuit. This description will contain the operation type (\add, \del, \read), the note value, and the counter.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
@@ -662,7 +663,7 @@ Recent work \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} us
 The objective being reducing prover memory and/or improving prover parallelism.
 These works have not formally defined a notion like RCG, and rather use the IVC terminology. We believe the RCG framework may be better suited for
 capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over
-part of the witness to generate a random challenge. As eluded \Patrick{alluded?} to earlier,
+part of the witness to generate a random challenge. As alluded to earlier,
 one distinction is that these works start with a computation that is already linear, while here we start with cyclic computation and must ``compile'' it into a ``linear'' statement.
 
 
@@ -740,16 +741,16 @@ Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have
 \end{proof}
 
 \section{The execution model:}
-\Patrick{Suggestion:This section introduces a structure on the operations on the global state that result from executing a contract function.
-	Recall that the global state consists of notes (which are simply field elements) that can be added, read or deleted by functions, and that a 
+This section introduces a model of the operations on the global state that result from executing a contract function.
+For simplicity, we don't discuss various 
+	The global state consists of notes  that can be added, read or deleted by  the contract functions; and that a 
 	function can call other functions.
-	As the called functions modify themselves the global state (and for instance delete a note that was added during the execution), an ordering on 
+	As the called functions modify the global state, for instance -- delete a note that was added during the execution, an ordering on 
 	the operations on the global state is necessary to guarantee their consistency (e.g.,\ guarantee that a note can only be deleted if it were 
 	first added).
-	To this end, Section \ref{sec:exec_model:record_ops} defines record operations which essentially keep track of the computation steps at which
-	notes were added, created and deleted, and then defines conditions on record operations that guarantee the consistency of the operations 
+	To this end, Section \ref{sec:exec_model:record_ops} defines \emph{record operations} which keep track of the computation steps at which
+	notes were added, read and deleted. Then, it defines conditions on record operations that guarantee the consistency of the operations 
 	performed by the functions throughout the execution.
-}
 
 \Patrick{
 	Suggestion-second paragraph:
@@ -802,10 +803,14 @@ We say $\ops$ is \emph{has output \recset} if:
 
 \subsection{The Plonkish relation}
 \label{sec:exec_model:relation}
-Now we introduce a relation describing the individual function executions tailored to make it convenient to later discuss an execution of a sequence functions calling each other.
+Now we introduce a relation \relapp describing the individual function executions tailored to make it convenient to later discuss an execution of a \emph{sequence} functions calling each other.
+The executed function is represented in the instance by a single group element \f. In the terminology of \cite{plonk}, \f is a commitment to the permutation and selector values.
+%  Additionally, the instance contains a group element \f representing, in the terminology of \cite{plonk} functions are represented by commitments which consist of a single group element.}
+Additionally, the instance adheres to a form containing both the record operations and the details of the inner calls of the individual function execution.
+We stress, however, that the \emph{interpretation} of these values in the instance as record operation and inner calls, only happens in the next section when we discuss valid executions,
+and doesn't manifest in the defintion of \relapp below.
+% We stress that these values will be interpreted as record operations and internal only in the next section when we discuss valid executions.
 Some choices of constants -- like \args being of size four -- are arbitrary.
-We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
-\Patrick{Suggestion: In particular, functions are represented by commitments which consist of a single group element.}
 
 We fix a polynomial $G:\F^8\to \F$, and integers $N,\n$ that are implicit parameters in the following definition of relation \relapp.
 
@@ -834,7 +839,7 @@ such that
 By an \emph{execution tree of length $n$} we mean a binary tree \tree with $n$ vertices, whose nodes are
 labeled by pairs $(\instapp,\witapp)$.
 Let \funcs be a set of elements of \G.
-\Patrick{Suggestion: This set represent the set of all contract-function commitments.}
+% \Patrick{Suggestion: This set represent the set of all contract-function commitments.}
 Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
 \begin{enumerate}
  \item For each $\node\in\tree$, its label $(\instapp,\witapp)$ is in \relapp.
@@ -900,7 +905,7 @@ $\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\l
 
 
 We say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming access
-to $z$ and $w$ \prv requires space $O(|F|+|s|+\log n)$.
+to $z$ and $w$ \prv requires space $O(|F|+|s|+\lambda \log n)$.
 Here $|F|$ is defined as $\M+n'$ where $f:\F^\M\to {\F^{n'}}$ is the \protogal constraint function representing $F$ (see Section \ref{sec:folding}.).
 
 
@@ -1523,8 +1528,7 @@ Going through the reductions of previous sections, we get the following zk-SNARK
 \begin{enumerate}
  \item Let $\instexec=(\root,C,\recset),\zfin=(\empty,\root,\false)$ and $\instrcg=(\zfin,C,\recset)$.
 Let $\varphi$ be the map in Lemma \ref{lem:execasRCG}, and compute $\witrcg=\varphi(\witexec)$.
-\item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is when $s_{i,j}$ is an \add operation, and zero otherwise.
-appears in $s_i$.
+\item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is read when $s_{i,j}$ is an \add operation, and zero otherwise.
 \item Compute $h_n=\cm'(s,m)$, where $\cm'$ is as in Lemma \ref{lem:FtoFstar}. Compute
 $(\alpha,\beta,\eps) = (\hash(\inchash,\recset,1),\hash(\inchash,\recset,2),\hash(\inchash,\recset,3))$.
 \item Define $\zfin^*=(\zfin,h_n,\alpha,\beta,\eps),  \instrcg^*=(\zfin^*,C,\recset)$. Let $\witrcg^*=\varphi^*(\witrcg)$ where
