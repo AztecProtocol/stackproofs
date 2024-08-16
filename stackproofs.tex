@@ -106,6 +106,8 @@
 \newcommand{\relbase}{\ensuremath{\rel_0}\xspace}
 \mathchardef\mhyphen="2D
 
+\newcommand{\Patrick}[1]{\textcolor{blue}{{\bf Patrick}: #1}}
+
 \newcommand{\instbase}{\ensuremath{\inst_0}\xspace}
 \newcommand{\witbase}{\ensuremath{\wit_0}\xspace}
 
@@ -577,6 +579,8 @@
 \newcommand{\n}{\shlomomath{n}}
 \newcommand{\dimK}{\calligmath{k}}
 \newcommand{\M}{\calligmath{M}}
+ \newcommand{\relrcg}{\ensuremath{\rel_{F,\finpred}}\xspace}
+ \newcommand{\relrcgstar}{\ensuremath{\rel_{F^*,\finpred^*}}\xspace}
 \begin{document}
     \maketitle
 \begin{abstract}
@@ -603,10 +607,11 @@ However, what if we're in a situation where $A$ and $B$ have already been ``SNAR
 Namely, there is a verification key attached to each one, and we are expected to use these keys specifically.
 This is what happens in the Aztec system.
 \paragraph{The Aztec private contract system:}
- Similar to Ethereum we have contracts, and the contracts have functions.
-A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions,
-we can't predict specifically what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
-But the call to ``authorize'' need not be tied to a specific implementation, and consequently verification key -- as different token holders are allowed to set their own ``authorize'' function.
+ Similar to Ethereum we have contracts, and the contracts have functions.\footnote{Detailed documentation of the Aztec protocol can be found \href{https://docs.aztec.network/}{here}.}
+A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions and compiling them to circuits,
+we can't predict what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
+But the call to ``authorize'' need not be tied to a specific implementation and consequently,  to a specific verification key -- as different token holders are 
+allowed to set their own ``authorize'' function.
 
 
 The goal of the Aztec system is to enable constructing zero-knowledge proofs of such contract function executions.
@@ -619,8 +624,11 @@ contract address with a Merkle root of a tree whose leaves are the verification 
 \end{enumerate}
 
 \paragraph{Dealing with Global state}
-Each contract has a set of notes, which are simply values in a field \F.
-While running, a function can read, add or delete notes belonging to its contract.
+The global state of the Aztec system is described by a set of notes, which are simply values in a field \F.
+% \Patrick{What does it mean for a contract to "have" a set of notes? Perhaps mention instead that there is a global state consisting of notes that can
+% 	be modified by any contract}
+Each note belongs to a certain contract. While running, a function can read, add or delete notes belonging to its contract.
+% \Patrick{Same remark for "belonging"}
 We can thus think of the notes as global variables shared between the different functions.
 
 Assume all functions in this system return \acc or \rej. (We can always move the output into the arguments if a function is not of this form.)
@@ -628,8 +636,10 @@ Here's a natural way to prove the mentioned execution: Put the arguments to $B$ 
 Verify the proofs $\prf_A,\prf_B$ for $A,B$; and check via the public inputs the same value was used in both proofs for the arguments of $B$.
 
 This however, doesn't yet deal with the notes. During execution, note operations happened in a certain order.
-We can thus assign a \emph{counter} equal to one to the first operation, and increment the counter with each operation.
-We then need to check, for example, that if a note was read with a certain counter, it was indeed added
+We can thus assign a \emph{counter} equal to one for the first operation
+% \Patrick{equal to one for the first operation}, 
+and increment the counter with each operation.
+We then need to check, for example, that if a note was read  with a certain counter, it was indeed added
 with a smaller counter.
 We can include a description of the note operations performed by a function in the inputs of its circuit. This description will contain the operation type (\add, \del, \read), the note value, and the counter.
 The issue is, what if $A$ is reading a note that was added in the internal call to $B$?
@@ -653,10 +663,10 @@ Roughly, we'll require space sufficient for storing the inputs to the final pred
 \subsection{Related work}
 Recent work \cite{moonmoon, mangrove} as well as ongoing work \cite{jenstalk} uses folding schemes \cite{othernova,nova} to break up proving statements about large computation into smaller statements.
 The objective being reducing prover memory and/or improving prover parallelism.
-These works have not formally defined a notion like RCG, and rather use the IVC terminology. We believe the RCG framework may be better suited for capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over part of the witness to generate a random challenge. As eluded to earlier,
+These works have not formally defined a notion like RCG, and rather use the IVC terminology. We believe the RCG framework may be better suited for
+capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over
+part of the witness to generate a random challenge. As alluded to earlier,
 one distinction is that these works start with a computation that is already linear, while here we start with cyclic computation and must ``compile'' it into a ``linear'' statement.
-
-
 
 
 \section{Preliminaries}
@@ -732,10 +742,35 @@ Otherwise, there is a non-zero polynomial $C_i\in\F_{\leq d}[X_1,\ldots,X_{t-1}]
 Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have a univariate non-zero polynomial $C_j'\in\F_{\leq d}[X_1]$ with $C_j'(z_1)=0$. In this base case, \advprime can output the degree-$d$ relation $(D_1,x,\tau_1)$, where $D_1$ is the function that computes $f_1(X)\defeq C_j'(X)$ given $x$ and $\tau_1\defeq(\tau,1)$, finishing the proof.
 \end{proof}
 
-\section{The execution model:}
-We present a formal framework that will be convenient for our proof system of what it means to prove an execution where functions can call each other, and there is global state.
-For this, we first introduce record operations which is our specific notion of operating on a global state.
+\section{The execution model}
+ We present a formal framework  for describing function executions enabling both internal function calls and global state.
+ 
+
+We begin in Section \ref{sec:exec_model:record_ops} by introducing   \emph{record operations} which is our specific notion of operating on a global state.
+% 	The global state consists of values, simply referred to as \emph{values},  that can be added, read or deleted by  the contract functions; and that a 
+% 	function can call other functions.
+% 	As the called functions modify the global state, for instance -- delete a note that was added during the execution, an ordering on 
+% 	the operations on the global state is necessary to guarantee their consistency (e.g.,\ guarantee that a note can only be deleted if it were 
+% 	first added).
+	 Record operations keep track of the computation steps at which	records (roughly corresponding to notes in the introduction) were added, read and deleted. 
+We then define what it means for a set of such operations to be \emph{consistent}. For example, we want to enforce that a record can be deleted only if it was first added. 
+
+	The eventual goal is to prove that a certain set of records is the output of a function execution (where that execution includes the function's internal calls).
+	The proof should not reveal any information about which function was executed, as long as it belongs to a pre-defined set of legal functions,
+	or about its arguments.
+	To do so, it is sufficient to prove knowledge of an execution tree with the initial function at the root, the functions it calls at its children nodes and so forth. 
+% 	The execution of the initial function is valid if the function at each node accepts on its arguments.
+	Section \ref{sec:exec_model:relation} defines a relation which formally captures what it means for an individual function to accept on its arguments,
+	and Section \ref{sec:validexec} formally defines such execution trees.
+
+\begin{remark}
+ For simplicity, and in contrast to the introduction, we don't explicitly discuss contracts. We only model functions operating on a shared global state.
+As in Aztec each function can only operate on notes of its contract, this corresponds to a system with one contract. Capturing the general system mainly requires modelling the restriction that a function is only operating on the subset of notes belonging to its contract. 
+ 
+\end{remark}
+
 \subsection{Record operations}
+\label{sec:exec_model:record_ops}
 \emph{Records} are pairs $(\v,\c)$, where $\v\in \F$ is the \emph{value}, and $\c\in \countrange$ is a \emph{counter}.
 A \emph{record operation} has one of the following forms:
 \begin{itemize}
@@ -770,11 +805,18 @@ We say $\ops$ is \emph{has output \recset} if:
 
 
 \subsection{The Plonkish relation}
-Now we introduce a relation describing the individual function executions tailored to make it convenient to later discuss an execution of a sequence functions calling each other.
-Some choices of constants -- like \args being of size four -- are arbitrary.
-We require the instance to adhere to a form containing both the record operations and the details of the inner calls (though they will be interpreted as such only in the next section when we discuss valid executions).
+\label{sec:exec_model:relation}
+Now we introduce a relation \relapp describing the individual function executions tailored to make it convenient to later discuss an execution of a \emph{sequence} functions calling each other.
+The executed function is represented in the instance by a single group element \f. In the terminology of \cite{plonk}, \f is a commitment to the permutation and selector values of a specific \plonk circuit. In particular, \relapp is a ``universal'' Plonkish relation where the circuit is not fixed but chosen in the instance. 
+%  Additionally, the instance contains a group element \f representing, in the terminology of \cite{plonk} functions are represented by commitments which consist of a single group element.}
 
-We fix a polynomial $G:\F^8\to \F$, and integers $N,\n$ that are implicit parameters in the following definition of the relation \relapp.
+Additionally, the instance adheres to a form containing both the record operations and the details of the inner calls of the individual function execution.
+We stress however, that the \emph{interpretation} of these values as record operations and inner calls, only happens in the next section when we discuss valid executions trees;
+and doesn't manifest in the definition of \relapp.
+% We stress that these values will be interpreted as record operations and internal only in the next section when we discuss valid executions.
+Some choices of constants -- like \args being of size four -- are arbitrary.
+
+We fix a polynomial $G:\F^8\to \F$, and integers $N,\n$ that are implicit parameters in the following definition of relation \relapp.
 
 \relapp consists of all pairs $(\instapp, \witapp)$ having the form
 \begin{itemize}
@@ -801,6 +843,7 @@ such that
 By an \emph{execution tree of length $n$} we mean a binary tree \tree with $n$ vertices, whose nodes are
 labeled by pairs $(\instapp,\witapp)$.
 Let \funcs be a set of elements of \G.
+% \Patrick{Suggestion: This set represent the set of all contract-function commitments.}
 Given such \tree we say it is a \emph{valid execution of length $n$ with function set \funcs and output \recset} if
 \begin{enumerate}
  \item For each $\node\in\tree$, its label $(\instapp,\witapp)$ is in \relapp.
@@ -826,10 +869,17 @@ of the form
 such that $n\leq C$, and \tree is a valid execution tree of length $n$ with function set \funcs having Merkle root \root, and output set \recset.
 
 \section{Repeated Computation with Global state}
-An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
+	Motivated by space-efficient proofs for \relexec, we introduce the notion of \emph{Repeated Computation with 
+	Global state} (RCG).
+	RCGs enable us to deal separately with the local consistency of  iterative steps of a transition function,
+	and over-all consistency of a global state consisting of a part of each iteration's witness.
+We first define the general notion, and then in Section \ref{sec:exec->RFC} show how to capture valid execution trees with it.
+
+
+\paragraph{Defining RCG relations:}
+  An RCG relation is defined by a pair of functions $(F,\finpred)$.\\
 \noindent
 We call $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ the \emph{transition predicate}.
-
 We informally think of
 \begin{itemize}
 \item $Z$ as the public input and $W$ as the private input of $F$.
@@ -837,29 +887,41 @@ We informally think of
 \item $S$ as the part of the private input that will be used in the final predicate.
 \end{itemize}
 
-Let $D_1,D_2$ be the domains of $S,\recset$ respectively. \finpred is a function
-$\finpred:D_1^*\times D_2 \to \set{\acc,\rej}$ called the \emph{final predicate}.
+Let $D_0,D_1,D_2$ be the domains of $Z,S,\recset$ respectively. \finpred is a function
+$\finpred:D_0\times D_1^*\times D_2 \to \set{\acc,\rej}$ called the \emph{final predicate}.\\
+\noindent
 
-The relation $\rel=\rel_{F,\finpred}$ consists of pairs $(\inpF,\witF)$ such that
-$\inpF=(\zfin,C,\recset),\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ such that
+\emph{The relation $\relrcg$} is the set of pairs $(\inpF,\witF)$ 
 \begin{itemize}
+ \item 
+$\inpF=(\zfin,C,\recset)$,
+\item $\witF=(n,z=(z_0,\ldots,z_n),w=(w_1\ldots,w_n),s=(s_1,\ldots,s_n))$ 
+\end{itemize}
+such that
+\begin{enumerate}
  \item $z_0.\init = \true$.
+% 	 \Patrick{You are here tacitly assuming (and requiring) structure on $z,$ namely that it is a tuple with one component that is a boolean 
+% 	 value.}
  \item $z_n=\zfin$.
  \item $n\leq C$.
  \item For each $i\in [n]$, $F(z_{i-1},w_i,z_i,s_i)=\acc$.
  \item $\finpred(z_n,s_1,\ldots,s_n,\recset)=\acc$.
-\end{itemize}
+\end{enumerate}
 
 
-We say a \zksnark for \rel is \emph{space-efficient} if given $s$ and streaming access
+We say a \zksnark for \relrcg is \emph{space-efficient} if given $s$ and streaming access
 to $z$ and $w$ \prv requires space $O(|F|+|s|+\lambda \log n)$.
 Here $|F|$ is defined as $\M+n'$ where $f:\F^\M\to {\F^{n'}}$ is the \protogal constraint function representing $F$ (see Section \ref{sec:folding}.).
 
 
 \subsection{Valid executions as RCGs}\label{sec:exec->RFC}
-We show how to represent checking valid executions as defined in Section \ref{sec:validexec} via RCGs.
+We define a specific RCG relation \relrcg capturing valid execution trees as defined in Section \ref{sec:validexec}.
+Loosely speaking, the transition function $F$ will update a call stack of functions yet to be executed, and execute the function that is
+at the top of the stack.
+The final predicate \finpred will check the union of record operations from all iterations is consistent.\\
 
-Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
+\noindent
+More precisely, define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
 \begin{itemize}
  \item $Z=(g,\root,\init)$ where $g$ is a stack of elements of the form $(\f,\args)$, \root is a root of a Merkle tree, and \init a boolean.
  \item $Z^*=(g^*,\root^*,\init^*)$ has the same form.
@@ -871,8 +933,8 @@ Define the function $F(Z,W,Z^*,S)\to \set{\acc,\rej}$ as follows.
 $F(Z,W,Z^*,S)=\acc$ if and only if
 \begin{enumerate}
 \item If $\init=\true$, $g$ contains exactly one element.
- \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
  \item Setting $\instapp=(\instnoops,S)$, we have $(\instapp,\witapp)\in \relapp$.
+ \item Denoting $g[0]=(\f,\args)$, we have $\f=\instnoops.\f$ and $\args=\instnoops.\args$.
  \item \path is a Merkle path from \f to \root.
  \item $\root=\root^*$.
  \item $g^*$ is the result of popping $(\f,\args)$ from $g$ and then pushing the $\instapp.\callnum$ elements
@@ -881,11 +943,15 @@ $F(Z,W,Z^*,S)=\acc$ if and only if
 
 
 Denote by \empty the empty stack.
-We define the function \finpred on input $(z_n,s_1,\ldots,s_n,\recset)$ to output \acc if and only if $z_n.g=\empty$,
-each $s_i$ is a well-formed set of record operations, and when defining \ops as the multi-set union of $s_1,\ldots,s_n$ it has output \recset.
+We define $\finpred(z_n,s_1,\ldots,s_n,\recset)$ to output \acc if and only if
+\begin{enumerate}
+ \item$z_n.g=\empty$,
+\item  Defining \ops as the multi-set union of $s_1,\ldots,s_n$ it is as well-formed set of record operations with output \recset.
+\end{enumerate}
 
 
-
+We show that proving knowledge of a witness for an instance of \relexec can be reduced to proving knowledge of a witness for an instance of 
+$\rel_{F,\finpred}$.
 
 \begin{lemma}\label{lem:execasRCG}
 There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
@@ -903,25 +969,27 @@ DFS order.
 Define a sequence of stacks $g_0,\ldots,g_n$ according to the sequence of labels.
 
 Namely, $g_0$ is the stack containing only $(\instapp_1.\f,\instapp_1.\args)$. And for each $i\in [n]$, $g_i$ is
-the stack obtained by popping $g[0]$ and adding $(\instapp_i.\f_j,\instapp_i.\args_j)$ for $j\in [\instapp_i.\callnum]$.
-
+the stack obtained by popping $g_{i-1}[0]$  and adding $(\instapp_i.\f_j,\instapp_i.\args_j)$ for $j\in [\instapp_i.\callnum]$.
 Now, define $z_0=(g_0,\root,\true)$ and for each $i\in [n]$, $z_i=(g_i,\root,\false)$.
 
 
 
-We now need to refer to the record operations in each instance separately.
-For this purpose,
-for each $i\in [n]$, denote $\instapp_i=(\instnoops_i,\ops_i)$.
+To proceed we need to refer to the record operations in each instance separately.
+For this purpose, for each $i\in [n]$ denote $\instapp_i=(\instnoops_i,\ops_i)$.
 For each $i\in [n]$, let $\path_i$ be the path from $\instapp_i.\f$ to \root.
 Define for each $i\in [n]$, $w_i=(\path_i,\instnoops_i,\witapp_i)$, $s_i=\ops_i$.
 Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
  and $\varphi(\tree)=(n,z,w,s)$. Given this definition of $\varphi$ the statement of the lemma is straightforward to check.
 \end{proof}
 
-\section{Removing the global state}\label{sec:Fstar}
-
-\paragraph{Rational Identities:}
-Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identities.
+\section{Removing the global state via rational identities}\label{sec:Fstar}
+	We give rational identities which are equivalent to the consistency of record operations  as formally defined 
+	in Section \ref{sec:exec_model:record_ops}.
+	They arise from ideas similar to those used in ``log-derivative lookups'' \cite{bplusplus,logup}.
+	Using these identities, we then define a new RCG relation \relrcgstar capturing valid execution trees, i.e., \relexec. The advantage of \relrcgstar over \relrcg from Section \ref{sec:exec->RFC} is that the final predicate is ``trivial'' in the sense of only depending on the output of the final iteration.
+	As we'll see in Section \ref{sec:FtoFprime}, this makes constructing a zk-SNARK for it more convenient.
+% \paragraph{Rational Identities:}
+% Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identities.
 \begin{claim}\label{clm:reducetologder}
 Assume $\F$ has characteristic larger than $M+1$.
 Let \recset be a set of records and $\ops=\sett{(\op_i,\v_i,\vc_i,\c_i)}{i\in \countrange}$ be a set of record operations (defining $\vc_i=0$ when $\op_i=\add$) with $\vc_i<\c_i$ for all $i\in \countrange$.
@@ -955,14 +1023,23 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
 
 
 
-We reduce the relation $\rel_{F,\finpred}$ from the last section to
-$\rel_{F^*,\finpred^*}$:
+	\noindent
+% We reduce the relation $\rel_{F,\finpred}$ from the last section to
+% $\rel_{F^*,\finpred^*}$:
+\paragraph{Defining \relrcgstar}
+	We now define the RCG relation $\rel_{F^*,\finpred^*}$ which will permit efficient proofs that record operations are consistent. 
+	The idea is to evaluate the above rational identities at a random point, and have the transition predicate incrementally check the evaluation is correct
+	by a running sum.
+	For the random evaluation point to be generated in manner that is sound but also allow for an incremental computation of the rational identity 
+	summand by summand, we compute it via a hash chain.
+	This chain includes at each step the new set of record operations and the last hash output, which is in essence a commitment to all the record
+	operations in previous steps.
+	This idea also appears in \cite{moonmoon,mangrove,jenstalk}. We proceed with the formal definition.\\ \\
+\noindent	
+Let $F$ denote the function $F(Z_F,W_F,Z_F^*,S_F)\to \set{\acc,\rej}$ from Section \ref{sec:exec->RFC}.
+Let $k\defeq |S_F|$, $\cm:\F^{5k} \to \G$, and set $M\defeq kn$.\\
 
-Let $F$ denote the function $F(Z_F,W_F,Z_F^*,S_F)\to \set{\acc,\rej}$ as from Section \ref{sec:exec->RFC}.
-
-Let $k\defeq |S_F|$, $\cm:\F^{5k} \to \G$, and set $M\defeq kn$.
-
-Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
+\noindent Define the function $F^*:(Z,W,Z^*)\to \set{\acc,\rej}$:
 \begin{itemize}
  \item $Z=(Z_F,\inchash,\incsum,\alpha,\beta,\eps)$.
  \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\eps^*)$.
@@ -987,17 +1064,19 @@ $\incsum^*=\incsum\;+$
  \item $\hash(\inchash,\recset,1)=\alpha$, $\hash(\inchash,\recset,2)=\beta$, $\hash(\inchash,\recset,3)=\eps$.
 \end{enumerate}
 
+\noindent
+We show that \relrcgstar captures \relrcg and consequently valid executions.
 \begin{lemma}\label{lem:FtoFstar}
 There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Fix some $\alpha,\beta,\eps\in \F$ and set of records \recset.
 Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and set $\inst\defeq (\zfin^*,C,\recset)$.
-Suppose efficient \adv outputs \wit such that $(\inst,\wit)\in \rel_{F^*,\finpred^*}$.
+Suppose an efficient adversary \adv outputs \wit such that $(\inst,\wit)\in \relrcgstar$.
 
 Set $d\defeq 3M+|\recset|+1$. Define $\cm'((s_1,m_1),\ldots,(s_n,m_n))\defeq h_n$, where $h_0\defeq\emptyset$ and $h_i\defeq\hash(h_{i-1},\cm(s_i,m_i))$ for $i \in [n]$.
 Let \ztafuncs be a function family to be defined in the proof.
 Assume the 3-variate ZTA holds for $(\ztafuncs,\hash,\cm',d)$.
-Then e.w.p. \negl, $((\zfin,C,\recset),\varphi(\wit))\in \rel_{F,\finpred}$.
+Then e.w.p. \negl, $((\zfin,C,\recset),\varphi(\wit))\in \relrcg$.
 \end{lemma}
 \begin{proof}
 Given a witness $\wit=(n,z',w')$ with $z'=(z_0',\ldots,z_n'),w'=(w_1',\ldots,w_n')$ output by \adv, denote
@@ -1257,7 +1336,6 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
  \newcommand{\witacc}{\ensuremath{\mathbf{w\mhyphen}\mathsf{acc}}\xspace}
  \newcommand{\witinst}{\ensuremath{\boldsymbol{w}\mhyphen \mathsf{inst}}\xspace}
  \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
- \newcommand{\relrcg}{\ensuremath{\rel_{F,\finpred}}\xspace}
  \newcommand{\instfin}{\ensuremath{\shlomomath{x}}}%_{\mathsf{fin}}}\xspace}
  \newcommand{\witfin}{\ensuremath{\shlomomath{w}}}%_{\mathsf{fin}}}\xspace}
  \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
