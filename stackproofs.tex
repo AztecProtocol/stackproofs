@@ -605,7 +605,7 @@ The second approach is more generic, while the first offers more room for optimi
 However, what if we're in a situation where $A$ and $B$ have already been ``SNARKified'' separately?
 Namely, there is a verification key attached to each one, and we are expected to use these keys specifically.
 This is what happens in the Aztec system.
-\paragraph{The Aztec private contract system.}
+\paragraph{The Aztec private contract system}
 Similar to Ethereum we have contracts, and the contracts have functions.\footnote{Detailed documentation of the Aztec protocol can be found \href{https://docs.aztec.network/}{here}.}
 A function in a contract can internally call a different function in the same or a different contract. Moreover, while writing the code for the different functions and compiling them to circuits,
 we can't predict what function will be internally called by a given contract function. For example, a ``send token'' function could have an internal call to an ``authorize'' function.
@@ -621,7 +621,7 @@ For this purpose, a contract is deployed by
 contract address with a Merkle root of a tree whose leaves are the verification keys of that contract's functions.
 \end{enumerate}
 
-\paragraph{Dealing with global state.}
+\paragraph{Dealing with global state}
 The global state of the Aztec system is described by a set of notes, which are simply values in a field \F.
 % \Patrick{What does it mean for a contract to "have" a set of notes? Perhaps mention instead that there is a global state consisting of notes that can
 % 	be modified by any contract}
@@ -689,7 +689,7 @@ We often denote by $[n]$ the integers \set{1,\ldots,n}.
 We use the acronym e.w.p. for ``except with probability''; i.e. e.w.p. $\gamma$ means with probability \emph{at least} $1-\gamma$.
 
 
-% \paragraph{Representing \G.}
+% \paragraph{Representing \G}
 % Assume an injective function $R:\G \to \F^2$.
 % Whenever we discuss $a\in \G$ we assume it is represented as $R(a)$.
 % When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ with $R(a)=b$.
@@ -868,7 +868,7 @@ and over-all consistency of a global state consisting of a part of each iteratio
 We first define the general notion, and then in Section \ref{sec:exec->RFC} show how to capture valid execution trees with it.
 
 
-\paragraph{Defining RCG relations.}
+\paragraph{Defining RCG relations}
 An RCG relation is defined by a pair of functions $(F,\finpred)$.
 We call $F(Z,W,Z^*,S)\to \set{\accept,\rej}$ the \emph{transition predicate}, and $\finpred(Z,S_1,\ldots,S_n,\recset)\to \set{\accept,\rej}$ the \emph{final predicate}.
 We informally think of
@@ -971,7 +971,7 @@ Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
 	They arise from ideas similar to those used in ``log-derivative lookups'' \cite{bplusplus,logup}.
 	Using these identities, we then define a new RCG relation \relrcgstar capturing valid execution trees, i.e., \relexec. The advantage of \relrcgstar over \relrcg from Section \ref{sec:exec->RFC} is that the final predicate is ``trivial'' in the sense of only depending on the output of the final iteration.
 	As we'll see in Section \ref{sec:FtoFprime}, this makes constructing a zk-SNARK for it more convenient.
-% \paragraph{Rational Identities.}
+% \paragraph{Rational Identities}
 % Following work on ``log-derivative lookup'' \cite{bplusplus,logup}, we characterize the validity of record operations via rational identities.
 \begin{claim}\label{clm:reducetologder}
 Assume $\F$ has characteristic larger than $M+1$.
@@ -1008,7 +1008,7 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
 
 
 % We reduce the relation \relrcg from the last section to \relrcgstar:
-\paragraph{Defining \relrcgstar.}
+\paragraph{Defining \relrcgstar}
 	We now define the RCG relation \relrcgstar which will permit efficient proofs that record operations are consistent. 
 	The idea is to evaluate the above rational identities at a random point, and have the transition predicate incrementally check the evaluation is correct
 	by a running sum.
@@ -1137,16 +1137,16 @@ $(\inst,\wit)$ such that
  \item $\inst=\cm(\wit)$.
 \end{enumerate}
 
-\paragraph{The relation $\relrand$.}
+\paragraph{The relation \relrand}
  For brevity, let $\rel=\rel_{f,\predinst,\cm}$.
-  As in \cite{protogalaxy}, we define the ``randomized relaxed'' version of $\rel, \relrand$. First, some required notation.
- Let $t\defeq \log n$. For $i\in [n]$, let $S_i\subset \set{0,\ldots,t-1}$ be the set such that $i-1=\sumj{S_i}2^j$. We define the $t$-variate polynomial $\pow_i$ as
+  As in \cite{protogalaxy}, we define the ``randomized relaxed'' version of \rel, \relrand. First, some required notation.
+ Let $t\defeq \log n$. For $i\in [n]$, let $S_i\subseteq \set{0,\ldots,t-1}$ be the set such that $i-1=\sumj{S_i}2^j$. We define the $t$-variate polynomial $\pow_i$ as
  \[\pow_i(X_0,\ldots,X_{t-1}) \defeq \prod_{\ell\in S_i} X_\ell.\]
  Note that if $\betaa=(\beta,\beta^2,\beta^4,\ldots,\beta^{2^{t-1}})$, $\pow_i(\betaa)=\beta^{i-1}$.
 % This implies the $n$ \emph{univariate} polynomials
 % $\pow_i(X,X^2,\ldots,X^{2^{t-1}})$ are linearly independent.
 
-  Given the above notation, $\relrand$ consists of the pairs $( \insttbase,\wit)$ with $\insttbase=(\inst,\betaa,e)$ such that
+  Given the above notation, \relrand consists of the pairs $(\insttbase,\wit)$ with $\insttbase=(\inst,\betaa,e)$ such that
  \begin{enumerate}
   \item $\inst=\cm(\wit)$.
   \item $\betaa\in \F^t, e\in \F$ and we have
@@ -1566,7 +1566,7 @@ One can now show inductively that when starting from the zero vector, under the 
 % it is sufficient to check for all $j \in [k C]$ that $f_j(S_i,b,S_{i+1})=0$ where
 %
 % These constraints clearly encode the concatenation relation.
-\paragraph{Prover efficiency.}
+\paragraph{Prover efficiency}
 If the stack is folded in order, then even in the new randomized instance, the zero padding is preserved.
 That is, higher order elements above $ ki$ are still zero after folding.
 So the prover only needs to perform one field multiplication per stack element to compute the folded witness.
