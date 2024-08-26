@@ -92,7 +92,7 @@
 \newcommand{\cq}{\ensuremath{\mathpgoth{cq}}\xspace}
 \newcommand{\cqlin}{\ensuremath{\mathpgoth{cq}\mathscr{\text{\calligra{lin}}}}\xspace}
 \newcommand{\cqstar}{\ensuremath{\mathpgoth{cq^{\mathbf{*}}}}\xspace}
-\newcommand{\protogal}{{\scshape Proto\bfseries{galaxy}}\xspace}
+\newcommand{\protogal}{\normalfont{\scshape Proto\bfseries{galaxy}}\xspace}
 \newcommand{\stackproofs}{s{\ensuremath{\mathfrak{t} \mathpgoth {ack}}\bfseries{proofs}}\xspace}
 \newcommand{\protostar}{{\scshape Protostar}\xspace}
 \newcommand{\hypernova}{{HyperNova}\xspace}
@@ -933,7 +933,7 @@ Denote by \empty the empty stack.
 We define $\finpred(z_n,s_1,\ldots,s_n,\recset)$ to output \accept if and only if
 \begin{enumerate}
  \item $z_n.g=\empty$,
- \item Defining \ops as the multi-set union of $s_1,\ldots,s_n$ it is as well-formed set of record operations with output \recset.
+ \item Defining \ops as the multi-set union of $s_1,\ldots,s_n$, it is a well-formed set of record operations with output \recset.
 \end{enumerate}
 
 
@@ -945,7 +945,7 @@ There is an efficiently computable and efficiently invertible map $\varphi$ such
 Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
 Define $\zfin=(\empty,\root,\false)$. Let \tree be an execution tree of length $n$.
 
-Then $((\root,C,\recset),(n,\tree))\in \relexec$ if and only if $((\zfin,C,\recset),\varphi(\tree))\in \relrcg$.
+Then $((\root,C,\recset),(n,\tree))\in \relexec$ if and only if $((\zfin,C,\recset),\varphi(n,\tree))\in \relrcg$.
 \end{lemma}
 \begin{proof}
 We describe the operation of $\varphi$.
@@ -962,7 +962,7 @@ For this purpose, for each $i\in [n]$ denote $\instapp_i=(\instnoops_i,\ops_i)$.
 For each $i\in [n]$, let $\path_i$ be the path from $\instapp_i.\f$ to \root.
 Define for each $i\in [n]$, $w_i=(\path_i,\instnoops_i,\witapp_i)$, $s_i=\ops_i$.
 Finally set $z=(z_0,\ldots,z_n),w=(w_1,\ldots,w_n),s=(s_1,\ldots,s_n)$
- and $\varphi(\tree)=(n,z,w,s)$. Given this definition of $\varphi$, the statement of the lemma is straightforward to check.
+and $\varphi(n,\tree)=(n,z,w,s)$. Given this definition of $\varphi$, the statement of the lemma is straightforward to check.
 \end{proof}
 
 \section{Removing the global state via rational identities}\label{sec:Fstar}
@@ -1042,6 +1042,7 @@ $\incsum^*=\incsum\;+$
 
 \noindent $\finpred^*(Z,\recset)=\accept$ if and only if
 \begin{enumerate}
+ \item $Z.g=\empty$,
  \item $\incsum=\sum_{(\v,\c)\in \recset} \frac{1}{\alpha + \beta \v+ \c}+\sum_{i\in \countrange}\frac{\eps^2}{\alpha+i}$,
  \item $\hash(\inchash,\recset,1)=\alpha$, $\hash(\inchash,\recset,2)=\beta$, $\hash(\inchash,\recset,3)=\eps$.
 \end{enumerate}
@@ -1049,26 +1050,24 @@ $\incsum^*=\incsum\;+$
 \noindent
 We show that \relrcgstar captures \relrcg and consequently valid executions.
 \begin{lemma}\label{lem:FtoFstar}
-There is an efficiently computable and efficiently invertible map $\varphi$ such that the following holds.
-Let \funcs be a set of function commitments with Merkle root \root. Fix positive integers $n,C$ with $n\leq C$.
-Fix some $\alpha,\beta,\eps\in \F$ and set of records \recset.
-Define $\zfin=(\empty,\root,\false), \zfin^*\defeq (\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and set $\inst\defeq (\zfin^*,C,\recset)$.
-Suppose an efficient adversary \adv outputs \wit such that $(\inst,\wit)\in \relrcgstar$.
-
-Set $d\defeq 3M+|\recset|+1$. Define $\cm'((s_1,m_1),\ldots,(s_n,m_n))\defeq h_n$, where $h_0\defeq\emptyset$ and $h_i\defeq\hash(h_{i-1},\cm(s_i,m_i))$ for $i \in [n]$.
+There is an efficiently computable and efficiently invertible map $\varphi^*$ such that the following holds.
+Suppose an efficient adversary \adv outputs $(\inst,\wit)\in \relrcgstar$.
+Set $d\defeq 3M+|\recset|+1$. Define $\cm^*(s_1,\ldots,s_n,m_1,\ldots,m_n)\defeq h_n$, where $h_0\defeq\emptyset$ and $h_i\defeq\hash(h_{i-1},\cm(s_i,m_i))$ for $i \in [n]$.
 Let \ztafuncs be a function family to be defined in the proof.
-Assume the 3-variate ZTA holds for $(\ztafuncs,\hash,\cm',d)$.
-Then e.w.p. \negl, $((\zfin,C,\recset),\varphi(\wit))\in \relrcg$.
+Assume the 3-variate ZTA holds for $(\ztafuncs,\hash,\cm^*,d)$.
+Then e.w.p. \negl, $\varphi^*(\inst,\wit)\in \relrcg$.
 \end{lemma}
 \begin{proof}
-Given a witness $\wit=(n,z',w')$ with $z'=(z_0',\ldots,z_n'),w'=(w_1',\ldots,w_n')$ output by \adv, denote
+Given an instance $\inst=(\zfin^*,C,\recset)$ with $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and witness $\wit=(n,z',w')$ with $z'=(z_0',\ldots,z_n'),w'=(w_1',\ldots,w_n')$ output by \adv, denote
 $z_i'=(z_i,\inchash_i,\incsum_i,\alpha_i,\beta_i,\eps_i), w_i'=(w_i,s_i,m_i)$.
-Define $\witF=\varphi(\wit)$ as $\witF\defeq (n,(z_0,\ldots,z_n),(w_1,\ldots,w_n),(s_1,\ldots,s_n))$.
+Define $\varphi^*(\inst,\wit)\defeq(\inpF,\witF)$ as
+\[\inpF\defeq (\zfin,C,\recset),\ \witF\defeq (n,(z_0,\ldots,z_n),(w_1,\ldots,w_n),(s_1,\ldots,s_n)).\]
+
 From $(\inst,\wit)\in \relrcgstar$, we know \witF satisfies the transition constraints, namely for $i\in [n]$,
 $F(z_{i-1},w_i,z_i,s_i)=\accept$. We also know that $z_0.\init = \true$, $z_n=\zfin$, and $n\leq C$.
-It is left to show that e.w.p. \negl $\finpred(z_n,s_1,\ldots,s_n,\recset)=\accept$.
+It is left to show that e.w.p. \negl $\finpred(z_n,s_1,\ldots,s_n,\recset)=\accept$. Since $z_n.g=\empty$, this is equivalent to showing that the rational identities from Claim \ref{clm:reducetologder} hold e.w.p. \negl.
 
-From $((\zfin^*,C,\recset),\wit)\in \relrcgstar$ we know the equations from Claim \ref{clm:reducetologder} hold
+From $F^*(z_{i-1}',w_i',z_i')=\accept$ for all $i\in [n]$ and $\finpred^*(z_n',\recset)=\accept$, we know the equations from Claim \ref{clm:reducetologder} hold
 at $\alpha,\beta,\eps$. That is, defining the rational function
 \begin{align*}
 r(X,Y,Z)\defeq&\sum_{(\v,\c)\in \recset}\frac{1}{X+\v Y+\c}-\sum_{i\in \countrange,\op_i=\add}\frac{1}{X+\v_i Y+\c_i}+\sum_{i\in \countrange, \op_i=\del}\frac{1}{X+\v_i Y+\vc_i} \\
@@ -1076,7 +1075,7 @@ r(X,Y,Z)\defeq&\sum_{(\v,\c)\in \recset}\frac{1}{X+\v Y+\c}-\sum_{i\in \countran
 &+Z^2\left(\sum_{i\in \countrange}\frac{1}{X+\c_i}-\sum_{i\in \countrange}\frac{1}{X+i}\right),
 \end{align*}
 we have $r(\alpha,\beta,\eps)=0$. If any of the three rational identities from Claim \ref{clm:reducetologder} does not hold, we have $r(X,Y,Z)\not\equiv 0$.
-Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero degree-$d$ polynomial when multiplying $r(X,Y,Z)$ with all of its denominators. Note that $f(\alpha,\beta,\eps)=0$. Define $D$ as the function that computes $f(X,Y,Z)$ given $x\defeq((s_1,m_1),\ldots,(s_n,m_n))$ and $\tau\defeq\recset$. Set $\ztafuncs\defeq\{D\}$. Then we can define an efficient adversary \advprime against the $3$-variate ZTA for $(\ztafuncs,\hash,\cm',d)$ that outputs the $(3,d)$-relation $(D,x,\tau)$, which has probability \negl.
+Let $f\in\F_{\leq d}[X,Y,Z]$ denote the resulting non-zero degree-$d$ polynomial when multiplying $r(X,Y,Z)$ with all of its denominators. Note that $f(\alpha,\beta,\eps)=0$. Define $D$ as the function that computes $f(X,Y,Z)$ given $x\defeq(s_1,\ldots,s_n,m_1,\ldots,m_n)$ and $\tau\defeq\recset$. Set $\ztafuncs\defeq\{D\}$. Then we can define an efficient adversary \advprime against the $3$-variate ZTA for $(\ztafuncs,\hash,\cm^*,d)$ that outputs the $(3,d)$-relation $(D,x,\tau)$, which has probability \negl.
 \end{proof}
 
 
@@ -1156,7 +1155,7 @@ $(\inst,\wit)$ such that
 \subsection{The \protogal scheme}
 Deviating from \cite{protogalaxy}, we explicitly present \protogal as a \emph{non-interactive} folding scheme, and for the special case of folding $k=1$ instances.
 We define $Z(X)\defeq X\cdot(1-X)$. We assume below \hash is a function mapping arbitrary strings to elements of \Fstar. \\ \\ \noindent
-\underline{$\prv_{PG}(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}
+\underline{$\perpg(\insttbase=(\inst,\betaa,e),\inst_1;\wit,\wit_1)$:}
 \begin{enumerate}
 % \item \ver checks for each $i\in [k]$ that $\inst_i$ is \hash-consistent, and outputs \rej otherwise.
 % \item \ver sends a challenge $\delta \in \F$.
@@ -1182,8 +1181,6 @@ Finally, output
 \item the instance
 $\instt=(\inststar,\betaa^*,e^*),$
 where \[\inst^*\defeq \gamma\cdot \inst + (1-\gamma) \inst_1,\]
-
-
 \item the witness
 $\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \item and the proof $\prf\defeq (a,b)$.\\
@@ -1192,8 +1189,7 @@ $\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \underline{$\verpg(\insttbase,\inst_1, \instt,\prf=(a,b))$:}
 \begin{enumerate}
 \item Check that $\predinst(\inst_1)=\accept$. Output \rej otherwise.
- \item Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
-
+\item Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
 \item Check that $\instt$ is computed as in the prover algorithm. Output \accept iff this is the case.
 \end{enumerate}
 
@@ -1227,7 +1223,7 @@ We construct an efficient \advprime that runs \adv, and when $E$ occurs outputs 
 probability \negl, and must have probability \negl itself.
 
 Assume we are in event $E$.
-% Since $\ver_{PG}(\insttbase,\inst_1,\instt,\prf)=\accept$, we have $\inststar=\gamma \inst +(1-\gamma)\inst_1$.
+% Since $\verpg(\insttbase,\inst_1,\instt,\prf)=\accept$, we have $\inststar=\gamma \inst +(1-\gamma)\inst_1$.
 % And since $(\instt,\witstar)\in \relrand$ we have $\cm(\witstar)=\inststar$.
 Using linearity of \cm, when $E$ occurs we have
 \[\cm( \gamma\wit+(1-\gamma)\wit_1)=\gamma \inst +(1-\gamma)\inst_1=\inststar=\cm(\witstar).\]
@@ -1243,7 +1239,7 @@ F'(X) &\defeq F_0(X)-\sum_{i\in [n]} \pow_i(\betaa+X\deltaa) f_i(\wit), \\
 G'(X) &\defeq F_0(\alpha)X+ Z(X)K'(X)-\sum_{i\in [n]}\pow_i( \betaa^*) f_i(X\wit +(1-X)\wit_1).
 \end{align*}
 
-Since $((\inststar,\betaa^*,e^*),\witstar)\in \relrand$ and $\ver_{PG}(\insttbase,\inst',\instt,\prf)=\accept$,
+Since $((\inststar,\betaa^*,e^*),\witstar)\in \relrand$ and $\verpg(\insttbase,\inst',\instt,\prf)=\accept$,
 \begin{align*}
 G'(\gamma) &= F_0(\alpha)\gamma + Z(\gamma)K'(\gamma)- \sum_{i\in [n]} \pow_i(\betaa^*) f_i(\gamma\wit +(1-\gamma)\wit_1) \\
            &= e^*-\sum_{i\in [n]} \pow_i(\betaa^*) f_i(\witstar) = e^*-e^* = 0.
@@ -1311,22 +1307,27 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
 \newcommand{\witrcg}{\ensuremath{\mathscr{w}}\xspace}
 \newcommand{\empt}{\calligmath{empty}}
 
- \newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
- \newcommand{\accprev}{\ensuremath{\mathsf{acc}_{0}}\xspace}%\calligmath{prev}}}\xspace}
- \renewcommand{\inst}{\ensuremath{\mathsf{inst}}\xspace}
- \newcommand{\witacc}{\ensuremath{\mathbf{w\mhyphen}\mathsf{acc}}\xspace}
- \newcommand{\witinst}{\ensuremath{\boldsymbol{w}\mhyphen \mathsf{inst}}\xspace}
- \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
- \newcommand{\instfin}{\ensuremath{\shlomomath{x}}}%_{\mathsf{fin}}}\xspace}
- \newcommand{\witfin}{\ensuremath{\shlomomath{w}}}%_{\mathsf{fin}}}\xspace}
- \newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+\newcommand{\accprev}{\ensuremath{\mathsf{acc}_{0}}\xspace}%\calligmath{prev}}}\xspace}
+\renewcommand{\inst}{\ensuremath{\mathsf{inst}}\xspace}
+\newcommand{\witacc}{\ensuremath{\mathbf{w\mhyphen}\mathsf{acc}}\xspace}
+\newcommand{\witinst}{\ensuremath{\boldsymbol{w}\mhyphen \mathsf{inst}}\xspace}
+\newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
+\newcommand{\instfin}{\ensuremath{\shlomomath{x}}}%_{\mathsf{fin}}}\xspace}
+\newcommand{\witfin}{\ensuremath{\shlomomath{w}}}%_{\mathsf{fin}}}\xspace}
+\newcommand{\emptyacc}{\ensuremath{\acc_{\text{\calligra{empty}}}}\xspace}
 % \newcommand{\verpg}{\ensuremath{\ver_{\cm,n}}\xspace}
- \newcommand{\prvpg}{\ensuremath{\prv^{\mathrm{PG}}_{\cm,n,f}}\xspace}
- \newcommand{\prvsnark}{\ensuremath{\prv_{\mathsf{fin}}}\xspace} %{\calligra{fin}}}}\xspace}
- \newcommand{\versnark}{\ensuremath{\ver_{\mathsf{fin}}}\xspace}%text{\calligra{fin}}}}\xspace}
+\newcommand{\prvpg}{\ensuremath{\prv^{\mathrm{PG}}_{\cm,n,f}}\xspace}
+\newcommand{\prvsnark}{\ensuremath{\prv_{\mathsf{fin}}}\xspace} %{\calligra{fin}}}}\xspace}
+\newcommand{\versnark}{\ensuremath{\ver_{\mathsf{fin}}}\xspace}%text{\calligra{fin}}}}\xspace}
 % \newcommand{\prvsnark}{\ensuremath{\prv_{\text{\calligra{fin}}}}\xspace}
 % \newcommand{\versnark}{\ensuremath{\ver_{\text{\calligra{fin}}}}\xspace}
- \newcommand{\prffin}{\ensuremath{\pi_{\mathsf{fin}}}\xspace}
+\newcommand{\prffin}{\ensuremath{\pi_{\mathsf{fin}}}\xspace}
+\newcommand{\prvexec}{\ensuremath{\prv_{\mathrm{exec}}}\xspace}
+\newcommand{\verexec}{\ensuremath{\ver_{\mathrm{exec}}}\xspace}
+ 
+
+
 \section{The main construction}\label{sec:FtoFprime}
 We say an RCG relation \relrcg is \emph{trivial} if the $S$ variable is not used in $F$, and accordingly \finpred depends only on $(\zfin,\recset)$.
 We assume in this section \relrcg is trivial, thinking of it as \relrcgstar from Section \ref{sec:Fstar}.
@@ -1375,16 +1376,16 @@ For readability, from now on we modify notational conventions and denote an accu
  \subsection{The relation \relfin}
 We define the relation \relfin of pairs $(\instfin,\witfin)$ with
 \begin{itemize}
- \item $\instfin = (\acc,\recset,C,\zfin)$
+ \item $\instfin = (\acc,\zfin,C,\recset)$
  \item $\witfin = (\witacc,\accprev,\inst,\prf)$
 \end{itemize}
 such that
 \begin{enumerate}
  \item $(\acc,\witacc)\in\relrand$.
 \item $\verpg(\accprev,\inst,\acc,\prf)=\accept$.
-\item $\hash(\accprev) = \inst.\acchash$.
 \item $\inst.z=\zfin$.
 \item $\inst.\cnt\leq C$.
+\item $\inst.\acchash = \hash(\accprev)$.
 \end{enumerate}
 
 \noindent
@@ -1394,12 +1395,12 @@ Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
 
 \subsection{Main construction}\label{subsec:main}
 We now describe the full prover and verifier for a given trivial RCG relation \relrcg.
-Later we review how to use this to get a zk-SNARK for the relation \relexec of valid executions, given the reductions of previous sections. \\ \\
+Later we review how to use this to get a zk-SNARK for the relation \relexec of valid executions, given the reductions of the previous sections. \\ \\
 \noindent
 \underline{$\prv(\inpF,\witF)$:}
 \begin{enumerate}
  \item Let
-$\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall that $(\inpF,\witF)\in \relrcg$ implies $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$, $z_0.\init =\true, z_n=\zfin$ and $\finpred(\zfin,\recset) = \accept$.
+$\inpF =(\zfin,C,\recset),\witF=(n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$. Recall that $(\inpF,\witF)\in \relrcg$ implies $F(z_{i-1},w_i,z_i)=\accept$ for each $i\in [n]$, $z_0.\init =\true$, $z_n=\zfin$, $n\le C$ and $\finpred(\zfin,\recset) = \accept$.
 % \item For $i\in [n]$, let
 
 
@@ -1504,28 +1505,45 @@ Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\
 From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$, $\Pr[E_{i-1} \mid D_i]=\negl$; which is the desired inductive statement.
 \end{proof}
 \subsection{Constructing proofs for \relexec}
-Going through the reductions of previous sections, we get the following zk-SNARK for the relation \relexec from Section \ref{sec:validexec} describing valid executions.\\ \\
+Going through the reductions of the previous sections, we get the following zk-SNARK for the relation \relexec from Section \ref{sec:validexec} describing valid executions.\\ \\
 \noindent
-\underline{$\prv(\instexec,\witexec)$:}
+\underline{$\prvexec(\instexec,\witexec)$:}
 \begin{enumerate}
- \item Let $\instexec=(\root,C,\recset),\zfin=(\empty,\root,\false)$ and $\instrcg=(\zfin,C,\recset)$.
+\item Let $\instexec=(\root,C,\recset),\zfin=(\empty,\root,\false)$ and $\instrcg=(\zfin,C,\recset)$.
 Let $\varphi$ be the map in Lemma \ref{lem:execasRCG}, and compute $\witrcg=\varphi(\witexec)$.
-\item Let $\witrcg = (n,z,w,s)$. As in Lemma \ref{lem:FtoFstar} define for each $i\in [n]$ $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is read when $s_{i,j}$ is an \add operation, and zero otherwise.
-\item Compute $h_n=\cm'(s,m)$, where $\cm'$ is as in Lemma \ref{lem:FtoFstar}. Compute
-$(\alpha,\beta,\eps) = (\hash(\inchash,\recset,1),\hash(\inchash,\recset,2),\hash(\inchash,\recset,3))$.
-\item Define $\zfin^*=(\zfin,h_n,\alpha,\beta,\eps), \instrcg^*=(\zfin^*,C,\recset)$. Let $\witrcg^*=\varphi^*(\witrcg)$ where
-$\varphi^*$ is the mapping from Lemma \ref{lem:FtoFstar}.
+\item Let $\witrcg = (n,(z_0,\ldots,z_n),(w_1,\ldots,w_n),(s_1,\ldots,s_n))$.
+    \begin{enumerate}
+    \item For each $i\in [n]$, define  $m_i\in \F^k$ such that $m_{i,j}$ is the number of times a record is read when $s_{i,j}$ is an \add operation, and 0 otherwise.
+    \item Set $\inchash_0=\emptyset$ and compute $\inchash_i=\hash(\inchash_{i-1},\cm(s_i,m_i))$ for $i \in [n]$.
+    \item Compute
+$(\alpha,\beta,\eps) = (\hash(\inchash_n,\recset,1),\hash(\inchash_n,\recset,2),\hash(\inchash_n,\recset,3))$.
+    \item Set $\incsum_0=0$ and compute $\incsum_i$ for $i \in [n]$ as in the definition of $F^*$ in Section \ref{sec:Fstar}.
+    \item Let $\zfin^*=(\zfin,\inchash_n,\incsum_n,\alpha,\beta,\eps)$, for $0 \le i \le n$, let $z_i^*=(z_i,\inchash_i,\incsum_i,\alpha,\beta,\eps)$, and for $i \in [n]$, let $w_i^*=(w_i,s_i,m_i)$.
+    \item Set $\instrcg^*=(\zfin^*,C,\recset)$ and $\witrcg^*=(n,(z_0^*,\ldots,z_n^*),(w_1^*,\ldots,w_n^*))$.
+    \end{enumerate}
 \item Compute the proof $\prf^*$ for $(\instrcg^*,\witrcg^*)\in \relrcgstar$ according to \prv in Section \ref{subsec:main}.
-\item Output $\prf=( (h_n,\alpha,\beta,\eps),\prf^*)$.
+\item Output $\prf=(\inchash_n,\incsum_n,\alpha,\beta,\eps,\prf^*)$.
 \end{enumerate}
 
 \noindent
-\underline{$\ver(\instexec,\prf)$:}
+\underline{$\verexec(\instexec,\prf)$:}
 \begin{enumerate}
-\item Parse $\prf$ as $(\inchash,\alpha,\beta,\eps,\prf^*)$. Parse $\instexec$ as $(\zfin,C,\recset)$. Define
-$\instrcg=((\zfin,\inchash,\alpha,\beta,\eps),C,\recset)$.
- \item Let $\ver'$ be \ver from Section \ref{subsec:main}. Return $\ver'(\instrcg,\prf^*)$.
+\item Parse $\instexec$ as $(\root,C,\recset)$ and $\prf$ as $(\inchash,\incsum,\alpha,\beta,\eps,\prf^*)$. Let $\zfin=(\empty,\root,\false)$, $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and $\instrcg=(\zfin^*,C,\recset)$.
+\item Return $\ver(\instrcg,\prf^*)$ according to \ver in Section \ref{subsec:main}.
 \end{enumerate}
+
+\begin{thm}
+$(\prvexec,\verexec)$ is knowledge-sound for \relexec.
+\end{thm}
+\begin{proof}
+Let \adv be a recursive algebraic adversary that outputs $\instexec=(\root,C,\recset)$ and $\prf=(\inchash,\incsum,\alpha,\beta,\eps,\prf^*)$ such that $\verexec(\instexec,\prf)=\accept$. Let $\zfin=(\empty,\root,\false)$, $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and $\instrcg^*=(\zfin^*,C,\recset)$.
+
+From the knowledge soundness of $(\prv,\ver)$ for \relrcgstar from Section \ref{subsec:main}, we can use the respective extractor \ext to obtain the witness $\witrcg^*$ such that $(\instrcg^*,\witrcg^*)\in\relrcgstar$ e.w.p. \negl.
+
+Let $(\instrcg,\witrcg)=\varphi^*(\instrcg^*,\witrcg^*)$. From Lemma \ref{lem:FtoFstar}, we get $(\instrcg,\witrcg)\in\relrcg$ e.w.p. \negl.
+
+Let $\witexec=\varphi^{-1}(\witrcg)$. From Lemma \ref{lem:execasRCG}, we get $(\instexec,\witexec)\in\relexec$ e.w.p. \negl, finishing the proof.
+\end{proof}
 
 
 
