@@ -1325,6 +1325,7 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
 \newcommand{\prffin}{\ensuremath{\pi_{\mathsf{fin}}}\xspace}
 \newcommand{\prvexec}{\ensuremath{\prv_{\mathrm{exec}}}\xspace}
 \newcommand{\verexec}{\ensuremath{\ver_{\mathrm{exec}}}\xspace}
+\newcommand{\extexec}{\ensuremath{\ext_{\mathrm{exec}}}\xspace}
 
 
 
@@ -1528,21 +1529,32 @@ $(\alpha,\beta,\eps) = (\hash(\inchash_n,\recset,1),\hash(\inchash_n,\recset,2),
 \noindent
 \underline{$\verexec(\instexec,\prf)$:}
 \begin{enumerate}
-\item Parse $\instexec$ as $(\root,C,\recset)$ and $\prf$ as $(\inchash,\incsum,\alpha,\beta,\eps,\prf^*)$. Let $\zfin=(\empty,\root,\false)$, $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and $\instrcg=(\zfin^*,C,\recset)$.
-\item Return $\ver(\instrcg,\prf^*)$ according to \ver in Section \ref{subsec:main}.
+\item Parse $\instexec$ as $(\root,C,\recset)$ and $\prf$ as $(\inchash,\incsum,\alpha,\beta,\eps,\prf^*)$. Let $\zfin=(\empty,\root,\false)$, $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and $\instrcg^*=(\zfin^*,C,\recset)$.
+\item Return $\ver(\instrcg^*,\prf^*)$ according to \ver in Section \ref{subsec:main}.
 \end{enumerate}
 
 \begin{thm}
-$(\prvexec,\verexec)$ is knowledge-sound for \relexec.
+If $(\prv,\ver)$ from Section \ref{subsec:main} is knowledge-sound for \relrcgstar and the necessary assumptions from Lemma \ref{lem:FtoFstar} hold, $(\prvexec,\verexec)$ is knowledge-sound for \relexec.
 \end{thm}
 \begin{proof}
-Let \adv be a recursive algebraic adversary that outputs $\instexec=(\root,C,\recset)$ and $\prf=(\inchash,\incsum,\alpha,\beta,\eps,\prf^*)$ such that $\verexec(\instexec,\prf)=\accept$. Let $\zfin=(\empty,\root,\false)$, $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\eps)$ and $\instrcg^*=(\zfin^*,C,\recset)$.
+Let \adv be a recursive algebraic adversary that outputs $\instexec=(\root,C,\recset)$ and $\prf=(\inchash,\incsum,\alpha,\beta,\eps,\prf^*)$. Let $\zfin=(\empty,\root,\false)$, $\zfin^*=(\zfin,\inchash,\incsum,\alpha,\beta,\eps)$, and $\instrcg^*=(\zfin^*,C,\recset)$. Define $\adv^*$ as the adversary that runs \adv but outputs $(\instrcg^*,\prf^*)$. Define the following extractor \extexec:
+\begin{enumerate}
+    \item Given $(\instexec,\prf)$, use \ext from Section \ref{subsec:main} to extract $\witrcg^*$ from the adversary $\adv^*$.
+    \item Compute $(\instrcg,\witrcg)=\varphi^*(\instrcg^*,\witrcg^*)$, where $\varphi^*$ is the map from Lemma \ref{lem:FtoFstar}.
+    \item Output $\witexec=\varphi^{-1}(\witrcg)$, where $\varphi$ is the map from Lemma \ref{lem:execasRCG}.
+\end{enumerate}
+We need to show that
+\[\Pr[\verexec(\instexec,\prf)=\accept \land (\instexec,\witexec)\notin\relexec]=\negl.\]
 
-From the knowledge soundness of $(\prv,\ver)$ for \relrcgstar from Section \ref{subsec:main}, we can use the respective extractor \ext to obtain the witness $\witrcg^*$ such that $(\instrcg^*,\witrcg^*)\in\relrcgstar$ e.w.p. \negl.
+If the first event in the above expression has negligible probability, we are done.
 
-Let $(\instrcg,\witrcg)=\varphi^*(\instrcg^*,\witrcg^*)$. From Lemma \ref{lem:FtoFstar}, we get $(\instrcg,\witrcg)\in\relrcg$ e.w.p. \negl.
+Otherwise, assuming we are in the first event, i.e., \verexec accepts, we show the second event has negligible probability. In particular, this means $\ver(\instrcg^*,\prf^*)=\accept$.
 
-Let $\witexec=\varphi^{-1}(\witrcg)$. From Lemma \ref{lem:execasRCG}, we get $(\instexec,\witexec)\in\relexec$ e.w.p. \negl, finishing the proof.
+From the knowledge soundness of $(\prv,\ver)$ for \relrcgstar, we get that the witness $\witrcg^*$ output by \ext satisfies $(\instrcg^*,\witrcg^*)\in\relrcgstar$ e.w.p. \negl.
+
+From Lemma \ref{lem:FtoFstar}, we get $(\instrcg,\witrcg)\in\relrcg$ e.w.p. \negl.
+
+From Lemma \ref{lem:execasRCG}, we get $(\instexec,\witexec)\in\relexec$ e.w.p. \negl, finishing the proof.
 \end{proof}
 
 
