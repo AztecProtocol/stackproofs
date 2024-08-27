@@ -92,7 +92,7 @@
 \newcommand{\cq}{\ensuremath{\mathpgoth{cq}}\xspace}
 \newcommand{\cqlin}{\ensuremath{\mathpgoth{cq}\mathscr{\text{\calligra{lin}}}}\xspace}
 \newcommand{\cqstar}{\ensuremath{\mathpgoth{cq^{\mathbf{*}}}}\xspace}
-\newcommand{\protogal}{\normalfont{\scshape Proto\bfseries{galaxy}}\xspace}
+\newcommand{\protogal}{{\normalfont\scshape Proto\bfseries{galaxy}}\xspace}
 \newcommand{\stackproofs}{s{\ensuremath{\mathfrak{t} \mathpgoth {ack}}\bfseries{proofs}}\xspace}
 \newcommand{\protostar}{{\scshape Protostar}\xspace}
 \newcommand{\hypernova}{{HyperNova}\xspace}
@@ -568,7 +568,7 @@
 \newcommand{\recset}{\ensuremath{\mathsf{V}}\xspace}
 \newcommand{\tree}{\ensuremath{\mathsf{T}}\xspace}
 \newcommand{\node}{\ensuremath{\mathsf{n}}\xspace}
-\newcommand{\incsum}{\ensuremath{\text{\calligra{s}}}\xspace}
+\newcommand{\incsum}{\ensuremath{\mathscr{s}}\xspace}
 \newcommand{\inchash}{\ensuremath{\mathscr{h}}\xspace}
 \newcommand{\shlomomath}[1]{\ensuremath{\text{\usefont{U}{BOONDOX-cal}{m}{n}#1}}\xspace}
 \newcommand{\calligmath}[1]{\ensuremath{\text{\calligra{#1}}}\xspace}
@@ -1050,7 +1050,7 @@ $\incsum^*=\incsum\;+$
 \noindent
 We show that \relrcgstar captures \relrcg and consequently valid executions.
 \begin{lemma}\label{lem:FtoFstar}
-There is an efficiently computable and efficiently invertible map $\varphi^*$ such that the following holds.
+There is an efficiently computable map $\varphi^*$ such that the following holds.
 Suppose an efficient adversary \adv outputs $(\inst,\wit)\in \relrcgstar$.
 Set $d\defeq 3M+|\recset|+1$. Define $\cm^*(s_1,\ldots,s_n,m_1,\ldots,m_n)\defeq h_n$, where $h_0\defeq\emptyset$ and $h_i\defeq\hash(h_{i-1},\cm(s_i,m_i))$ for $i \in [n]$.
 Let \ztafuncs be a function family to be defined in the proof.
@@ -1189,7 +1189,7 @@ $\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \underline{$\verpg(\insttbase,\inst_1, \instt,\prf=(a,b))$:}
 \begin{enumerate}
 \item Check that $\predinst(\inst_1)=\accept$. Output \rej otherwise.
-\item Compute $\delta,\alpha,\betaa^*, \gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
+\item Compute $\delta,\alpha,\betaa^*,\gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
 \item Check that $\instt$ is computed as in the prover algorithm. Output \accept iff this is the case.
 \end{enumerate}
 
@@ -1325,7 +1325,7 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
 \newcommand{\prffin}{\ensuremath{\pi_{\mathsf{fin}}}\xspace}
 \newcommand{\prvexec}{\ensuremath{\prv_{\mathrm{exec}}}\xspace}
 \newcommand{\verexec}{\ensuremath{\ver_{\mathrm{exec}}}\xspace}
- 
+
 
 
 \section{The main construction}\label{sec:FtoFprime}
