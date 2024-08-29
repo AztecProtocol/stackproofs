@@ -663,9 +663,26 @@ These works have not formally defined a notion like RCG, and rather use the IVC 
 capturing the properties of these constructions. In terms of the concrete constructions, there are overlaps with this work, notably a two-pass over
 part of the witness to generate a random challenge. As alluded to earlier,
 one distinction is that these works start with a computation that is already linear, while here we start with cyclic computation and must ``compile'' it into a ``linear'' statement.
+\subsection{Overview of the paper}
 
 
-\section{Preliminaries}
+
+In Section \ref{sec:Preliminaries}, we go over terminology and preliminaries.
+Notably, in Section \ref{subsec:zta} we introduce the \emph{Zero-Testing Assumption} from \cite{novarecursive} that enables us to
+avoid heuristic assumptions as commonly happens in IVC papers due to the need of instantiating the random oracle.
+In Section \ref{sec:model}, we introduce our execution model involving record operations and execution trees.
+In Section \ref{sec:RCG}, we introduce the notion of Repeated Computation with Global state, and show how to reduce computations in the model of Section \ref{sec:model} to RCG.
+In Section \ref{sec:Fstar}, we show how ``log-derivative methods'' \cite{bplusplus,logup} can capture global consistency of operations
+as defined in previous sections.
+In Section \ref{sec:folding}, we show how the \protogal folding scheme \cite{protogalaxy} can be proven secure under the ZTA (without
+the need of a random oracle).
+In Section \ref{sec:FtoFprime}, we present our main zk-SNARK construction. The main ingredient is a ``folding to IVC'' reduction similar to the ones in 
+\cite{othernova,nova}.
+In Section \ref{sec:general}, we outline how RCG can be implemented for a more general set of functions.
+
+A reader wanting to get a feeling of the main construction ideas might want to focus first on Sections \ref{sec:model}--\ref{sec:Fstar}.
+
+\section{Preliminaries}\label{sec:Preliminaries}
 \subsection{Terminology and Conventions}\label{sec:terminology}
 We assume all algorithms described receive as an implicit parameter the security parameter $\lambda$.
 Similarly, all integer parameters in the paper are implicitly functions of $\lambda$, and of size at most \poly unless explicitly stated otherwise.
@@ -694,7 +711,7 @@ We use the acronym e.w.p. for ``except with probability''; i.e. e.w.p. $\gamma$ 
 % Whenever we discuss $a\in \G$ we assume it is represented as $R(a)$.
 % When we say for $b\in \F^2$ that $b\in \G$ we mean that there exists $a\in \G$ with $R(a)=b$.
 
-\subsection{Zero-Testing Assumption}
+\subsection{Zero-Testing Assumption}\label{subsec:zta}
 Throughout this paper, we'll make use of a variant of the \emph{Zero-Testing Assumption (ZTA)} from \cite{novarecursive} given in Definition \ref{dfn:ZTA} as well as its generalization, the \emph{$t$-variate Zero-Testing Assumption}, we introduce in Definition \ref{dfn:multiZTA}.
 
 \begin{dfn}\label{dfn:ZTA}
@@ -738,7 +755,7 @@ Otherwise, there is a non-zero polynomial $C_i\in\F_{\leq d}[X_1,\ldots,X_{t-1}]
 Recursively define degree-$d$ relations $(D_i,x,\tau_i)$ until $i=1$ and we have a univariate non-zero polynomial $C_j'\in\F_{\leq d}[X_1]$ with $C_j'(z_1)=0$. In this base case, \advprime can output the degree-$d$ relation $(D_1,x,\tau_1)$, where $D_1$ is the function that computes $f_1(X)\defeq C_j'(X)$ given $x$ and $\tau_1\defeq(\tau,1)$, finishing the proof.
 \end{proof}
 
-\section{The execution model}
+\section{The execution model}\label{sec:model}
 We present a formal framework for describing function executions enabling both internal function calls and global state.
 
 We begin in Section \ref{sec:exec_model:record_ops} by introducing \emph{record operations} which is our specific notion of operating on a global state.
@@ -860,7 +877,7 @@ of the form
 \end{itemize}
 such that $n\leq C$, and \tree is a valid execution tree of length $n$ with function set \funcs having Merkle root \root, and output set \recset.
 
-\section{Repeated Computation with Global state}
+\section{Repeated Computation with Global state}\label{sec:RCG}
 Motivated by space-efficient proofs for \relexec, we introduce the notion of \emph{Repeated Computation with
 Global state} (RCG).
 RCGs enable us to deal separately with the local consistency of iterative steps of a transition function,
@@ -1559,7 +1576,7 @@ From Lemma \ref{lem:execasRCG}, we get $(\instexec,\witexec)\in\relexec$ e.w.p. 
 
 
 
-\section{General Final predicate}
+\section{General Final predicate}\label{sec:general}
 \renewcommand{\s}{\incsum}
 We sketch how to deal with a \emph{general} final predicate \finpred, rather than the one described so far for checking record operations. A more detailed explanation will appear in an updated version of the paper.
 
