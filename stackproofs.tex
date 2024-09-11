@@ -1008,7 +1008,7 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
  Thus, $\sum_{v,c} a_{v,c} R_{v,c} = \sum b_{v,c} R_{v,c}$ implies $a_{v,c}=b_{v,c}$ for each $(v,c)\in \F^2$.
  The event of \ops not having output \recset means one of the following occurs.
  \begin{enumerate}
-  \item The multi-set of counters $\sett{\c_i}{i\in \countrange}$ doesn't equal \set{1,\ldots,M}. In this case, the LHS of the third identity will not have all one coefficients for the elements \sett{R_{0,\c_i}}{i\in \countrange} and so cannot equal the RHS.
+  \item The multi-set of counters $\sett{\c_i}{i\in \countrange}$ doesn't equal \set{1,\ldots,M}. In this case, the LHS of the third identity will not have all one coefficients for the elements \sett{R_{0,i}}{i\in \countrange} and so cannot equal the RHS.
 
   Note that when we are not in this case the counters in \ops are all distinct, which we assume for the next cases.
  \item For some $\v,\vc,\c$, $(\del,\v,\vc,\c)\in \ops$ but $(\add,\v,0,\vc)\notin \ops$; or for some $\v,\vc,\c_1\neq \c_2$, $(\del,\v,\vc,\c_1),(\del,\v,\vc,\c_2)\in \ops$: In the first identity RHS, we will have $R_{\v,\vc}$ with coefficient in the range $\set{-1,\ldots,-M}$, while in the LHS it has coefficient one or zero.
@@ -1029,7 +1029,7 @@ We focus on the only if direction. That is, if \ops doesn't have output \recset 
 	We now define the RCG relation \relrcgstar which will permit efficient proofs that record operations are consistent. 
 	The idea is to evaluate the above rational identities at a random point, and have the transition predicate incrementally check the evaluation is correct
 	by a running sum.
-	For the random evaluation point to be generated in manner that is sound but also allow for an incremental computation of the rational identity 
+	For the random evaluation point to be generated in a manner that is sound but also allow for an incremental computation of the rational identity 
 	summand by summand, we compute it via a hash chain.
 	This chain includes at each step the new set of record operations and the last hash output, which is in essence a commitment to all the record
 	operations in previous steps.
