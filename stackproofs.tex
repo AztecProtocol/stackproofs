@@ -1042,7 +1042,7 @@ Let $k\defeq |S_F|$, $\cm:\F^{5k} \to \G$, and set $M\defeq kn$.\\
 \begin{itemize}
  \item $Z=(Z_F,\inchash,\incsum,\alpha,\beta,\eps)$.
  \item $Z^*=(Z_F^*,\inchash^*,\incsum^*,\alpha^*,\beta^*,\eps^*)$.
- \item $W=(W_F,S_F,m)$
+ \item $W=(W_F,S_F,m)$.
 \end{itemize}
 \noindent
 Under this notation
@@ -1593,7 +1593,7 @@ Given a sequence consisting of vectors \sett{s_i}{i\in [n]} of field elements of
 We highlight that it is important the constraint system does not depend on the current iteration $i$, or actual sequence length $n$, only on the bound $C$.
 The idea is that if we append the new elements \emph{at the beginning} of the vector, the concatenation constraints can be written as linear constraints that indeed only depend on $k,C$ but not $i$ or $n$.
 
-Fix vector $b\in \F^k$ and vectors $a,a'\in F^{kC}$.
+Fix vector $b\in \F^k$ and vectors $a,a'\in \F^{kC}$.
 For each $j\in [kC]$ we define the constraint $f_j(a,b,a')$ as follows.
 \begin{equation*}
 f_j(a, b, a') \defeq \begin{cases}
@@ -1630,7 +1630,8 @@ Therefore, the total prover computation depends only on the size of the vector $
 % then checking depends only on the instance.
 
 
-
+\subsection{RCG and Goblin \plonk}
+The ``Global'' in RCG suggests a final predicate checking conditions \emph{between} the different $s_i$. However, as suggested in \cite{goblin}, it might 
 \section*{Acknowledgements}
 The third author was funded by the Vienna Science and Technology Fund (WWTF) [10.47379/VRG18002] and by the Austrian Science Fund (FWF) [10.55776/F8515-N].
 
