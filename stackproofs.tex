@@ -20,7 +20,7 @@
 
 
     %%% page dimensions
-\usepackage{geometry} % to change the page dimensions
+\usepackage{geometry} % to change the page dimensions 
 \geometry{a4paper} % or letterpaper (us) or a5paper or....
 %     \geometry{margin=2in} % for example, change the margins to 2 inches all round
     % \geometry{landscape} % set up the page for landscape
@@ -283,7 +283,7 @@
 \newcommand{\accnew}{\ensuremath{\mathscr{acc}}\xspace}
 \newcommand{\cnt}{\ensuremath{\mathsf{count}}\xspace}
 \newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
-\newcommand{\verpg}{\ensuremath{\ver_{PG}}\xspace}
+\newcommand{\verpg}{\ensuremath{\ver^{\predinst,\cm}_{PG}}\xspace}
 \newcommand{\per}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
 \newcommand{\perpg}{\ensuremath{\per_{PG}}\xspace}
 \newcommand{\sonic}{\ensuremath{\mathsf{Sonic}}\xspace}
@@ -578,7 +578,9 @@
 \newcommand{\n}{\shlomomath{n}}
 \newcommand{\dimK}{\calligmath{k}}
 \newcommand{\M}{\calligmath{M}}
+\newcommand{\cmsetup}{\ensuremath{r_\cm}\xspace}
 \newcommand{\relrcg}{\ensuremath{\rel_{F,\finpred}}\xspace}
+\newcommand{\relzer}{\ensuremath{\rel_{0}}\xspace}
 \newcommand{\relrcgstar}{\ensuremath{\rel_{F^*,\finpred^*}}\xspace}
 \begin{document}
     \maketitle
@@ -688,16 +690,18 @@ We assume all algorithms described receive as an implicit parameter the security
 Similarly, all integer parameters in the paper are implicitly functions of $\lambda$, and of size at most \poly unless explicitly stated otherwise.
 
 Whenever we use the term \emph{efficient}, we mean an algorithm running in time \poly. Furthermore,
-we assume an \emph{object generator} \obgen that is run with input $\lambda$ before all protocols, and returns all fields and groups used. Specifically, in our protocol $\obgen(\lambda) = (\F, \G,g)$ where
+we assume an \emph{object generator} \obgen that is run with input $\lambda$ before all protocols, and returns all fields and groups used. Specifically, in our protocol $\obgen(\lambda) = (\F, \G,g,\cmsetup)$ where
 \begin{itemize}
 \item \F is a field of \textbf{prime} size $r = \lambda^{\omega(1)}$
 .
 \item $\G$ is a group of size $r$.
 \item $g$ is a uniformly chosen generator of \G.
+\item $\cmsetup$ is a uniformly chosen key for a collision-resistant homomorphic commitment scheme $\cm:\F^M \to \G$.
 \end{itemize}
 We usually let the $\lambda$ parameter be implicit, e.g. write \F instead of $\F(\lambda)$.
 We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than $d$.
 We write \G additively.
+\emph{All probabilistic statements in the paper are additionally over the randomness of \obgen.}
 % We use the notations $\enc1{x}\defeq x\cdot g_1$ and $\enc2{x}\defeq x\cdot g_2$.
 
 We often denote by $[n]$ the integers \set{1,\ldots,n}.
@@ -1135,7 +1139,7 @@ such that
 \end{remark}
 
 \subsection{Relations for folding schemes}
-We define a more general satisfiability relation than in \cite{protogalaxy}.
+We define a more general satisfiability relation than in \cite{protostar, protogalaxy}.
 We have as parameters, integers $n,\M,d$ and an $\F$-vector space $K$.
 We have a
 \begin{itemize}
@@ -1152,7 +1156,7 @@ $(\inst,\wit)$ such that
  \item $\predinst(\inst)=\accept$.
  \item $\inst=\cm(\wit)$.
 \end{enumerate}
-
+We refer to a relation of this form as a \emph{protostar relation} as the definition is based on relations appearing in \cite{protostar}.
 \paragraph{The relation \relrand}
  For brevity, let $\rel=\rel_{f,\predinst,\cm}$.
   As in \cite{protogalaxy}, we define the ``randomized relaxed'' version of \rel, \relrand. First, some required notation.
@@ -1203,12 +1207,27 @@ $\witstar\defeq \gamma\cdot \wit + (1-\gamma)\cdot \wit_1,$
 \item and the proof $\prf\defeq (a,b)$.\\
 \end{itemize}
 \noindent
+
+
 \underline{$\verpg(\insttbase,\inst_1, \instt,\prf=(a,b))$:}
 \begin{enumerate}
 \item Check that $\predinst(\inst_1)=\accept$. Output \rej otherwise.
-\item Compute $\delta,\alpha,\betaa^*,\gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
-\item Check that $\instt$ is computed as in the prover algorithm. Output \accept iff this is the case.
+\item Compute $\delta,\alpha,\gamma$ as in the prover algorithm given $\insttbase,\inst_1,a,b$.
+\item Check that $\instt$ is as computed as in the prover algorithm. Specifically, that
+\begin{enumerate}
+ \item For each $i\in [t]$, $\betaa^*_i= \betaa_i+\alpha\cdot \deltaa_i$.
+ \item $ e^* = F(\alpha)\gamma + Z(\gamma)K(\gamma)$, where the coefficients of $F,K$ are defined by $a,b$ respectively.
+ \item $ \inst^*= \gamma\cdot \inst + (1-\gamma) \inst_1$.
 \end{enumerate}
+
+
+Output \accept iff this is the case.
+\end{enumerate}
+
+\begin{remark}
+ We stress that the verifier's description depends on $\predinst,\cm$ (and $t=\log n$ which is implicitly defined by the former), but not $f$; hence the notation \verpg.
+ The independence of the verifier definition from $f$ will be crucial in Section \ref{sec:FtoFprime} to avoid a circular definition of $F'$.
+\end{remark}
 
 
 
@@ -1290,6 +1309,30 @@ Setting $\tau_4\defeq a$ and $D_4$ to be the function that computes $F'$ given $
 have that $(D_4,x,\tau_4)$ is a degree $\log n$ relation that \advprime can output in this case.
 Setting $\ztafuncs=\set{D_1,D_2,D_3,D_4}$ we have proven knowledge soundness under the theorem assumptions.
 \end{proof}
+\subsection{Representative protostar-relations}\label{subsec:reprelation}
+\begin{dfn}\label{dfn:represent-relation}
+Given a relation \relzer we say a protostar-relation $\rel = \rel_{f,\predinst,\cm}$ \emph{represents} \relzer
+if there is an efficiently computable and invertible maps $\varphi_0, \varphi_1$ such that any efficient \adv has a \negl probability of outputting
+a pair $(\inst,\wit)$ such that 
+\begin{enumerate}
+ \item $\varphi_0(\inst)$ is always of the form $(\inst,X)$ for some $X$.
+ \item Any efficient \adv has a \negl probability of outputting a pair $(\inst,\wit)$ such that
+ 
+ 
+
+
+either:
+\begin{enumerate}
+ \item $(\inst,\wit)\in \relzer$ but $(\varphi_0(\inst),\varphi_1(\wit))\notin \rel$.
+ \item $(\inst,\wit)\in \rel$ but $(\varphi^{-1}_0(\inst),\varphi^{-1}_1(\wit))\notin \relzer$.
+\end{enumerate}
+\end{enumerate}
+
+\end{dfn}
+We define the \emph{size} of the protostar relation $R_{f,\predinst,\cm}$ as $\M+n$.
+\begin{claim}\label{clm:repplonk}
+Assuming ZTA for a constant size family there is a protostar-relation $\rel_{f,\predinst,cm}$ representing \relapp of size $O(N+\n)$.
+\end{claim}
 
 % \section{On protogalaxy}
 % \subsection{Introspective constraints}
@@ -1327,6 +1370,8 @@ In particular the output $\cm(\wit)$ is a mixture of \F and \G elements, and acc
 \newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
 \newcommand{\accprev}{\ensuremath{\mathsf{acc}_{0}}\xspace}%\calligmath{prev}}}\xspace}
 \renewcommand{\inst}{\ensuremath{\mathsf{inst}}\xspace}
+\renewcommand{\instt}{\ensuremath{\mathsf{acc}}\xspace}
+\renewcommand{\insttbase}{\ensuremath{\mathsf{acc_{0}}}\xspace}
 \newcommand{\witacc}{\ensuremath{\mathbf{w\mhyphen}\mathsf{acc}}\xspace}
 \newcommand{\witinst}{\ensuremath{\boldsymbol{w}\mhyphen \mathsf{inst}}\xspace}
 \newcommand{\relfin}{\ensuremath{\rel_{\mathsf{fin}}}\xspace}
@@ -1369,6 +1414,8 @@ $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \item$\prf$ -- proof for \protogal verifier
 \end{itemize}
 
+We fix $\predinst,\cm,\varphi_1,\varphi_2$ to be the values appearing in the statement of Claim \ref{clm:repplonk}.
+
 
 \noindent
 $F'(\instFprime,\witFprime)=\accept$ if and only if:
@@ -1383,14 +1430,13 @@ $F'(\instFprime,\witFprime)=\accept$ if and only if:
         \item $\hash(\instt)=\acchash$.
         \item $\hash(\insttbase)=\instFprime_0.\acchash$.
         \item $\instFprime_0.\cnt=\cnt-1$.
-        \item $\verpg(\insttbase,\instFprime_0,\instt,\prf)=\accept$.
+        \item $\verpg(\insttbase,\varphi_0(\instFprime_0),\instt,\prf)=\accept$.
     \end{enumerate}
 \end{enumerate}
+Let $\relzer$ be the set of pairs $(\instFprime,\witFprime)$ with $F'(\instFprime,\witFprime)=\accept$.
+Let $\rel$ be a protostar-relation representing \relzer as defined in Section \ref{subsec:reprelation}.
 
-Let $\rel,\relrand$ be relations for the \protogal version of the function $F'$ above.\footnote{In an updated version of the paper we will give more details on how to efficiently implement $F'$ as a \protogal relation.}\\
-
-
-For readability, from now on we modify notational conventions and denote an accumulator by \acc, accumulator witness by \witacc, instance by \inst, and instance witness by \witinst.
+For readability, from now on we denote an accumulator by \acc, accumulator witness by \witacc, instance by \inst, and instance witness by \witinst.
  \subsection{The relation \relfin}
 We define the relation \relfin of pairs $(\instfin,\witfin)$ with
 \begin{itemize}
