@@ -243,6 +243,7 @@
 \newcommand{\trapdoor}{\ensuremath{r}}
 \newcommand{\trapdoorext}{\ensuremath{r_{\mathrm{ext}}}\xspace}
 % \newcommand{\trapdoorsim}{\ensuremath{r_{\mathrm{sim}}}\xspace}
+\renewcommand{\sim}{\ensuremath{\mathrm{S}}\xspace}
 \renewcommand{\mod}{\ensuremath{\;\mathrm{mod}\;}}
 \newcommand{\hsub}{\ensuremath{H^*}\xspace}
 \num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
@@ -1347,8 +1348,9 @@ Assuming ZTA for a constant size family there is a protostar-relation $\rel_{f,\
 Following \cite{novarecursive}, we define a model of ``recursive extraction'' for our analysis in Section \ref{sec:FtoFprime}. We assume our commitment function $\cm:\F^\M\to K$ is surjective.
 We assume the existence of an efficiently computable injective representation function $R:K\to \F^{\dimK}$. Whenever an adversary \adv outputs $a\in K$ we assume it is represented as $R(a)$.
 When analyzing knowledge soundness of our zk-SNARK in the next section, we put the following limitation on \adv. Say \adv outputs a vector
-$v$ over \F. If there is an index $i$ such that $(v_i,\ldots,v_{i+\dimK-1})=R(a)$ for some $a\in K$, then \adv must also output $\omega\in \F^\M$ such that $\cm(\omega)=a$.
-We call such \adv a \emph{recursive algebraic adversary}.
+$v$ over \F. If there is an index $i$ such that $(v_i,\ldots,v_{i+\dimK-1})=R(a)$ for some $a\in K$, then \adv must also output $\omega\in \F^\M$ such that $\cm(\omega)=a$. The same requirement of outputting a \cm preimage for substrings in $K$ then holds for $\omega$ and all other outputs of \adv. In other words, \adv
+must continue outputting more vectors ``explaining'' elements of $K$, until the explanation vectors do not contain any elements of $K$ as substrings.  
+We call such \adv a \emph{recursive algebraic adversary with respect to $\cm$}. We always work with \cm and $R$ such that only a \negl fraction of elements of $F^{\dimK}$ are in $R(K)$. This is to get a \negl probability that a random vector  of  \poly size  has a substring that is an element of $K$ - and thus avoid situations where \adv is forced to ``explain'' elements of $K$ that he didn't purposefully write.
 
 
 This assumption is motivated by a ``recursive'' interpretation of the Algebraic Group Model\cite{agm} as done in \cite{novarecursive}.
@@ -1436,6 +1438,26 @@ $F'(\instFprime,\witFprime)=\accept$ if and only if:
 Let $\relzer$ be the set of pairs $(\instFprime,\witFprime)$ with $F'(\instFprime,\witFprime)=\accept$.
 Let $\rel$ be a protostar-relation representing \relzer as defined in Section \ref{subsec:reprelation}.
 
+\subsection{Commitment-consistent SNARKs}
+It will be convenient to assume a zk-SNARK where the proof contains a commitment to the witness. All SNARK construction we are aware of  (e.g. \cite{plonk}) have this property. 
+
+\begin{dfn}\label{dfn:cmsnark}
+Fix a relation \rel. Fix a linear function $\cm:\F\to K$. A \emph{$\cm$-consistent  zk-SNARK for \rel} is a tuple of efficient algorithms $(\prv,\ver,\sim)$ such that  $\ver(\inst,\prf)=\accept$ implies  $\prf=(\prf_1,\prf_2)$ with $\prf_1\in K$.
+And additionally,
+\begin{itemize}
+ \item \textbf{Completeness:} Suppose $(\inst,\wit)\in \rel$. Let $\prf=\prv(\inst,\wit)$. Then with probability $1-\negl$, $\ver(\inst,\prf)=\accept$.
+ \item \textbf{Knowledge Soundness given extractable commitments:}
+ The probability of any efficient \adv outputting $\inst,\prf=(\prf_1,\prf_2),\wit$ such that
+ \begin{enumerate}
+  \item $\ver(\inst,\prf)=\accept$,
+  \item $\cm(\wit)=\prf_1$,
+  \item $(\inst,\wit)\notin \rel$, 
+ \end{enumerate}
+is \negl.
+ \item \textbf{Zero-Knowledge:} Fix any $(\inst,\wit)\in \rel$. $\sim(\inst,\cmsetup)$ outputs a distribution \negl-close to $\prv(\inst,\wit)$.
+\end{itemize}
+
+\end{dfn}
 For readability, from now on we denote an accumulator by \acc, accumulator witness by \witacc, instance by \inst, and instance witness by \witinst.
  \subsection{The relation \relfin}
 We define the relation \relfin of pairs $(\instfin,\witfin)$ with
@@ -1453,8 +1475,7 @@ such that
 \end{enumerate}
 
 \noindent
-Let $(\prvsnark,\versnark)$ be a zk-SNARK for \relfin.
-
+Let $(\prvsnark,\versnark)$ be a $\cm$-consistent zk-SNARK for \relfin.
 
 
 \subsection{Main construction}\label{subsec:main}
@@ -1507,7 +1528,8 @@ Let \relrcg be a trivial RCG relation. Assume that \hash is collision resistant,
 
 We define the following extractor algorithm \ext:
 \begin{enumerate}
- \item Given $(\instfin,\prf)$, use the SNARK extractor to output $\witfin=(\witacc,\acc^*,\inst^*,\prf^*)$.
+ \item Given $(\instfin,\prffin)$, if $\prffin$ is not of the form $(\prf_1,\prf_2)$ with $\prf_1\in K$ output \empt and abort. Otherwise let $\witfin$ be the element output by \adv such that $\cm(\witfin)=\prf_1$.
+ \item Parse $\witfin$ as $\witfin=(\witacc,\acc^*,\inst^*,\prf^*)$ where the different elements have the appropriate length in a witness for \relfin. If such parsing fails output \empt and abort.
  \item Let $n\defeq \inst^*.\cnt$. Denote $\acc_n\defeq \acc^*, \inst_n \defeq \inst^*$.
  \item If $(\instfin,\witfin)\notin \relfin$ output \empt and abort. Otherwise $\acc_n,\inst_n\in K$ and let $\witacc_n,\witinst_n$ be the elements output by \adv such that $\cm(\witacc_n)=\acc_n$ and $\cm(\witinst_n)=\inst_n$.
  \item For $i=n-1,\ldots,1$:
