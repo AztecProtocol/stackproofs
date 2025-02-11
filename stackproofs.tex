@@ -20,7 +20,7 @@
 
 
     %%% page dimensions
-\usepackage{geometry} % to change the page dimensions 
+\usepackage{geometry} % to change the page dimensions
 \geometry{a4paper} % or letterpaper (us) or a5paper or....
 %     \geometry{margin=2in} % for example, change the margins to 2 inches all round
     % \geometry{landscape} % set up the page for landscape
@@ -914,7 +914,7 @@ such that
  \item $z_n=\zfin$.
  \item $n\leq C$.
  \item For each $i\in [n]$, $F(z_{i-1},w_i,z_i,s_i)=\accept$.
- \item $\finpred(z_n,s_1,\ldots,s_n,\recset)=\accept$.
+ \item $\finpred(\zfin,s_1,\ldots,s_n,\recset)=\accept$.
 \end{enumerate}
 
 
@@ -1125,7 +1125,7 @@ For any efficient \adv the probability of the following event is \negl:
 such that
 \begin{enumerate}
 \item $\cm(\wit)=\inst,\cm(\wit')=\inst',\cm(\witstar)=\inststar$,
-\item $\ver(\inst,\inst',\inststar,\prf)=\accept$,
+\item $\ver((\inst,\tau),\inst',(\inststar,\tau^*),\prf)=\accept$,
 \item $((\inststar,\tau^*),\witstar)\in\accrel$,
 \item $((\inst,\tau),\wit)\notin\accrel$ or $(\inst',\wit')\notin \rel$.
 \end{enumerate}
@@ -1310,19 +1310,14 @@ Setting $\tau_4\defeq a$ and $D_4$ to be the function that computes $F'$ given $
 have that $(D_4,x,\tau_4)$ is a degree $\log n$ relation that \advprime can output in this case.
 Setting $\ztafuncs=\set{D_1,D_2,D_3,D_4}$ we have proven knowledge soundness under the theorem assumptions.
 \end{proof}
+
 \subsection{Representative protostar-relations}\label{subsec:reprelation}
 \begin{dfn}\label{dfn:represent-relation}
 Given a relation \relzer we say a protostar-relation $\rel = \rel_{f,\predinst,\cm}$ \emph{represents} \relzer
-if there is an efficiently computable and invertible maps $\varphi_0, \varphi_1$ such that any efficient \adv has a \negl probability of outputting
-a pair $(\inst,\wit)$ such that 
+if there are efficiently computable and invertible maps $\varphi_0, \varphi_1$ such that
 \begin{enumerate}
  \item $\varphi_0(\inst)$ is always of the form $(\inst,X)$ for some $X$.
- \item Any efficient \adv has a \negl probability of outputting a pair $(\inst,\wit)$ such that
- 
- 
-
-
-either:
+ \item Any efficient \adv has a \negl probability of outputting a pair $(\inst,\wit)$ such that either:
 \begin{enumerate}
  \item $(\inst,\wit)\in \relzer$ but $(\varphi_0(\inst),\varphi_1(\wit))\notin \rel$.
  \item $(\inst,\wit)\in \rel$ but $(\varphi^{-1}_0(\inst),\varphi^{-1}_1(\wit))\notin \relzer$.
@@ -1416,7 +1411,7 @@ $\witFprime=(\instt,\insttbase,\instFprime_0,w,\prf)$
 \item$\prf$ -- proof for \protogal verifier
 \end{itemize}
 
-We fix $\predinst,\cm,\varphi_1,\varphi_2$ to be the values appearing in the statement of Claim \ref{clm:repplonk}.
+We fix $\predinst,\cm,\varphi_0,\varphi_1$ to be the values appearing in the statement of Claim \ref{clm:repplonk}.
 
 
 \noindent
@@ -1456,10 +1451,11 @@ And additionally,
 is \negl.
  \item \textbf{Zero-Knowledge:} Fix any $(\inst,\wit)\in \rel$. $\sim(\inst,\cmsetup)$ outputs a distribution \negl-close to $\prv(\inst,\wit)$.
 \end{itemize}
-
 \end{dfn}
+
 For readability, from now on we denote an accumulator by \acc, accumulator witness by \witacc, instance by \inst, and instance witness by \witinst.
- \subsection{The relation \relfin}
+
+\subsection{The relation \relfin}
 We define the relation \relfin of pairs $(\instfin,\witfin)$ with
 \begin{itemize}
  \item $\instfin = (\acc,\zfin,C,\recset)$
@@ -1476,6 +1472,7 @@ such that
 
 \noindent
 Let $(\prvsnark,\versnark)$ be a $\cm$-consistent zk-SNARK for \relfin.
+
 
 
 \subsection{Main construction}\label{subsec:main}
@@ -1496,16 +1493,16 @@ Let $\inst_1=(z_1,1,\acchash_1)$, $\witinst_1=(\acc_0,\acc_0, \inst_0, w_1, \prf
 
 \item For each $2\leq i\leq n$, compute
 \begin{enumerate}
- \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\inst_{i-1},\witinst_{i-1})$
+ \item $(\acc_i,\witacc_i,\prf_i) = \prvpg(\acc_{i-1},\witacc_{i-1},\varphi_0(\inst_{i-1}),\varphi_1(\witinst_{i-1}))$
 \item $\inst_i = (z_i,i,\hash(\acc_i))$,
 \item $\witinst_i=(\acc_i,\acc_{i-1},\inst_{i-1},w_{i},\prf_i)$
 \end{enumerate}
 \item
-$(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\inst_{n},\witinst_{n})$.
+$(\acc,\witacc,\prf^*) = \prvpg(\acc_{n},\witacc_{n},\varphi_0(\inst_{n}),\varphi_1(\witinst_{n}))$.
 \item Let $\prffin = \prvsnark(\instfin,\witfin)$ where
 \begin{itemize}
- \item $\instfin = (\acc,\recset,C,\zfin)$
- \item $\witfin = (\witacc,\acc_n,\inst_n,\prf^*)$
+ \item $\instfin = (\acc,\zfin,C,\recset)$
+ \item $\witfin = (\witacc,\acc_n,\varphi_0(\inst_n),\prf^*)$
 \end{itemize}
 \item Output $\prf=(\acc,\prffin)$.\\
 \end{enumerate}
@@ -1528,14 +1525,14 @@ Let \relrcg be a trivial RCG relation. Assume that \hash is collision resistant,
 
 We define the following extractor algorithm \ext:
 \begin{enumerate}
- \item Given $(\instfin,\prffin)$, if $\prffin$ is not of the form $(\prf_1,\prf_2)$ with $\prf_1\in K$ output \empt and abort. Otherwise let $\witfin$ be the element output by \adv such that $\cm(\witfin)=\prf_1$.
+ \item Given $(\instrcg,\prffin)$, if $\prffin$ is not of the form $(\prf_1,\prf_2)$ with $\prf_1\in K$ output \empt and abort. Otherwise let $\witfin$ be the element output by \adv such that $\cm(\witfin)=\prf_1$.
  \item Parse $\witfin$ as $\witfin=(\witacc,\acc^*,\inst^*,\prf^*)$ where the different elements have the appropriate length in a witness for \relfin. If such parsing fails output \empt and abort.
  \item Let $n\defeq \inst^*.\cnt$. Denote $\acc_n\defeq \acc^*, \inst_n \defeq \inst^*$.
- \item If $(\instfin,\witfin)\notin \relfin$ output \empt and abort. Otherwise $\acc_n,\inst_n\in K$ and let $\witacc_n,\witinst_n$ be the elements output by \adv such that $\cm(\witacc_n)=\acc_n$ and $\cm(\witinst_n)=\inst_n$.
+ \item If $(\instfin,\witfin)\notin \relfin$, output \empt and abort. Otherwise, $\verpg(\acc_n,\inst_n,\acc,\prf^*)=\accept$, and thus $\acc_n,\inst_n\in K$. Let $\witacc_n,\witinst_n$ be the elements output by \adv such that $\cm(\witacc_n)=\acc_n$ and $\cm(\witinst_n)=\inst_n$.
  \item For $i=n-1,\ldots,1$:
  \begin{enumerate}
   \item If $(\inst_{i+1},\witinst_{i+1})\notin \rel$, output \empt and abort. Otherwise, as $(\inst_{i+1},\witinst_{i+1})\in \rel$ implies $\acc_{i},\inst_{i}\in K$, let $\witacc_{i},\witinst_{i}$ be the elements output by \adv such that $\acc_i= \cm(\witacc_{i}),\inst_i=\cm(\witinst_i)$.
-  \item Parse $\inst_i$ as $(z_i,\cnt_i,\acchash_i)$. Parse $\witinst_i$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$.
+  \item Parse $\varphi_0^{-1}(\inst_i)$ as $(z_i,\cnt_i,\acchash_i)$. Parse $\varphi_1^{-1}(\witinst_i)$ as $(\acc'_i,\acc_{i-1},\inst_{i-1},w_i,\prf_i)$. Note that through this parsing we have in particular defined $z_i,w_i$ and $\inst_{i-1}$.
  \end{enumerate}
  \item Define $z_0\defeq \inst_0.z$.
 \item Output $\witrcg\defeq ( n,(z_0,\ldots,z_n),(w_1,\ldots,w_n))$.
@@ -1549,7 +1546,7 @@ Let $E_0$ be the event $(\instfin,\witfin)\notin \relfin$.
 For $i\in [n]$, let $E_i$ be the union of the following events:
 \begin{enumerate}
  \item $(\inst_i,\witinst_i)\notin \rel$.
-\item $(\acc_i,\witacc_i) \notin \rel$.
+\item $(\acc_i,\witacc_i) \notin \relrand$.
 \item $\hash(\acc_i)\neq \inst_i.\acchash$.
 \end{enumerate}
 % \item $D_i:\acc'_i\neq \acc_i$.
@@ -1560,7 +1557,7 @@ Examining the definition of $\relrcg$, the statement $(\instrcg,\witrcg)\in \rel
 \begin{enumerate}
 \item $\finpred(\zfin,\recset)=\accept$: \ver checks this directly so we know it holds.
 \item $\inst_n.z = \zfin$ and $n \leq C$: Follows from $(\instfin,\witfin)\in \relfin$.
-\item For all $i\in [n]$ $F(z_{i-1},w_i,z_i)=\accept$: Follows directly from $(\inst_i,\witinst_i)\in \rel$ for each $i\in [n]$.
+\item For all $i\in [n]$, $F(z_{i-1},w_i,z_i)=\accept$: Follows directly from $(\inst_i,\witinst_i)\in \rel$ for each $i\in [n]$.
  \item $z_0.\init = \true$:
 For this we first prove by backwards induction on $i=n,{n-1},\ldots,1$ that $\inst_i.\cnt =i$.
 By our definition of $\inst_n$ this holds for $i=n$. For the induction step, assume it holds for $i$.
@@ -1569,7 +1566,7 @@ Since $(\inst_i,\witinst_i)\in \rel$ we have $\inst_{i-1}.\cnt = \witinst_{i-1}.
 In particular, $\inst_1.\cnt=1$ which implies when $(\inst_1,\witinst_1)\in \rel$ that $z_0.\init = \inst_0.z.\init=\true$.
 \end{enumerate}
 
-It is left to show that the probability of $E_0\cup E_1 \cup \ldots \cup E_n$ is \negl. From the knowledge-soundness of the zk-SNARK for \relfin
+It is left to show that the probability of $E_0\cup E_1 \cup \ldots \cup E_n$ is \negl. From the knowledge soundness of the zk-SNARK for \relfin
 we have $\Pr[E_0]=\negl$. (Recall we are in the event $D$ and assuming its probability is non-negligible.)
 
 For this purpose, we prove by backwards induction on $i$, for each $i\in [n]$, that
@@ -1578,7 +1575,7 @@ the probability that $E_i$ occurs given $E_0,E_{i+1},\ldots,E_n$ \emph{didn't} i
 
 For $i=n$, assume $E_0$ didn't occur, hence $(\instfin,\witfin)\in \relfin$.
 % from the knowledge soudness of $(\prvsnark,\versnark)$ e.w.p. \negl $(\instfin,\witfin)\in \relfin$.
-In this case $(\acc,\witacc)\in \relrand$ and $\verpg(\inst_n,\acc_n,\acc,\prf^*)=\accept$.
+In this case $(\acc,\witacc)\in \relrand$ and $\verpg(\acc_n,\inst_n,\acc,\prf^*)=\accept$.
 Define $\adv_n$ to be the algorithm that executes \ext and outputs $\acc_n,\inst_n,\acc,\witacc_n,\witinst_n,\witacc,\prf^*$.
 From the knowledge soundness of \protogal applied to $\adv_n$ we have that the probability conditioned on $\neg E_0$ that
 $E_n$ occurred is \negl.
@@ -1586,10 +1583,13 @@ $E_n$ occurred is \negl.
 Now assume the induction hypothesis for some $i>1$. We have by the hypothesis that the event $D_i\defeq \neg(E_0\cup E_i\cup\ldots\cup E_n)$ has probability $1-\negl$. Assume that we are in $D_i$.
 From $(\inst_{i},\witinst_{i})\in \rel$ we have that $\inst_{i}.\acchash = \hash(\acc'_{i})=\hash(\acc_i)$.
 From the collision resistance of \hash, we thus have that the probability that $\acc_i\neq \acc_i$ is \negl.
-If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$ that $\ver(\acc_{i-1},\inst_{i-1},\prf_i,\acc_i) =\accept$.
+If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$ that $\ver(\acc_{i-1},\inst_{i-1},\acc_i,\prf_i) =\accept$.
 Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i-1},\witacc_{i-1},$ $\witinst_{i-1},\witacc_i,\prf_i$.
-From the knowledge soundness of \protogal applied to $\adv_i$ we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$, $\Pr[E_{i-1} \mid D_i]=\negl$; which is the desired inductive statement.
+From the knowledge soundness of \protogal applied to $\adv_i$, we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$, $\Pr[E_{i-1} \mid D_i]=\negl$; which is the desired inductive statement.
 \end{proof}
+
+
+
 \subsection{Constructing proofs for \relexec}
 Going through the reductions of the previous sections, we get the following zk-SNARK for the relation \relexec from Section \ref{sec:validexec} describing valid executions.\\ \\
 \noindent
@@ -1706,5 +1706,4 @@ The third author was funded by the Vienna Science and Technology Fund (WWTF) [10
 \bibliographystyle{alpha}
 \bibliography{references}
 \end{document}
-
 
