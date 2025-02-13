@@ -731,6 +731,12 @@ The Zero-Testing Assumption (ZTA) for $(\ztafuncs,\hash,\cm,d)$ states that for 
 \adv outputs a degree $d$-relation for $(\ztafuncs,\hash,\cm)$ is \negl.
 \end{dfn}
 
+\begin{remark}
+The validity of ZTA is very sensitive to the choice of $D$. At first thought, one would want to prohibit $D$ from \emph{any} invocation of \hash or \cm. However, as will be seen later, this will be over-restrictive for capturing what is needed in multi-round protocols. We make sure not to use $D$ where \hash is invoked on $(\cm(x),\tau)$, and conjecture this suffices for avoiding couter-examples. In any case, analyzing a hash-based protocol under ZTA with a specific choice of $D$  allows for falsifiability - as opposed to an analysis in the ROM followed by applying Fiat-Shamir .
+\end{remark}
+
+
+
 \begin{dfn}[$t$-variate ZTA]\label{dfn:multiZTA}
 Fix $\cm:\F^M\to K$, hash function $\hash:\B^*\to \F$, and integer $d$. Fix the family of functions \ztafuncs.
 We say the tuple $(D,x,\tau)$ is a \emph{$(t,d)$-relation for $(\ztafuncs,\hash,\cm)$} if
@@ -1585,7 +1591,7 @@ Now assume the induction hypothesis for some $i>1$. We have by the hypothesis th
 Thus $\hash(\acc_i)=\hash(\acc'_i)$.
 From the collision resistance of \hash, we thus have that the probability that $\acc_i\neq \acc'_i$ is \negl.
 If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$ that $\ver(\acc_{i-1},\inst_{i-1},\acc_i,\prf_i) =\accept$.
-Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i-1},\witacc_{i-1},$ $\witinst_{i-1},\witacc_i,\prf_i$.
+Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i},\witacc_{i-1},$ $\witinst_{i-1},\witacc_i,\prf_i$.
 From the knowledge soundness of \protogal applied to $\adv_i$, we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$, $\Pr[E_{i-1} \mid D_i]=\negl$; which is the desired inductive statement.
 \end{proof}
 
@@ -1699,8 +1705,8 @@ Therefore, the total prover computation depends only on the size of the vector $
 % then checking depends only on the instance.
 
 
-\subsection{RCG and Goblin \plonk}
-The ``Global'' in RCG suggests a final predicate checking conditions \emph{between} the different $s_i$. However, as suggested in \cite{goblin}, it might 
+% \subsection{RCG and Goblin \plonk}
+% The ``Global'' in RCG suggests a final predicate checking conditions \emph{between} the different $s_i$. However, as suggested in \cite{goblin}, it might 
 \section*{Acknowledgements}
 The third author was funded by the Vienna Science and Technology Fund (WWTF) [10.47379/VRG18002] and by the Austrian Science Fund (FWF) [10.55776/F8515-N].
 
