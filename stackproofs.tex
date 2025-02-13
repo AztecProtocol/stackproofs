@@ -278,8 +278,8 @@
 \newcommand{\eps}{\ensuremath{\varepsilon}\xspace}
 \newcommand{\inpF}{\ensuremath{\mathscr{x}}\xspace}
 \newcommand{\witF}{\ensuremath{\mathscr{w}}\xspace}
-\newcommand{\instFprime}{\ensuremath{\mathpgoth{x}}\xspace}
-\newcommand{\witFprime}{\ensuremath{\mathpgoth{w}}\xspace}
+\newcommand{\instFprime}{\ensuremath{\inst}\xspace}%\mathpgoth{x}}\xspace}
+\newcommand{\witFprime}{\ensuremath{\witinst}\xspace}%\mathpgoth{w}}\xspace}
 \newcommand{\acchash}{\ensuremath{\mathscr{h}}\xspace}
 \newcommand{\accnew}{\ensuremath{\mathscr{acc}}\xspace}
 \newcommand{\cnt}{\ensuremath{\mathsf{count}}\xspace}
@@ -1575,14 +1575,15 @@ the probability that $E_i$ occurs given $E_0,E_{i+1},\ldots,E_n$ \emph{didn't} i
 
 For $i=n$, assume $E_0$ didn't occur, hence $(\instfin,\witfin)\in \relfin$.
 % from the knowledge soudness of $(\prvsnark,\versnark)$ e.w.p. \negl $(\instfin,\witfin)\in \relfin$.
-In this case $(\acc,\witacc)\in \relrand$ and $\verpg(\acc_n,\inst_n,\acc,\prf^*)=\accept$.
+In this case $(\acc,\witacc)\in \relrand$, $\hash(\acc_n)=\inst_n.\acchash$ and $\verpg(\acc_n,\inst_n,\acc,\prf^*)=\accept$.
 Define $\adv_n$ to be the algorithm that executes \ext and outputs $\acc_n,\inst_n,\acc,\witacc_n,\witinst_n,\witacc,\prf^*$.
 From the knowledge soundness of \protogal applied to $\adv_n$ we have that the probability conditioned on $\neg E_0$ that
 $E_n$ occurred is \negl.
 
 Now assume the induction hypothesis for some $i>1$. We have by the hypothesis that the event $D_i\defeq \neg(E_0\cup E_i\cup\ldots\cup E_n)$ has probability $1-\negl$. Assume that we are in $D_i$.
-From $(\inst_{i},\witinst_{i})\in \rel$ we have that $\inst_{i}.\acchash = \hash(\acc'_{i})=\hash(\acc_i)$.
-From the collision resistance of \hash, we thus have that the probability that $\acc_i\neq \acc_i$ is \negl.
+ From $\neg E_i$ we have $\inst_{i}.\acchash=\hash(\acc_i)$. From $(\inst_{i},\witinst_{i})\in \rel$ we have that $\inst_{i}.\acchash = \hash(\acc'_{i})$.
+Thus $\hash(\acc_i)=\hash(\acc'_i)$.
+From the collision resistance of \hash, we thus have that the probability that $\acc_i\neq \acc'_i$ is \negl.
 If $\acc_i=\acc'_i$ we have from $(\inst_i,\witinst_i)\in \rel$ that $\ver(\acc_{i-1},\inst_{i-1},\acc_i,\prf_i) =\accept$.
 Define $\adv_i$ to be the algorithm that executes \ext and outputs $\acc_{i-1},\inst_{i-1},\acc_{i-1},\witacc_{i-1},$ $\witinst_{i-1},\witacc_i,\prf_i$.
 From the knowledge soundness of \protogal applied to $\adv_i$, we have that the probability that $(\inst_{i-1},\witinst_{i-1})\notin \rel$ or $(\acc_{i-1},\witacc_{i-1})\notin \relrand$ given $D_i$ is \negl. Noting that $(\inst_i,\witinst_i)\in \rel$ also implies $\hash(\acc_{i-1}) = \inst_{i-1}.\acchash$, $\Pr[E_{i-1} \mid D_i]=\negl$; which is the desired inductive statement.
